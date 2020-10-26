@@ -22,6 +22,5 @@ int main (int argc, char** argv)
     luck.remove_flat_region();
     luck.viewer();
 
-
     return (0);
 }

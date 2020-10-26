@@ -6,13 +6,6 @@ loader::loader(){
 //    cloud2 = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
 //    cloud3 = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
 }
-loader::spherical_point::spherical_point() {
-    r=0;
-    pi=0;
-    theta=0;
-    index = -1;
-}
-
 
 void loader::txt2pcl(std::string fileName) {
     pcl::PointXYZRGB temp;

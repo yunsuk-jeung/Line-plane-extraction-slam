@@ -10,6 +10,19 @@
 #include <vector>
 #include <cmath>
 #define _USE_MATH_DEFINES
+struct spherical_point{
+    float r;
+    float theta;
+    float pi;
+    int index;
+    spherical_point(){
+        r=0;
+        theta=0;
+        pi =0;
+        index =-1;
+    }
+
+};
 
 class loader
 {
@@ -17,16 +30,8 @@ public:
     loader();
     void txt2pcl(std::string fileName);
     void viewer();
-    void get_spherical_coordinate();
 
-    class spherical_point{
-    public:
-        spherical_point();
-        float r;
-        float theta;
-        float pi;
-        int index;
-    };
+
 
     void create_depth_image();
     void remove_flat_region();
