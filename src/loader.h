@@ -29,12 +29,15 @@ public:
     loader();
     void txt2pcl(std::string fileName);
     void viewer();
-    void create_depth_image();
+//    void create_depth_image_2();
     void remove_flat_region();
+    void create_depth_image();
 
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud;
-    std::vector< std::vector < spherical_point > > spherical_depth_image;
+//    std::vector< std::vector < spherical_point > > spherical_depth_image;
+    spherical_point depth_image[100][4500];
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud;
 };
 
 #endif /* loader_h */

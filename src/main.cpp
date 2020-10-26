@@ -16,7 +16,6 @@ int main (int argc, char** argv)
 
     loader luck;
     luck.txt2pcl(fileName);
-
     luck.create_depth_image();
 
     luck.remove_flat_region();
