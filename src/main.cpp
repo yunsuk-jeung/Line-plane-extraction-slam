@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <pcl/io/io.h>
+#include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/point_types.h>
@@ -14,12 +14,15 @@ int main (int argc, char** argv)
     std:: string fileName;
     fileName = file_env + "/0000000000.txt";
 
+    //
     loader luck;
     luck.txt2pcl(fileName);
     luck.create_depth_image();
-
     luck.remove_flat_region();
-    luck.viewer();
+    luck.create_integral_image();
+//    luck.viewer();
+//    luck.get_normal();
+
 
     return (0);
 }
