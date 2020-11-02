@@ -240,8 +240,8 @@ void loader::create_integral_image() {
     int row=sizeof(depth_image) / sizeof(depth_image[0]);
     int col= sizeof(depth_image[0])/sizeof(spherical_point);
     image integral(row,col);
-    integral.set_boundary(10,10);
-    integral.integral_image(depth_image, vertical_cloud);
+    integral.set_boundary(10,20);
+    integral.create_integral_image(depth_image, vertical_cloud);
 }
 
 image::image(int row, int col){
@@ -255,9 +255,15 @@ image::image(int row, int col){
     itg_yz = std::vector<std::vector<double> > (row, std::vector < double > (col));
     itg_zz = std::vector<std::vector<double> > (row, std::vector < double > (col));
     itg_num = std::vector<std::vector<int> > (row, std::vector < int > (col));
+    interval_image = std::vector<std::vector<interval_point> > (row, std::vector < interval_point > (col));
 }
 
-void image::integral_image(spherical_point (&depth_image)[64][4500], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud){
+void image::set_boundary(int max_row, int max_col) {
+    boundary_col = max_col;
+    boundary_row = max_row;
+}
+
+void image::create_integral_image(spherical_point (&depth_image)[64][4500], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud){
     int skipper;
     interval_point checked;
     std::vector <interval_point > row_checked;
@@ -311,18 +317,72 @@ void image::integral_image(spherical_point (&depth_image)[64][4500], pcl::PointC
             itg_num[i][j] += itg_num[i-1][j];
         }
     }
-
-    for (int i=0; i< ROW; i++){
-        for (int j=0; j<COL; j++){
-            index = depth_image[i][j].index;
-            if (index != -1){
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-            }
-
-        }
-    }
+    for (int i= 0 ; i < 10; i++){
+}   create_interval_image(depth_image, itg_num);
 
 }
 
+interval_point check_vertical(int i, int j, spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > itg_num, int boundary_row, int boundary_col){
+    interval_point output;
+    int left_col=j-1;
+    int right_col=j+1;
+    int up_row=i+1;
+    int bottom_row=i-1;
+    int num=1;
+    int checker=0;
+    float pre_depth = depth_image[i][j].r;
+    float depth;
+    for (int k=0; k< 100;k++){
+       if(depth_image[i][k].index != -1){
+           std::cout << depth_image[i][k].r - pre_depth<< std::endl;
+       }
+    }
+    ///// right column check
+    while (right_col < 4500 && checker < boundary_col){
+        if(depth_image[i][right_col].index == -1){
+            right_col ++;
+        }
+        else{
+            depth = depth_image[i][right_col].r;
+            if(fabs(depth-pre_depth)< DEPTH_THRESHOLD){
+                checker++;
+                right_col++;
+                pre_depth = depth;
+                std::cout << right_col<< std:: endl;
+            }else{
+                break;
+            }
+        }
+    }
+
+    output.left_col = left_col;
+    output.right_col = right_col;
+    output.up_row = up_row;
+    output.bottom_row = bottom_row;
+    output.num  = num;
+    return output;
+}
+
+void image::create_interval_image(spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > itg_num) {
+    interval_point ver;
+    interval_point hor;
+    int num1;
+    int num2;
+//    for (int i=0; i<ROW; i++ ){
+//        for (int j=0; j<COL; j++){
+int i=6;
+int j=0;
+
+           ver = check_vertical(i,j,depth_image,itg_num,boundary_row,boundary_col);
+
+            if (ver.num > hor.num){
+                interval_image[i][j] = ver;
+            }else{
+                interval_image[i][j] = hor;
+            }
+
+//        }
+//    }
+}
 
 

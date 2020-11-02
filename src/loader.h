@@ -13,6 +13,7 @@
 #define _USE_MATH_DEFINES
 #define ROW 64
 #define COL 4500
+#define DEPTH_THRESHOLD 3
 struct spherical_point{
     float r;
     float theta;
@@ -49,15 +50,17 @@ private:
 };
 
 struct interval_point{
-    int min_row;
-    int max_row;
-    int min_col;
-    int max_col;
+    int left_col;
+    int up_row;
+    int right_col;
+    int bottom_row;
+    int num;
     interval_point(){
-        min_row = 0;
-        max_row=0;
-        min_col=0;
-        max_col=0;
+        left_col = 0;
+        up_row=0;
+        right_col=0;
+        bottom_row=0;
+        int num=0;
     }
 };
 
@@ -65,9 +68,9 @@ struct interval_point{
 class image{
 public:
     image(int row, int col);
-    void integral_image(spherical_point (&depth_image)[64][4500], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud);
-    void set_boundary(int boundary_row, int boundary_col);
-
+    void create_integral_image(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_vertical_cloud);
+    void set_boundary(int row_boundary, int col_boundary);
+    void create_interval_image(spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > integral_num);
 private:
     std::vector < std::vector < interval_point > > interval_image;
     std::vector < std::vector < double > > itg_x;
