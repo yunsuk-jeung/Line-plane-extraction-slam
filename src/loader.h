@@ -70,7 +70,7 @@ public:
     image(int row, int col);
     void create_integral_image(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_vertical_cloud);
     void set_boundary(int row_boundary, int col_boundary);
-    void create_interval_image(spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > integral_num);
+    void create_interval_image(const spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > integral_num);
 private:
     std::vector < std::vector < interval_point > > interval_image;
     std::vector < std::vector < double > > itg_x;

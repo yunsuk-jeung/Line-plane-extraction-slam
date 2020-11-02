@@ -10,7 +10,7 @@ int main (int argc, char** argv)
     std::string home_env;
     std::string file_env;
     home_env = getenv("HOME") ;
-    file_env = home_env + "/Downloads/2011_09_26/2011_09_26_drive_0002_extract/velodyne_points/data";
+    file_env = home_env + "/workspace/line_plane/src/extract";
     std:: string fileName;
     fileName = file_env + "/0000000000.txt";
 
