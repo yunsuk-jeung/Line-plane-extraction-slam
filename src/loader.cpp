@@ -158,7 +158,7 @@ void loader::remove_flat_region(){
 //// call integral_image
 void loader::create_image() {
     image integral(ROW,COL);
-    integral.set_boundary(10,20);
+    integral.set_boundary(5,5);
     integral.create_integral_image(depth_image, vertical_cloud);
     integral.create_interval_image(depth_image);
 }
@@ -241,19 +241,23 @@ interval_point check_horizontal(int i, int j, const spherical_point (&depth_imag
     int up_row=i;
     int bottom_row=i;
     int checker;
+    int double_checker;
     float depth;
     float pre_depth;
     ///// right column check
     checker=0;
+    double_checker=0;
     pre_depth = input_depth;
-    while (right_col < COL && checker < boundary_col){
+    while (right_col < COL && checker < boundary_col && double_checker < 100){
         if(depth_image[i][right_col].index == -1){
             right_col ++;
+            double_checker++;
         }
         else{
             depth = depth_image[i][right_col].r;
             if(fabs(depth-pre_depth)< DEPTH_THRESHOLD){
                 checker++;
+                double_checker++;
                 right_col++;
                 pre_depth = depth;
             }else{
@@ -267,15 +271,18 @@ interval_point check_horizontal(int i, int j, const spherical_point (&depth_imag
     }
 //// left col check
     checker =0;
+    double_checker=0;
     pre_depth = input_depth;
-    while (left_col >= 0 && checker < boundary_col){
+    while (left_col >= 0 && checker < boundary_col && double_checker < 100){
         if(depth_image[i][left_col].index == -1){
             left_col --;
+            double_checker++;
         }
         else{
             depth = depth_image[i][left_col].r;
             if(fabs(depth-pre_depth)< DEPTH_THRESHOLD){
                 checker++;
+                double_checker++;
                 left_col--;
                 pre_depth = depth;
             }else{
