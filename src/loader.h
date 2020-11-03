@@ -54,13 +54,11 @@ struct interval_point{
     int up_row;
     int right_col;
     int bottom_row;
-    int num;
     interval_point(){
         left_col = 0;
         up_row=0;
         right_col=0;
         bottom_row=0;
-        int num=0;
     }
 };
 

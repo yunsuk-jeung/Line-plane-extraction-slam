@@ -183,12 +183,8 @@ void image::set_boundary(int max_row, int max_col) {
 }
 
 void image::create_integral_image(const spherical_point (&depth_image)[64][4500], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud){
-    int skipper;
-    interval_point checked;
     std::vector <interval_point > row_checked;
-    float x,y,z;
-
-    int index=0;
+    int index;
     for (int i=0; i< ROW; i++){
         for (int j=0; j<COL; j++){
             index = depth_image[i][j].index;
@@ -238,76 +234,18 @@ void image::create_integral_image(const spherical_point (&depth_image)[64][4500]
     }
 }
 
-interval_point check_vertical(int i, int j, const spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > itg_num, int boundary_row, int boundary_col){
+interval_point check_horizontal(int i, int j, const spherical_point (&depth_image)[ROW][COL], int boundary_col, float input_depth){
     interval_point output;
     int left_col=j-1;
     int right_col=j+1;
-    int up_row=i-1;
-    int bottom_row=i+1;
-    int num=1;
+    int up_row=i;
+    int bottom_row=i;
     int checker;
-    int ver_checker;
-    float pre_depth;
     float depth;
-    float ver_pre_depth;
-    float ver_depth;
-    for (int k=0; k< 63;k++){
-//       if(depth_image[k][8].index != -1){
-           std::cout << k<<' '<<  depth_image[k][8].index - pre_depth<< std::endl;
-//       }
-    }
-
-    ver_checker =0;
-    ver_pre_depth = depth_image[i][j].r;
-    //// up row check
-    while (up_row >= 0 && ver_checker < boundary_row){
-        if(depth_image[up_row][j].index == -1){
-            up_row --;
-        }else{
-            ver_depth = depth_image[up_row][j].r;
-            if(fabs(ver_depth-ver_pre_depth) < DEPTH_THRESHOLD){
-               ver_checker++;
-               up_row --;
-               ver_pre_depth = ver_depth;
-            }else{
-                up_row ++;
-                break;
-            }
-
-        }
-    }
-    if (up_row <0){
-        up_row = 0;
-    }
-    std::cout << up_row << std::endl;
-
-    //// down row check
-    ver_checker =0;
-    ver_pre_depth = depth_image[i][j].r;
-    while (bottom_row >= 0 && ver_checker < boundary_row){
-        if(depth_image[bottom_row][j].index == -1){
-            bottom_row ++;
-        }else{
-            ver_depth = depth_image[bottom_row][j].r;
-            if(fabs(ver_depth-ver_pre_depth) < DEPTH_THRESHOLD){
-                ver_checker++;
-                bottom_row ++;
-                ver_pre_depth = ver_depth;
-            }else{
-                bottom_row --;
-                break;
-            }
-
-        }
-    }
-    if (bottom_row >= ROW){
-        bottom_row = ROW-1;
-    }
-
-    std::cout << bottom_row << std::endl;
+    float pre_depth;
     ///// right column check
     checker=0;
-    pre_depth = depth_image[i][j].r;
+    pre_depth = input_depth;
     while (right_col < 4500 && checker < boundary_col){
         if(depth_image[i][right_col].index == -1){
             right_col ++;
@@ -320,7 +258,6 @@ interval_point check_vertical(int i, int j, const spherical_point (&depth_image)
                 pre_depth = depth;
             }else{
                 right_col --;
-
                 break;
             }
         }
@@ -351,32 +288,131 @@ interval_point check_vertical(int i, int j, const spherical_point (&depth_image)
     if (left_col < 0){
         left_col = 0;
     }
+    output.left_col = left_col;
+    output.right_col = right_col;
+    output.up_row = up_row;
+    output.bottom_row = bottom_row;
+    return output;
+}
+interval_point check_vertical(int i, int j, const spherical_point (&depth_image)[ROW][COL], int boundary_row){
+    interval_point output;
+    int left_col=j;
+    int right_col=j;
+    int up_row=i-1;
+    int bottom_row=i+1;
 
+    int ver_checker;
+    float ver_pre_depth;
+    float ver_depth;
+    ver_checker =0;
+    ver_pre_depth = depth_image[i][j].r;
+    //// up row check
+    while (up_row >= 0 && ver_checker < boundary_row){
+        if(depth_image[up_row][j].index == -1){
+            up_row --;
+        }else{
+            ver_depth = depth_image[up_row][j].r;
+            if(fabs(ver_depth-ver_pre_depth) < DEPTH_THRESHOLD){
+               ver_checker++;
+               up_row --;
+               ver_pre_depth = ver_depth;
+            }else{
+                up_row ++;
+                break;
+            }
+
+        }
+    }
+    if (up_row <0){
+        up_row = 0;
+    }
+    //// down row check
+    ver_checker =0;
+    ver_pre_depth = depth_image[i][j].r;
+    while (bottom_row >= 0 && ver_checker < boundary_row){
+        if(depth_image[bottom_row][j].index == -1){
+            bottom_row ++;
+        }else{
+            ver_depth = depth_image[bottom_row][j].r;
+            if(fabs(ver_depth-ver_pre_depth) < DEPTH_THRESHOLD){
+                ver_checker++;
+                bottom_row ++;
+                ver_pre_depth = ver_depth;
+            }else{
+                bottom_row --;
+                break;
+            }
+
+        }
+    }
+    if (bottom_row >= ROW){
+        bottom_row = ROW-1;
+    }
 
     output.left_col = left_col;
     output.right_col = right_col;
     output.up_row = up_row;
     output.bottom_row = bottom_row;
-    output.num  = num;
     return output;
 }
 
 void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]) {
     interval_point ver;
     interval_point hor;
+    float input_depth;
+    float pre_depth;
+    int left_col=0;
+    int right_col=4999;
+    int up_row;
+    int bottom_row;
     int num1;
     int num2;
 //    for (int i=0; i<ROW; i++ ){
 //        for (int j=0; j<COL; j++){
     int i=6;
     int j=8;
-           ver = check_vertical(i,j,depth_image,itg_num,boundary_row,boundary_col);
 
-           if (ver.num > hor.num){
-                interval_image[i][j] = ver;
-            }else{
-                interval_image[i][j] = hor;
-            }
+    //// maximum col through row
+    pre_depth=depth_image[i][j].r;
+    ver = check_vertical(i,j,depth_image,boundary_row);
+    up_row = ver.up_row;
+    bottom_row = ver.bottom_row;
+    for (int ii = i; ii >= ver.up_row; ii--){
+        if (depth_image[ii][j].index == -1){
+            input_depth = pre_depth;
+        }else{
+            input_depth = depth_image[ii][j].r;
+            pre_depth = input_depth;
+        }
+        hor = check_horizontal(ii,j,depth_image,boundary_col,input_depth);
+        if(left_col < hor.left_col){
+            left_col = hor.left_col;
+        }
+        if(right_col > hor.left_col){
+            right_col = hor.right_col;
+        }
+    }
+    pre_depth=depth_image[i][j].r;
+    ver = check_vertical(i,j,depth_image,boundary_row);
+    for (int ii = i; ii <= ver.bottom_row; ii++){
+        if (depth_image[ii][j].index == -1){
+            input_depth = pre_depth;
+        }else{
+            input_depth = depth_image[ii][j].r;
+            pre_depth = input_depth;
+        }
+        hor = check_horizontal(ii,j,depth_image,boundary_col,input_depth);
+        if(left_col < hor.left_col){
+            left_col = hor.left_col;
+        }
+        if(right_col > hor.right_col){
+            right_col = hor.right_col;
+        }
+    }
+    std::cout << left_col << ' '<< up_row<< ' ' << right_col << ' ' << bottom_row << std::endl;
+    
+//    std::cout << ver.up_row << ' '<< ver.bottom_row << std::endl;
+//    std::cout << hor.left_col << ' '<< hor.right_col << std::endl;
 
 }
 
