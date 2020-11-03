@@ -156,12 +156,11 @@ void loader::remove_flat_region(){
 }
 
 //// call integral_image
-void loader::create_integral_image() {
-    int row=sizeof(depth_image) / sizeof(depth_image[0]);
-    int col= sizeof(depth_image[0])/sizeof(spherical_point);
-    image integral(row,col);
+void loader::create_image() {
+    image integral(ROW,COL);
     integral.set_boundary(10,20);
     integral.create_integral_image(depth_image, vertical_cloud);
+    integral.create_interval_image(depth_image);
 }
 
 image::image(int row, int col){
@@ -183,7 +182,7 @@ void image::set_boundary(int max_row, int max_col) {
     boundary_row = max_row;
 }
 
-void image::create_integral_image(spherical_point (&depth_image)[64][4500], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud){
+void image::create_integral_image(const spherical_point (&depth_image)[64][4500], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud){
     int skipper;
     interval_point checked;
     std::vector <interval_point > row_checked;
@@ -237,9 +236,6 @@ void image::create_integral_image(spherical_point (&depth_image)[64][4500], pcl:
             itg_num[i][j] += itg_num[i-1][j];
         }
     }
-    for (int i= 0 ; i < 10; i++){
-}   create_interval_image(depth_image, itg_num);
-
 }
 
 interval_point check_vertical(int i, int j, const spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > itg_num, int boundary_row, int boundary_col){
@@ -365,26 +361,23 @@ interval_point check_vertical(int i, int j, const spherical_point (&depth_image)
     return output;
 }
 
-void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL], std::vector < std::vector < int > > itg_num) {
+void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]) {
     interval_point ver;
     interval_point hor;
     int num1;
     int num2;
 //    for (int i=0; i<ROW; i++ ){
 //        for (int j=0; j<COL; j++){
-int i=6;
-int j=8;
-
+    int i=6;
+    int j=8;
            ver = check_vertical(i,j,depth_image,itg_num,boundary_row,boundary_col);
 
-            if (ver.num > hor.num){
+           if (ver.num > hor.num){
                 interval_image[i][j] = ver;
             }else{
                 interval_image[i][j] = hor;
             }
 
-//        }
-//    }
 }
 
 
