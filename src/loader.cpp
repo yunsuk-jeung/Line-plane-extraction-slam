@@ -157,10 +157,11 @@ void loader::remove_flat_region(){
 
 //// call integral_image
 void loader::create_image() {
-    image integral(ROW,COL);
+    image integral(ROW+1,COL+1);
     integral.set_boundary(5,5);
     integral.create_integral_image(depth_image, vertical_cloud);
     integral.create_interval_image(depth_image);
+    integral.get_normal();
 }
 
 image::image(int row, int col){
@@ -189,22 +190,22 @@ void image::create_integral_image(const spherical_point (&depth_image)[64][4500]
         for (int j=0; j<COL; j++){
             index = depth_image[i][j].index;
             if (index != -1) {
-                itg_x[i][j] = vertical_cloud->points[index].x;
-                itg_y[i][j] = vertical_cloud->points[index].y;
-                itg_z[i][j] = vertical_cloud->points[index].z;
-                itg_xx[i][j] = vertical_cloud->points[index].x * vertical_cloud->points[index].x;
-                itg_xy[i][j] = vertical_cloud->points[index].x * vertical_cloud->points[index].y;
-                itg_xz[i][j] = vertical_cloud->points[index].x * vertical_cloud->points[index].z;
-                itg_yy[i][j] = vertical_cloud->points[index].y * vertical_cloud->points[index].y;
-                itg_yz[i][j] = vertical_cloud->points[index].y * vertical_cloud->points[index].z;
-                itg_zz[i][j] = vertical_cloud->points[index].z * vertical_cloud->points[index].z;
-                itg_num[i][j] =1;
+                itg_x[i+1][j+1] = vertical_cloud->points[index].x;
+                itg_y[i+1][j+1] = vertical_cloud->points[index].y;
+                itg_z[i+1][j+1] = vertical_cloud->points[index].z;
+                itg_xx[i+1][j+1] = vertical_cloud->points[index].x * vertical_cloud->points[index].x;
+                itg_xy[i+1][j+1] = vertical_cloud->points[index].x * vertical_cloud->points[index].y;
+                itg_xz[i+1][j+1] = vertical_cloud->points[index].x * vertical_cloud->points[index].z;
+                itg_yy[i+1][j+1] = vertical_cloud->points[index].y * vertical_cloud->points[index].y;
+                itg_yz[i+1][j+1] = vertical_cloud->points[index].y * vertical_cloud->points[index].z;
+                itg_zz[i+1][j+1] = vertical_cloud->points[index].z * vertical_cloud->points[index].z;
+                itg_num[i+1][j+1] =1;
             }
         }
     }
     //// add through col
-    for (int i=0; i<ROW; i++){
-        for (int j=1; j< COL; j++){
+    for (int i=1; i<ROW+1; i++){
+        for (int j=2; j< COL+1; j++){
             itg_x[i][j] += itg_x[i][j-1];
             itg_y[i][j] += itg_y[i][j-1];
             itg_z[i][j] += itg_z[i][j-1];
@@ -218,8 +219,8 @@ void image::create_integral_image(const spherical_point (&depth_image)[64][4500]
         }
     }
     //// add through row
-    for (int j=0; j<COL; j++){
-        for (int i=1; i< ROW; i++){
+    for (int j=1; j<COL+1; j++){
+        for (int i=2; i< ROW+1; i++){
             itg_x[i][j] += itg_x[i-1][j];
             itg_y[i][j] += itg_y[i-1][j];
             itg_z[i][j] += itg_z[i-1][j];
@@ -428,4 +429,58 @@ void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]
     }
 }
 
+void image::get_normal() {
+    int left_col;
+    int right_col;
+    int up_row;
+    int bottom_row;
+    int num;
+    double cxx;
+    double cxy;
+    double cxz;
+    double cyy;
+    double cyz;
+    double czz;
+    double cx;
+    double cy;
+    double cz;
+    Eigen::Matrix3f cc;
+    Eigen::Vector3f c;
+    Eigen::Matrix3f cov_matrix;
 
+    int i=6;
+    int j=8;
+    left_col = interval_image[i][j].left_col+1;
+    right_col = interval_image[i][j].right_col+1;
+    up_row = interval_image[i][j].up_row+1;
+    bottom_row = interval_image[i][j].bottom_row+1;
+    cxx = itg_xx[bottom_row][right_col]-itg_xx[up_row-1][right_col]-itg_xx[bottom_row][left_col-1]+itg_xx[up_row-1][left_col-1];
+    cxy = itg_xy[bottom_row][right_col]-itg_xy[up_row-1][right_col]-itg_xy[bottom_row][left_col-1]+itg_xy[up_row-1][left_col-1];
+    cxz = itg_xz[bottom_row][right_col]-itg_xz[up_row-1][right_col]-itg_xz[bottom_row][left_col-1]+itg_xz[up_row-1][left_col-1];
+    cyy = itg_yy[bottom_row][right_col]-itg_yy[up_row-1][right_col]-itg_yy[bottom_row][left_col-1]+itg_yy[up_row-1][left_col-1];
+    cyz = itg_yz[bottom_row][right_col]-itg_yz[up_row-1][right_col]-itg_yz[bottom_row][left_col-1]+itg_yz[up_row-1][left_col-1];
+    czz = itg_zz[bottom_row][right_col]-itg_zz[up_row-1][right_col]-itg_zz[bottom_row][left_col-1]+itg_zz[up_row-1][left_col-1];
+    cx = itg_x[bottom_row][right_col]-itg_x[up_row-1][right_col]-itg_x[bottom_row][left_col-1]+itg_x[up_row-1][left_col-1];
+    cy = itg_y[bottom_row][right_col]-itg_y[up_row-1][right_col]-itg_y[bottom_row][left_col-1]+itg_y[up_row-1][left_col-1];
+    cz = itg_z[bottom_row][right_col]-itg_z[up_row-1][right_col]-itg_z[bottom_row][left_col-1]+itg_z[up_row-1][left_col-1];
+    num = itg_num[bottom_row][right_col]-itg_num[up_row-1][right_col]-itg_num[bottom_row][left_col-1]+itg_num[up_row-1][left_col-1];
+
+    cc(0,0)=cxx;
+    cc(0,1)=cxy;
+    cc(0,2)=cxz;
+    cc(1,0)=cxy;
+    cc(1,1)=cyy;
+    cc(1,2)=cyz;
+    cc(2,0)=cxz;
+    cc(2,1)=cyz;
+    cc(2,2)=czz;
+    c(0)=cx;
+    c(1)=cy;
+    c(2)=cz;
+    cov_matrix = cc - c*c.transpose()/num ;
+    std::cout<< cov_matrix << std::endl;
+    Eigen::EigenSolver<Eigen::Matrix3f> s(cov_matrix);
+    std::cout << s.eigenvalues() << std::endl;
+    std::cout << s.eigenvectors() << std::endl;
+
+}

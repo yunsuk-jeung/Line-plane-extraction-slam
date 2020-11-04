@@ -12,7 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   roscpp
 )
-
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

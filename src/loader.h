@@ -10,6 +10,8 @@
 #include <pcl/features/integral_image_normal.h>
 #include <vector>
 #include <cmath>
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 #define _USE_MATH_DEFINES
 #define ROW 64
 #define COL 4500
@@ -69,6 +71,7 @@ public:
     void create_integral_image(const spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_vertical_cloud);
     void set_boundary(int row_boundary, int col_boundary);
     void create_interval_image(const spherical_point (&depth_image)[ROW][COL]);
+    void get_normal();
 private:
     std::vector < std::vector < interval_point > > interval_image;
     std::vector < std::vector < double > > itg_x;
