@@ -15,7 +15,7 @@
 #define _USE_MATH_DEFINES
 #define ROW 64
 #define COL 4500
-#define DEPTH_THRESHOLD 3
+#define DEPTH_THRESHOLD 0.2
 struct spherical_point{
     float r;
     float theta;
@@ -40,7 +40,7 @@ public:
     void remove_flat_region();
     void create_depth_image();
     void create_image();
-    void get_normal();
+    void viewer2();
 
 
 private:
@@ -48,7 +48,7 @@ private:
 //    std::vector< std::vector < spherical_point > > spherical_depth_image;
     spherical_point depth_image[64][4500];
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud;
-    pcl::PointCloud<pcl::Normal>::Ptr normals;
+    pcl::PointCloud<pcl::Normal>::Ptr normal_cloud;
 };
 
 struct interval_point{
@@ -71,7 +71,7 @@ public:
     void create_integral_image(const spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_vertical_cloud);
     void set_boundary(int row_boundary, int col_boundary);
     void create_interval_image(const spherical_point (&depth_image)[ROW][COL]);
-    void get_normal();
+    pcl::PointCloud<pcl::Normal>::Ptr get_normal(spherical_point (&depth_image)[ROW][COL]);
 private:
     std::vector < std::vector < interval_point > > interval_image;
     std::vector < std::vector < double > > itg_x;
@@ -86,6 +86,7 @@ private:
     std::vector < std::vector < int > > itg_num;
     int boundary_row;
     int boundary_col;
+    pcl::PointCloud<pcl::Normal>::Ptr normals;
 
 };
 #endif /* loader_h */
