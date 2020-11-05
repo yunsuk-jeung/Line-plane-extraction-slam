@@ -144,7 +144,7 @@ void loader::remove_flat_region(){
     int index;
 
     for (int i=0; i<height; i++){
-        for (int j=0; j<length; j++){
+        for (int j=2100; j<2200; j++){
             index = depth_image[i][j].index;
             if( index != -1){
                 vertical_cloud->points.push_back(cloud->points[index]);
@@ -163,7 +163,7 @@ void loader::create_image() {
     integral.create_interval_image(depth_image);
     normal_cloud=integral.get_normal(depth_image);
     vertical_cloud->clear();
-    for (int i=0; i<ROW; i++){
+    for (int i=0; i<32; i++){
         for (int j=0; j<COL; j++){
             if(depth_image[i][j].index != -1){
                 vertical_cloud->points.push_back(cloud->points[depth_image[i][j].index]);

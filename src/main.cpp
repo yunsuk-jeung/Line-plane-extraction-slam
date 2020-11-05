@@ -20,9 +20,9 @@ int main (int argc, char** argv)
     luck.create_depth_image();
     luck.remove_flat_region();
     luck.viewer();
-    luck.create_image();
+//    luck.create_image();
 
-    luck.viewer2();
+//    luck.viewer2();
 
 
     return (0);
