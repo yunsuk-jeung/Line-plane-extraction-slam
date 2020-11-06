@@ -48,6 +48,7 @@ private:
 //    std::vector< std::vector < spherical_point > > spherical_depth_image;
     spherical_point depth_image[64][4500];
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud2;
     pcl::PointCloud<pcl::Normal>::Ptr normal_cloud;
 };
 

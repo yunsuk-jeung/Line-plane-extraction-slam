@@ -19,10 +19,10 @@ int main (int argc, char** argv)
     luck.txt2pcl(fileName);
     luck.create_depth_image();
     luck.remove_flat_region();
-    luck.viewer();
-//    luck.create_image();
 
-//    luck.viewer2();
+    luck.create_image();
+    luck.viewer();
+    luck.viewer2();
 
 
     return (0);

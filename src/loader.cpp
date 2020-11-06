@@ -4,6 +4,7 @@
 loader::loader(){
     cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
     vertical_cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
+    vertical_cloud2 = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
 //    cloud3 = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
     normal_cloud = pcl::PointCloud<pcl::Normal>::Ptr (new pcl::PointCloud<pcl::Normal>);
 //    interval_image(64, std::vector< interval_point>(4500));
@@ -40,7 +41,7 @@ void loader::viewer()
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
 
-    viewer.showCloud(vertical_cloud);
+    viewer.showCloud(vertical_cloud2);
 
     while (!viewer.wasStopped ())
     {
@@ -143,8 +144,8 @@ void loader::remove_flat_region(){
     int k=0;
     int index;
 
-    for (int i=0; i<height; i++){
-        for (int j=2100; j<2200; j++){
+    for (int i=0; i<ROW; i++){
+        for (int j=0; j<COL; j++){
             index = depth_image[i][j].index;
             if( index != -1){
                 vertical_cloud->points.push_back(cloud->points[index]);
@@ -162,18 +163,19 @@ void loader::create_image() {
     integral.create_integral_image(depth_image, vertical_cloud);
     integral.create_interval_image(depth_image);
     normal_cloud=integral.get_normal(depth_image);
-    vertical_cloud->clear();
-    for (int i=0; i<32; i++){
+
+    for (int i=0; i<ROW; i++){
         for (int j=0; j<COL; j++){
             if(depth_image[i][j].index != -1){
-                vertical_cloud->points.push_back(cloud->points[depth_image[i][j].index]);
+                vertical_cloud2->points.push_back(vertical_cloud->points[depth_image[i][j].index]);
             }
         }
     }
+    std::cout << vertical_cloud2->points.size() << ' '<< normal_cloud -> points.size() << std::endl;
 }
 void loader::viewer2() {
     pcl::visualization::PCLVisualizer viewer("pcl viewer");
-    viewer.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(vertical_cloud,normal_cloud,1,1);
+    viewer.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(vertical_cloud2,normal_cloud,2,1);
     while (!viewer.wasStopped ())
     {
         viewer.spinOnce ();
@@ -266,7 +268,7 @@ interval_point check_horizontal(int i, int j, const spherical_point (&depth_imag
     checker=0;
     double_checker=0;
     pre_depth = input_depth;
-    while (right_col < COL && checker < boundary_col && double_checker < 5){
+    while (right_col < COL && checker < boundary_col && double_checker < 10){
         if(depth_image[i][right_col].index == -1){
             right_col ++;
             double_checker++;
@@ -291,7 +293,7 @@ interval_point check_horizontal(int i, int j, const spherical_point (&depth_imag
     checker =0;
     double_checker=0;
     pre_depth = input_depth;
-    while (left_col >= 0 && checker < boundary_col && double_checker < 5){
+    while (left_col >= 0 && checker < boundary_col && double_checker < 10){
         if(depth_image[i][left_col].index == -1){
             left_col --;
             double_checker++;
@@ -482,7 +484,7 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
                 num = itg_num[bottom_row][right_col] - itg_num[up_row - 1][right_col] -
                       itg_num[bottom_row][left_col - 1] + itg_num[up_row - 1][left_col - 1];
 
-                if (num > 50) {
+                if (num > 3) {
                     cxx = itg_xx[bottom_row][right_col] - itg_xx[up_row - 1][right_col] -
                           itg_xx[bottom_row][left_col - 1] +
                           itg_xx[up_row - 1][left_col - 1];
@@ -525,9 +527,12 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
                     Eigen::EigenSolver<Eigen::Matrix3f> s(cov_matrix);
 
 
-                    eigen1 = fabs(s.eigenvalues().col(0)[0].real());
-                    eigen2 = fabs(s.eigenvalues().col(0)[1].real());
-                    eigen3 = fabs(s.eigenvalues().col(0)[2].real());
+                    eigen1 = s.eigenvalues().col(0)[0].real();
+                    eigen2 = s.eigenvalues().col(0)[1].real();
+                    eigen3 = s.eigenvalues().col(0)[2].real();
+//                    eigen1 = fabs(s.eigenvalues().col(0)[0].real());
+//                    eigen2 = fabs(s.eigenvalues().col(0)[1].real());
+//                    eigen3 = fabs(s.eigenvalues().col(0)[2].real());
                     if (eigen1 < eigen2 && eigen1 < eigen3) {
                         point_normal.normal_x=s.eigenvectors().col(0)[0].real();
                         point_normal.normal_y = s.eigenvectors().col(0)[1].real();
