@@ -15,7 +15,8 @@
 #define _USE_MATH_DEFINES
 #define ROW 64
 #define COL 4500
-#define DEPTH_THRESHOLD 0.6
+#define DEPTH_THRESHOLD 0.4
+#define neighbouring_radius 0.4
 
 struct spherical_point{
     float r;

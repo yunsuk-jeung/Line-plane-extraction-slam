@@ -116,7 +116,7 @@ void loader::remove_flat_region(){
                         num_vertical = 2;
                     } else {
                         epsilone = 0.2;
-                        num_vertical = 3;
+                        num_vertical = 1;
                     }
 
                     for (int jj = j + 1; jj < height; jj++) {
@@ -182,4 +182,51 @@ void loader::viewer2() {
     }
 }
 
+void loader::clusterizer(){
+    std::vector < std::vector < int > > visit(ROW, std::vector <int> (COL));
+    std::vector < int > surface_num;
+    int neighbor_row= 30;
+    int neighbor_col = 50;
+    float reference_depth;
+    float depth;
+    float distance = 100;
+    int surface=0;
+    int max_surface=0;
+    std::cout << 's' << std::endl;
 
+    for (int i = 0; i< ROW; i++){
+//        for (int j=4200; j<4300; j++){
+        int j = 4250;
+            if (depth_image[i][j].index != -1 && visit[i][j] == 0){
+                reference_depth = pow(vertical_cloud2->points[depth_image[i][j].index].x,2) + pow(vertical_cloud2->points[depth_image[i][j].index].y,2)
+                + pow(vertical_cloud2->points[depth_image[i][j].index].z,2);
+
+                if(visit[i][j] == 0){
+                    surface++;
+                } else{
+                    surface = visit[i][j];
+                }
+                if (surface > max_surface){
+                    max_surface=surface;
+                }
+                for (int ii= i-neighbor_row; ii < i+neighbor_row; ii++){
+                    for (int jj = j-neighbor_col; jj < j+neighbor_col; jj++ ){
+                        if (ii < 0 || ii >=COL || jj < 0 || jj >= COL ) {
+                            continue;
+                        }
+                        if(depth_image[ii][jj].index <0){
+                            continue;
+                        }
+                        depth =+pow(vertical_cloud2->points[depth_image[ii][jj].index].x,2)
+                        + pow(vertical_cloud2->points[depth_image[i][j].index].y,2)
+                        + pow(vertical_cloud2->points[depth_image[i][j].index].z,2);
+                        if(fabs(reference_depth - depth)< distance){
+                            visit[ii][jj] = surface;
+                        }
+                    }
+                }
+//            }
+        }
+    }
+    std::cout << max_surface << std::endl;
+}

@@ -14,6 +14,7 @@ public:
     void create_depth_image();
     void create_image();
     void viewer2();
+    void clusterizer();
 
 
 private:
