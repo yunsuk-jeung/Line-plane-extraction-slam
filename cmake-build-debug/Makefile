@@ -1331,6 +1331,33 @@ gtest_main/fast:
 	$(MAKE) $(MAKESILENT) -f gtest/gtest/CMakeFiles/gtest_main.dir/build.make gtest/gtest/CMakeFiles/gtest_main.dir/build
 .PHONY : gtest_main/fast
 
+src/image.o: src/image.cpp.o
+
+.PHONY : src/image.o
+
+# target to build an object file
+src/image.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main_node.dir/build.make CMakeFiles/main_node.dir/src/image.cpp.o
+.PHONY : src/image.cpp.o
+
+src/image.i: src/image.cpp.i
+
+.PHONY : src/image.i
+
+# target to preprocess a source file
+src/image.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main_node.dir/build.make CMakeFiles/main_node.dir/src/image.cpp.i
+.PHONY : src/image.cpp.i
+
+src/image.s: src/image.cpp.s
+
+.PHONY : src/image.s
+
+# target to generate assembly for a file
+src/image.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main_node.dir/build.make CMakeFiles/main_node.dir/src/image.cpp.s
+.PHONY : src/image.cpp.s
+
 src/loader.o: src/loader.cpp.o
 
 .PHONY : src/loader.o
@@ -1486,6 +1513,9 @@ help:
 	@echo "... gtest"
 	@echo "... gtest_main"
 	@echo "... main_node"
+	@echo "... src/image.o"
+	@echo "... src/image.i"
+	@echo "... src/image.s"
 	@echo "... src/loader.o"
 	@echo "... src/loader.i"
 	@echo "... src/loader.s"

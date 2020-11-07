@@ -4,6 +4,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/point_types.h>
 #include "loader.h"
+#include "image.h"
 
 int main (int argc, char** argv)
 {

@@ -1218,6 +1218,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/yunsuk/workspace/line_plane/src/extract/src/image.cpp">
+			<Option target="main_node"/>
+		</Unit>
+		<Unit filename="/home/yunsuk/workspace/line_plane/src/extract/src/image.h">
+			<Option target="main_node"/>
+		</Unit>
 		<Unit filename="/home/yunsuk/workspace/line_plane/src/extract/src/loader.cpp">
 			<Option target="main_node"/>
 		</Unit>
