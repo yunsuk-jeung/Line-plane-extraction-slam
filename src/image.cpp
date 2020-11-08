@@ -314,7 +314,7 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
                           itg_xx[up_row - 1][left_col - 1];
                     cxy = itg_xy[bottom_row][right_col] - itg_xy[up_row - 1][right_col] -
                           itg_xy[bottom_row][left_col - 1] +
-                          itg_xy[up_row - 1][left_col - 1];
+                          itg_xy[up_row  - 1][left_col - 1];
                     cxz = itg_xz[bottom_row][right_col] - itg_xz[up_row - 1][right_col] -
                           itg_xz[bottom_row][left_col - 1] +
                           itg_xz[up_row - 1][left_col - 1];

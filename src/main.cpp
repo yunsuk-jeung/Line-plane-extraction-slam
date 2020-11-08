@@ -21,8 +21,8 @@ int main (int argc, char** argv)
     luck.create_depth_image();
     luck.remove_flat_region();
     luck.create_image();
-    luck.clusterizer();
-//    luck.viewer();
+//    luck.clusterizer();
+    luck.viewer();
 //    luck.viewer2();
 
 
