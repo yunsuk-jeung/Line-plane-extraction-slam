@@ -186,33 +186,48 @@ void loader::viewer2() {
 
 void loader::clusterizer(){
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointXYZRGB temp_point;
 
     std::vector < std::vector < int > > visit(ROW, std::vector <int> (COL));
+    std::vector < std::vector < pcl::PointXYZRGB > > surface_point;
     std::vector < int > surface_num;
+    std::vector < std::vector < int > > cloud_index;
     int neighbor_row= 30;
     int neighbor_col = 50;
     float reference_depth;
     float depth;
-    float distance = 4;
+    float distance = 2;
     int surface=0;
     int max_surface=0;
     std::cout << 's' << std::endl;
+    float x1;
+    float x2;
+    float y1;
+    float y2;
+    float z1;
+    float z2;
 
     for (int i = 0; i< ROW; i++){
-//        for (int j=0; j<COL; j++){
-    int j=4250;
-            if (depth_image[i][j].index != -1 && visit[i][j] == 0){
-                reference_depth = pow(vertical_cloud2->points[depth_image[i][j].index].x,2)
-                                + pow(vertical_cloud2->points[depth_image[i][j].index].y,2)
-                                + pow(vertical_cloud2->points[depth_image[i][j].index].z,2);
+        for (int j=0; j<COL; j++){
+//    int j=4250;
+            if (depth_image[i][j].index != -1){
+                x1= vertical_cloud2->points[depth_image[i][j].index].x;
+                y1 = vertical_cloud2->points[depth_image[i][j].index].y;
+                z1 = vertical_cloud2->points[depth_image[i][j].index].z;
 
                 if(visit[i][j] == 0){
-                    surface++;
+                    max_surface++;
+                    visit[i][j] = max_surface;
+                    surface = max_surface;
+                    surface_point.push_back(std::vector<pcl::PointXYZRGB>());
+                    surface_point[surface-1].push_back(vertical_cloud2->points[depth_image[i][j].index]);
+                    cloud_index.push_back(std::vector<int>());
+                    cloud_index[surface-1].push_back(depth_image[i][j].index);
+
                 } else{
                     surface = visit[i][j];
-                }
-                if (surface > max_surface){
-                    max_surface=surface;
+                    surface_point[surface-1].push_back(vertical_cloud2->points[depth_image[i][j].index]);
+                    cloud_index[surface-1].push_back(depth_image[i][j].index);
                 }
                 for (int ii= i-neighbor_row; ii < i+neighbor_row; ii++){
                     for (int jj = j-neighbor_col; jj < j+neighbor_col; jj++ ){
@@ -222,96 +237,61 @@ void loader::clusterizer(){
                         if(depth_image[ii][jj].index <0){
                             continue;
                         }
-                        depth = pow(vertical_cloud2->points[depth_image[ii][jj].index].x,2)
-                        + pow(vertical_cloud2->points[depth_image[ii][jj].index].y,2)
-                        + pow(vertical_cloud2->points[depth_image[ii][jj].index].z,2);
+                        x2 = vertical_cloud2->points[depth_image[ii][jj].index].x;
+                        y2 = vertical_cloud2->points[depth_image[ii][jj].index].y;
+                        z2 = vertical_cloud2->points[depth_image[ii][jj].index].z;
 
-                        if(fabs(reference_depth - depth)< distance){
+                        if(fabs(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2))< distance){
                             visit[ii][jj] = surface;
+
                         }
                     }
                 }
-//            }
-        }
-    }
-
-    std::cout << max_surface << std::endl;
-    pcl::PointXYZRGB temp_point;
-
-    for (int i=0; i<ROW; i++){
-        for (int j=4200; j<4300; j++){
-            if(depth_image[i][j].index == -1){
-                continue;
-            }
-            else if (visit[i][j] == 1){
-                temp_point.x = vertical_cloud2->points[depth_image[i][j].index].x;
-                temp_point.y = vertical_cloud2->points[depth_image[i][j].index].y;
-                temp_point.z = vertical_cloud2->points[depth_image[i][j].index].z;
-                temp_point.r=255;
-                temp_point.g=0;
-                temp_point.b=0;
-                temp->points.push_back(temp_point);
-            } else if (visit[i][j] ==2){
-                temp_point.x = vertical_cloud2->points[depth_image[i][j].index].x;
-                temp_point.y = vertical_cloud2->points[depth_image[i][j].index].y;
-                temp_point.z = vertical_cloud2->points[depth_image[i][j].index].z;
-                temp_point.r=0;
-                temp_point.g=255;
-                temp_point.b=0;
-                temp->points.push_back(temp_point);
-            } else if (visit[i][j] ==3){
-                temp_point.x = vertical_cloud2->points[depth_image[i][j].index].x;
-                temp_point.y = vertical_cloud2->points[depth_image[i][j].index].y;
-                temp_point.z = vertical_cloud2->points[depth_image[i][j].index].z;
-                temp_point.r=255;
-                temp_point.g=0;
-                temp_point.b=0;
-                temp->points.push_back(temp_point);
-            }
-            else{
-                temp_point.x = vertical_cloud2->points[depth_image[i][j].index].x;
-                temp_point.y = vertical_cloud2->points[depth_image[i][j].index].y;
-                temp_point.z = vertical_cloud2->points[depth_image[i][j].index].z;
-                temp_point.r=255;
-                temp_point.g=255;
-                temp_point.b=255;
-                temp->points.push_back(temp_point);
             }
         }
     }
-//    for (int i=0; i<ROW; i++){
-//        for (int j=4200; j<4300; j++){
-//            if(visit[i][j] == 0){
-//                continue;
-//            }
-////            else if (visit[i][j] == 1){
-////                temp_point.x = vertical_cloud2->points[depth_image[i][j].index].x;
-////                temp_point.y = vertical_cloud2->points[depth_image[i][j].index].y;
-////                temp_point.z = vertical_cloud2->points[depth_image[i][j].index].z;
-////                temp_point.r=255;
-////                temp_point.g=0;
-////                temp_point.b=0;
-////                temp->points.push_back(temp_point);
-////            } else if (visit[i][j] ==2){
-////                temp_point.x = vertical_cloud2->points[depth_image[i][j].index].x;
-////                temp_point.y = vertical_cloud2->points[depth_image[i][j].index].y;
-////                temp_point.z = vertical_cloud2->points[depth_image[i][j].index].z;
-////                temp_point.r=0;
-////                temp_point.g=255;
-////                temp_point.b=0;
-////                temp->points.push_back(temp_point);
-////            }
-//            else{
-//                temp_point.x = vertical_cloud2->points[depth_image[i][j].index].x;
-//                temp_point.y = vertical_cloud2->points[depth_image[i][j].index].y;
-//                temp_point.z = vertical_cloud2->points[depth_image[i][j].index].z;
-//                temp_point.r=255;
-//                temp_point.g=255;
-//                temp_point.b=255;
-//                temp->points.push_back(temp_point);
-//            }
-//        }
-//    }
+    int color=0;
+    for (int i=0; i< max_surface; i++){
+        if (surface_point[i].size() > 30){
+            if (color % 3 == 0 ){
+                for (int j=0; j< surface_point[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 255;
+                    temp_point.g = 0;
+                    temp_point.b = 0;
+                    temp->points.push_back(temp_point);
+                }
+            }else if (color % 3 ==1){
+                for (int j=0; j< surface_point[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 0;
+                    temp_point.g = 255;
+                    temp_point.b = 0;
+                    temp->points.push_back(temp_point);
+                }
+            }else{
+                for (int j=0; j< surface_point[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 255;
+                    temp_point.g = 255;
+                    temp_point.b = 255;
+                    temp->points.push_back(temp_point);
+                }
+            }
+            color ++;
+        }
+
+
+    }
+
+
+
 
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
