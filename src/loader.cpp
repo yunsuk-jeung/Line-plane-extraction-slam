@@ -242,20 +242,24 @@ void loader::clusterizer(){
                 }
                 for (int ii= i-neighbor_row; ii < i+neighbor_row; ii++){
                     for (int jj = j-neighbor_col; jj < j+neighbor_col; jj++ ){
+
                         if (ii < 0 || ii >=COL || jj < 0 || jj >= COL ) {
                             continue;
                         }
                         if(depth_image[ii][jj].index <0){
                             continue;
                         }
+//                        if(visit[ii][jj] != 0 ){
+//                            continue;
+//                        }
                         x2 = vertical_cloud2->points[depth_image[ii][jj].index].x;
                         y2 = vertical_cloud2->points[depth_image[ii][jj].index].y;
                         z2 = vertical_cloud2->points[depth_image[ii][jj].index].z;
                         nx2 = normal_cloud->points[depth_image[ii][jj].index].normal_x;
                         ny2 = normal_cloud->points[depth_image[ii][jj].index].normal_y;
                         nz2 = normal_cloud->points[depth_image[ii][jj].index].normal_z;
-
-                        if(fabs(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2))< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.5){
+//                        ////&& nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.5
+                        if(fabs(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2))< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.6 ){
                             visit[ii][jj] = surface;
 
                         }
@@ -264,11 +268,8 @@ void loader::clusterizer(){
             }
         }
     }
-
-    int color=0;
     for (int i=0; i< surface_point.size(); i++){
-        if (surface_point[i].size() > 30){
-            if (color % 3 == 0 ){
+        if (surface_point[i].size() > 40){
                 for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -282,53 +283,103 @@ void loader::clusterizer(){
                     temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
                     temp_normal->points.push_back(temp_normal_point);
                 }
-            }else if (color % 3 ==1){
-                for (int j=0; j< surface_point[i].size(); j++){
-                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-                    temp_point.r = 0;
-                    temp_point.g = 255;
-                    temp_point.b = 0;
-                    temp->points.push_back(temp_point);
-                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-                    temp_normal->points.push_back(temp_normal_point);
-                }
-            }else{
-                for (int j=0; j< surface_point[i].size(); j++){
-                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-                    temp_point.r = 255;
-                    temp_point.g = 255;
-                    temp_point.b = 255;
-                    temp->points.push_back(temp_point);
-                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-                    temp_normal->points.push_back(temp_normal_point);
-                }
-            }
-            color ++;
+
         }
 
 
     }
-    pcl::visualization::CloudViewer viewer("Cloud Viewer");
+//    int color=0;
+//    for (int i=0; i< surface_point.size(); i++){
+//        if (surface_point[i].size() > 40){
+//            if (color % 5 == 0 ){
+//                for (int j=0; j< surface_point[i].size(); j++){
+//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+//                    temp_point.r = 255;
+//                    temp_point.g = 0;
+//                    temp_point.b = 0;
+//                    temp->points.push_back(temp_point);
+//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+//                    temp_normal->points.push_back(temp_normal_point);
+//                }
+//            }else if (color % 5 ==1){
+//                for (int j=0; j< surface_point[i].size(); j++){
+//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+//                    temp_point.r = 0;
+//                    temp_point.g = 255;
+//                    temp_point.b = 0;
+//                    temp->points.push_back(temp_point);
+//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+//                    temp_normal->points.push_back(temp_normal_point);
+//                }
+//            }else if (color % 5 ==2){
+//                for (int j=0; j< surface_point[i].size(); j++){
+//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+//                    temp_point.r = 0;
+//                    temp_point.g = 0;
+//                    temp_point.b = 255;
+//                    temp->points.push_back(temp_point);
+//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+//                    temp_normal->points.push_back(temp_normal_point);
+//                }
+//            }else if (color % 5 ==3){
+//                for (int j=0; j< surface_point[i].size(); j++){
+//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+//                    temp_point.r = 255;
+//                    temp_point.g = 255;
+//                    temp_point.b = 0;
+//                    temp->points.push_back(temp_point);
+//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+//                    temp_normal->points.push_back(temp_normal_point);
+//                }
+//            }else{
+//                for (int j=0; j< surface_point[i].size(); j++){
+//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+//                    temp_point.r = 255;
+//                    temp_point.g = 255;
+//                    temp_point.b = 255;
+//                    temp->points.push_back(temp_point);
+//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+//                    temp_normal->points.push_back(temp_normal_point);
+//                }
+//            }
+//            color ++;
+//        }
+//
+//
+//    }
+//    pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
 
-    viewer.showCloud(temp);
-
-    while (!viewer.wasStopped ())
-    {
-    }
-    pcl::visualization::PCLVisualizer viewer2("pcl viewer");
-
-    viewer2.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(temp,temp_normal,1,1);
-    while (!viewer2.wasStopped ())
-    {
-        viewer2.spinOnce ();
-    }
+//    viewer.showCloud(temp);
+//
+//    while (!viewer.wasStopped ())
+//    {
+//    }
+//    pcl::visualization::PCLVisualizer viewer2("pcl viewer");
+//
+//    viewer2.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(temp,temp_normal,1,1);
+//    while (!viewer2.wasStopped ())
+//    {
+//        viewer2.spinOnce ();
+//    }
 }

@@ -353,12 +353,12 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
                     Eigen::EigenSolver<Eigen::Matrix3f> s(cov_matrix);
 
 
-                    eigen1 = s.eigenvalues().col(0)[0].real();
-                    eigen2 = s.eigenvalues().col(0)[1].real();
-                    eigen3 = s.eigenvalues().col(0)[2].real();
-//                    eigen1 = fabs(s.eigenvalues().col(0)[0].real());
-//                    eigen2 = fabs(s.eigenvalues().col(0)[1].real());
-//                    eigen3 = fabs(s.eigenvalues().col(0)[2].real());
+//                    eigen1 = s.eigenvalues().col(0)[0].real();
+//                    eigen2 = s.eigenvalues().col(0)[1].real();
+//                    eigen3 = s.eigenvalues().col(0)[2].real();
+                    eigen1 = fabs(s.eigenvalues().col(0)[0].real());
+                    eigen2 = fabs(s.eigenvalues().col(0)[1].real());
+                    eigen3 = fabs(s.eigenvalues().col(0)[2].real());
                     if (eigen1 < eigen2 && eigen1 < eigen3) {
                         point_normal.normal_x=s.eigenvectors().col(0)[0].real();
                         point_normal.normal_y = s.eigenvectors().col(0)[1].real();
