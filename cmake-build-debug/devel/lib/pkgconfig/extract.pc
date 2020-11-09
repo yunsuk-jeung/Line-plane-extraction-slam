@@ -1,0 +1,8 @@
+prefix=/home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/devel
+
+Name: extract
+Description: Description of extract
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
