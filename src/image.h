@@ -12,11 +12,14 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
+
 #define _USE_MATH_DEFINES
 #define ROW 64
 #define COL 4500
-#define DEPTH_THRESHOLD 0.4
-#define neighbouring_radius 0.4
+#define DEPTH_THRESHOLD 0.5
+#define neighbouring_radius 0.2
+#define INTERVAL_CIRCULAR_LEVELS 2
+
 
 struct spherical_point{
     float r;
@@ -38,10 +41,10 @@ struct interval_point{
     int right_col;
     int bottom_row;
     interval_point(){
-        left_col = 0;
-        up_row=0;
-        right_col=0;
-        bottom_row=0;
+        left_col = -1;
+        up_row=-1;
+        right_col=-1;
+        bottom_row=-1;
     }
 };
 
