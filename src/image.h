@@ -12,11 +12,12 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
+#include <time.h>
 
 #define _USE_MATH_DEFINES
 #define ROW 64
 #define COL 4500
-#define DEPTH_THRESHOLD 0.5
+#define DEPTH_THRESHOLD 0.4
 #define neighbouring_radius 0.2
 #define INTERVAL_CIRCULAR_LEVELS 2
 
@@ -48,6 +49,30 @@ struct interval_point{
     }
 };
 
+struct integral_point{
+    double itg_x;
+    double itg_y;
+    double itg_z;
+    double itg_xx;
+    double itg_xy;
+    double itg_xz;
+    double itg_yy;
+    double itg_yz;
+    double itg_zz;
+    int itg_num;
+        integral_point(){
+            itg_x=0;
+            itg_y=0;
+            itg_z=0;
+            itg_xx=0;
+            itg_xy=0;
+            itg_xz=0;
+            itg_yy=0;
+            itg_yz=0;
+            itg_zz=0;
+            itg_num=0;
+        }
+};
 
 class image{
 public:
@@ -58,16 +83,8 @@ public:
     pcl::PointCloud<pcl::Normal>::Ptr get_normal(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud);
 private:
     std::vector < std::vector < interval_point > > interval_image;
-    std::vector < std::vector < double > > itg_x;
-    std::vector < std::vector < double > > itg_y;
-    std::vector < std::vector < double > > itg_z;
-    std::vector < std::vector < double > > itg_xx;
-    std::vector < std::vector < double > > itg_xy;
-    std::vector < std::vector < double > > itg_xz;
-    std::vector < std::vector < double > > itg_yy;
-    std::vector < std::vector < double > > itg_yz;
-    std::vector < std::vector < double > > itg_zz;
-    std::vector < std::vector < int > > itg_num;
+    std::vector < std::vector < integral_point > > integral_image;
+
     int boundary_row;
     int boundary_col;
     pcl::PointCloud<pcl::Normal>::Ptr normals;

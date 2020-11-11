@@ -163,17 +163,18 @@ void loader::create_image() {
     integral.set_boundary(5,5);
     integral.create_integral_image(depth_image, vertical_cloud);
     integral.create_interval_image(depth_image);
-//    normal_cloud=integral.get_normal(depth_image,vertical_cloud);
-//    int k=0;
-//    for (int i=0; i<ROW; i++){
-//        for (int j=0; j<COL; j++){
-//            if(depth_image[i][j].index != -1){
-//                vertical_cloud2->points.push_back(vertical_cloud->points[depth_image[i][j].index]);
-//                depth_image[i][j].index=k;
-//                k++;
-//            }
-//        }
-//    }
+    normal_cloud=integral.get_normal(depth_image,vertical_cloud);
+//    std::cout << normal_cloud->points.size() << std::endl;
+    int k=0;
+    for (int i=0; i<ROW; i++){
+        for (int j=0; j<COL; j++){
+            if(depth_image[i][j].index != -1){
+                vertical_cloud2->points.push_back(vertical_cloud->points[depth_image[i][j].index]);
+                depth_image[i][j].index=k;
+                k++;
+            }
+        }
+    }
 //    std::cout << vertical_cloud2->points.size() << ' '<< normal_cloud -> points.size() << std::endl;
 }
 void loader::viewer2() {

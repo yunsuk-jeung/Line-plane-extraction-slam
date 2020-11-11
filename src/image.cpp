@@ -1,16 +1,7 @@
 #include "image.h"
 
 image::image(int row, int col){
-    itg_x = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_y = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_z = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_xx = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_xy = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_xz = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_yy = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_yz = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_zz = std::vector<std::vector<double> > (row, std::vector < double > (col));
-    itg_num = std::vector<std::vector<int> > (row, std::vector < int > (col));
+    integral_image = std::vector<std::vector<integral_point> > (row+1, std::vector < integral_point> (col+1));
     interval_image = std::vector<std::vector<interval_point> > (row, std::vector < interval_point > (col));
     normals = pcl::PointCloud<pcl::Normal>::Ptr (new pcl::PointCloud<pcl::Normal>);
 }
@@ -27,47 +18,47 @@ void image::create_integral_image(const spherical_point (&depth_image)[64][4500]
         for (int j=0; j<COL; j++){
             index = depth_image[i][j].index;
             if (index != -1) {
-                itg_x[i+1][j+1] = vertical_cloud->points[index].x;
-                itg_y[i+1][j+1] = vertical_cloud->points[index].y;
-                itg_z[i+1][j+1] = vertical_cloud->points[index].z;
-                itg_xx[i+1][j+1] = vertical_cloud->points[index].x * vertical_cloud->points[index].x;
-                itg_xy[i+1][j+1] = vertical_cloud->points[index].x * vertical_cloud->points[index].y;
-                itg_xz[i+1][j+1] = vertical_cloud->points[index].x * vertical_cloud->points[index].z;
-                itg_yy[i+1][j+1] = vertical_cloud->points[index].y * vertical_cloud->points[index].y;
-                itg_yz[i+1][j+1] = vertical_cloud->points[index].y * vertical_cloud->points[index].z;
-                itg_zz[i+1][j+1] = vertical_cloud->points[index].z * vertical_cloud->points[index].z;
-                itg_num[i+1][j+1] =1;
+                integral_image[i+1][j+1].itg_x = vertical_cloud->points[index].x;
+                integral_image[i+1][j+1].itg_y = vertical_cloud->points[index].y;
+                integral_image[i+1][j+1].itg_z = vertical_cloud->points[index].z;
+                integral_image[i+1][j+1].itg_xx = vertical_cloud->points[index].x * vertical_cloud->points[index].x;
+                integral_image[i+1][j+1].itg_xy = vertical_cloud->points[index].x * vertical_cloud->points[index].y;
+                integral_image[i+1][j+1].itg_xz = vertical_cloud->points[index].x * vertical_cloud->points[index].z;
+                integral_image[i+1][j+1].itg_yy = vertical_cloud->points[index].y * vertical_cloud->points[index].y;
+                integral_image[i+1][j+1].itg_yz = vertical_cloud->points[index].y * vertical_cloud->points[index].z;
+                integral_image[i+1][j+1].itg_zz = vertical_cloud->points[index].z * vertical_cloud->points[index].z;
+                integral_image[i+1][j+1].itg_num =1;
             }
         }
     }
     //// add through col
     for (int i=1; i<ROW+1; i++){
         for (int j=2; j< COL+1; j++){
-            itg_x[i][j] += itg_x[i][j-1];
-            itg_y[i][j] += itg_y[i][j-1];
-            itg_z[i][j] += itg_z[i][j-1];
-            itg_xx[i][j] += itg_xx[i][j-1];
-            itg_xy[i][j] += itg_xy[i][j-1];
-            itg_xz[i][j] += itg_xz[i][j-1];
-            itg_yy[i][j] += itg_yy[i][j-1];
-            itg_yz[i][j] += itg_yz[i][j-1];
-            itg_zz[i][j] += itg_zz[i][j-1];
-            itg_num[i][j] += itg_num[i][j-1];
+            integral_image[i][j].itg_x += integral_image[i][j-1].itg_x;
+            integral_image[i][j].itg_y += integral_image[i][j-1].itg_y;
+            integral_image[i][j].itg_z += integral_image[i][j-1].itg_z;
+            integral_image[i][j].itg_xx += integral_image[i][j-1].itg_xx;
+            integral_image[i][j].itg_xy += integral_image[i][j-1].itg_xy;
+            integral_image[i][j].itg_xz += integral_image[i][j-1].itg_xz;
+            integral_image[i][j].itg_yy += integral_image[i][j-1].itg_yy;
+            integral_image[i][j].itg_yz += integral_image[i][j-1].itg_yz;
+            integral_image[i][j].itg_zz += integral_image[i][j-1].itg_zz;
+            integral_image[i][j].itg_num += integral_image[i][j-1].itg_num;
         }
     }
     //// add through row
     for (int j=1; j<COL+1; j++){
         for (int i=2; i< ROW+1; i++){
-            itg_x[i][j] += itg_x[i-1][j];
-            itg_y[i][j] += itg_y[i-1][j];
-            itg_z[i][j] += itg_z[i-1][j];
-            itg_xx[i][j] += itg_xx[i-1][j];
-            itg_xy[i][j] += itg_xy[i-1][j];
-            itg_xz[i][j] += itg_xz[i-1][j];
-            itg_yy[i][j] += itg_yy[i-1][j];
-            itg_yz[i][j] += itg_yz[i-1][j];
-            itg_zz[i][j] += itg_zz[i-1][j];
-            itg_num[i][j] += itg_num[i-1][j];
+            integral_image[i][j].itg_x += integral_image[i-1][j].itg_x;
+            integral_image[i][j].itg_y += integral_image[i-1][j].itg_y;
+            integral_image[i][j].itg_z += integral_image[i-1][j].itg_z;
+            integral_image[i][j].itg_xx += integral_image[i-1][j].itg_xx;
+            integral_image[i][j].itg_xy += integral_image[i-1][j].itg_xy;
+            integral_image[i][j].itg_xz += integral_image[i-1][j].itg_xz;
+            integral_image[i][j].itg_yy += integral_image[i-1][j].itg_yy;
+            integral_image[i][j].itg_yz += integral_image[i-1][j].itg_yz;
+            integral_image[i][j].itg_zz += integral_image[i-1][j].itg_zz;
+            integral_image[i][j].itg_num += integral_image[i-1][j].itg_num;
         }
     }
 }
@@ -222,6 +213,7 @@ int check_horizontal(int &left_col, int &right_col, const spherical_point (&dept
     }else{
         left_col ++;
         right_col ++;
+        found_valid_element=1;
     }
     for (int j= central_col -1; j >= start_col; j--){
         if(depth_image[row][j].index <0){
@@ -262,6 +254,7 @@ int check_vertical(int &up_row, int &bottom_row, const spherical_point (&depth_i
     }else{
         up_row ++;
         bottom_row ++;
+        found_valid_element=1;
     }
 
     for (int i = central_row-1 ; i>=start_row; i--){
@@ -302,6 +295,7 @@ int imin(int a, int b){
 
 }
 void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]) {
+
     for(int i=0; i<ROW; i++){
         for (int j=0; j<COL; j++){
             int index = depth_image[i][j].index;
@@ -342,12 +336,34 @@ void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]
                 interval_image[i][j].up_row = i-imin(left_up_row,right_up_row);
                 interval_image[i][j].bottom_row = i+imin(left_bottom_row,right_bottom_row);
                 interval_image[i][j].left_col = j-imin(up_left_col,bottom_left_col);
-                interval_image[i][j].up_row = j+imin(up_left_col,up_right_col);
-
+                interval_image[i][j].right_col = j + imin(up_left_col,up_right_col);
+                rows_crown_radius ++;
+                cols_crown_radius ++;
             }
-
         }
     }
+//    for (int i=0; i < 10; i++){
+//        for (int j=0; j<10; j++){
+//            if(depth_image[i][j].index < 0){
+//                continue;
+//            }
+//            int num=0;
+//
+//            for (int ii=interval_image[i][j].up_row; ii <= interval_image[i][j].bottom_row; ii++){
+//                for (int jj=interval_image[i][j].left_col; jj <= interval_image[i][j].right_col; jj++){
+//                    if(depth_image[ii][jj].index != -1){
+//                        num++;
+//                    }
+//                }
+//            }
+//            std::cout << i << ' ' << interval_image[i][j].up_row<< ' ' << interval_image[i][j].bottom_row << std::endl;
+//            std::cout << j << ' ' << interval_image[i][j].left_col<< ' ' << interval_image[i][j].right_col << std::endl;
+//            std::cout << num << std::endl;
+//
+//        }
+//    }
+
+
 }
 //void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]) {
 //    interval_point ver;
@@ -417,6 +433,9 @@ void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]
 //}
 
 pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud) {
+    clock_t begin, end;
+    begin = clock();
+    std::cout << "star_normal" << std:: endl;
     int left_col;
     int right_col;
     int up_row;
@@ -448,47 +467,42 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
                 right_col = interval_image[i][j].right_col + 1;
                 up_row = interval_image[i][j].up_row + 1;
                 bottom_row = interval_image[i][j].bottom_row + 1;
-                num = itg_num[bottom_row][right_col] - itg_num[up_row - 1][right_col] -
-                      itg_num[bottom_row][left_col - 1] + itg_num[up_row - 1][left_col - 1];
+                num = integral_image[bottom_row][right_col].itg_num - integral_image[up_row - 1][right_col].itg_num -
+                      integral_image[bottom_row][left_col - 1].itg_num + integral_image[up_row - 1][left_col - 1].itg_num;
+//                if (num > 2 && right_col - left_col > 0 && bottom_row-up_row >0) {
+                if (num > 4 ) {
 
-                if (num > 2 && right_col - left_col > 4) {
-                    cxx = itg_xx[bottom_row][right_col] - itg_xx[up_row - 1][right_col] -
-                          itg_xx[bottom_row][left_col - 1] +
-                          itg_xx[up_row - 1][left_col - 1];
-                    cxy = itg_xy[bottom_row][right_col] - itg_xy[up_row - 1][right_col] -
-                          itg_xy[bottom_row][left_col - 1] +
-                          itg_xy[up_row  - 1][left_col - 1];
-                    cxz = itg_xz[bottom_row][right_col] - itg_xz[up_row - 1][right_col] -
-                          itg_xz[bottom_row][left_col - 1] +
-                          itg_xz[up_row - 1][left_col - 1];
-                    cyy = itg_yy[bottom_row][right_col] - itg_yy[up_row - 1][right_col] -
-                          itg_yy[bottom_row][left_col - 1] +
-                          itg_yy[up_row - 1][left_col - 1];
-                    cyz = itg_yz[bottom_row][right_col] - itg_yz[up_row - 1][right_col] -
-                          itg_yz[bottom_row][left_col - 1] +
-                          itg_yz[up_row - 1][left_col - 1];
-                    czz = itg_zz[bottom_row][right_col] - itg_zz[up_row - 1][right_col] -
-                          itg_zz[bottom_row][left_col - 1] +
-                          itg_zz[up_row - 1][left_col - 1];
-                    cx = itg_x[bottom_row][right_col] - itg_x[up_row - 1][right_col] - itg_x[bottom_row][left_col - 1] +
-                         itg_x[up_row - 1][left_col - 1];
-                    cy = itg_y[bottom_row][right_col] - itg_y[up_row - 1][right_col] - itg_y[bottom_row][left_col - 1] +
-                         itg_y[up_row - 1][left_col - 1];
-                    cz = itg_z[bottom_row][right_col] - itg_z[up_row - 1][right_col] - itg_z[bottom_row][left_col - 1] +
-                         itg_z[up_row - 1][left_col - 1];
+                    cc(0, 0) = integral_image[bottom_row][right_col].itg_xx - integral_image[up_row - 1][right_col].itg_xx -
+                          integral_image[bottom_row][left_col - 1].itg_xx + integral_image[up_row - 1][left_col - 1].itg_xx;
 
-                    cc(0, 0) = cxx;
-                    cc(0, 1) = cxy;
-                    cc(0, 2) = cxz;
-                    cc(1, 0) = cxy;
-                    cc(1, 1) = cyy;
-                    cc(1, 2) = cyz;
-                    cc(2, 0) = cxz;
-                    cc(2, 1) = cyz;
-                    cc(2, 2) = czz;
-                    c(0) = cx;
-                    c(1) = cy;
-                    c(2) = cz;
+                    cc(0, 1) = integral_image[bottom_row][right_col].itg_xy - integral_image[up_row - 1][right_col].itg_xy -
+                          integral_image[bottom_row][left_col - 1].itg_xy + integral_image[up_row - 1][left_col - 1].itg_xy;
+
+                    cc(0, 2) = integral_image[bottom_row][right_col].itg_xz - integral_image[up_row - 1][right_col].itg_xz -
+                          integral_image[bottom_row][left_col - 1].itg_xz + integral_image[up_row - 1][left_col - 1].itg_xz;
+
+
+                    cc(1, 1)  = integral_image[bottom_row][right_col].itg_yy - integral_image[up_row - 1][right_col].itg_yy -
+                          integral_image[bottom_row][left_col - 1].itg_yy + integral_image[up_row - 1][left_col - 1].itg_yy;
+
+                    cc(1, 2)  = integral_image[bottom_row][right_col].itg_yz - integral_image[up_row - 1][right_col].itg_yz -
+                          integral_image[bottom_row][left_col - 1].itg_yz + integral_image[up_row - 1][left_col - 1].itg_yz;
+
+
+                    cc(2, 2) = integral_image[bottom_row][right_col].itg_zz - integral_image[up_row - 1][right_col].itg_zz -
+                          integral_image[bottom_row][left_col - 1].itg_zz + integral_image[up_row - 1][left_col - 1].itg_zz;
+                    cc(1, 0) = cc(0,1);
+                    cc(2, 0) = cc(0,2);
+                    cc(2, 1) = cc(1,2);
+
+                    c(0) = integral_image[bottom_row][right_col].itg_x - integral_image[up_row - 1][right_col].itg_x -
+                         integral_image[bottom_row][left_col - 1].itg_x + integral_image[up_row - 1][left_col - 1].itg_x;
+
+                    c(1) = integral_image[bottom_row][right_col].itg_y - integral_image[up_row - 1][right_col].itg_y -
+                         integral_image[bottom_row][left_col - 1].itg_y + integral_image[up_row - 1][left_col - 1].itg_y;
+
+                    c(2) = integral_image[bottom_row][right_col].itg_z - integral_image[up_row - 1][right_col].itg_z -
+                         integral_image[bottom_row][left_col - 1].itg_z + integral_image[up_row - 1][left_col - 1].itg_z;
 
                     cov_matrix = cc ;
                     cov_matrix -= c * c.transpose() / num;
@@ -538,5 +552,9 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
             }
         }
     }
+    end = clock();
+    std::cout << "end_normal" << std:: endl;
+    std::cout<<"수행시간 : "<<((end-begin))<<std::endl;
     return normals;
+
 }
