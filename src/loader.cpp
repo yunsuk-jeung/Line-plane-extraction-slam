@@ -196,11 +196,11 @@ void loader::clusterizer(){
     std::vector < std::vector < pcl::PointXYZRGB > > surface_point;
     std::vector < int > surface_num;
     std::vector < std::vector < int > > cloud_index;
-    int neighbor_row= 30;
-    int neighbor_col = 50;
+    int neighbor_row=20;
+    int neighbor_col =20;
     float reference_depth;
     float depth;
-    float distance = 2;
+    float distance = 1.5;
     int surface=0;
     int max_surface=0;
     std::cout << 's' << std::endl;
@@ -251,9 +251,9 @@ void loader::clusterizer(){
                         if(depth_image[ii][jj].index <0){
                             continue;
                         }
-//                        if(visit[ii][jj] != 0 ){
-//                            continue;
-//                        }
+                        if(visit[ii][jj] != 0 ){
+                            continue;
+                        }
                         x2 = vertical_cloud2->points[depth_image[ii][jj].index].x;
                         y2 = vertical_cloud2->points[depth_image[ii][jj].index].y;
                         z2 = vertical_cloud2->points[depth_image[ii][jj].index].z;
@@ -264,7 +264,7 @@ void loader::clusterizer(){
 //                        if ( (nx2 * (x2-x1) + ny2 * (y2-y1) + nz2 * (z2-z1))/sqrt(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2)) < -0.8 ){
 //                            continue;
 //                        }
-                        if(fabs(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2))< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.8 ){
+                        if(fabs(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2))< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.6 ){
                             visit[ii][jj] = surface;
 
                         }
@@ -348,7 +348,7 @@ void loader::clusterizer(){
 //    }
     int color=0;
     for (int i=0; i< surface_point.size(); i++){
-        if (surface_point[i].size() > 30){
+        if (surface_point[i].size() > 20){
             if (color % 5 == 0 ){
                for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;

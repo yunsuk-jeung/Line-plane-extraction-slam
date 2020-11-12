@@ -13,6 +13,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 #include <time.h>
+#include <omp.h>
 
 #define _USE_MATH_DEFINES
 #define ROW 64
