@@ -276,7 +276,7 @@ int check_horizontal(int &left_col, int &right_col, const spherical_point (&dept
     }else{
         left_col ++;
         right_col ++;
-        found_valid_element=1;
+//        found_valid_element=1;
     }
     for (int j= central_col -1; j >= start_col; j--){
         if(depth_image[row][j].index <0){
@@ -317,7 +317,7 @@ int check_vertical(int &up_row, int &bottom_row, const spherical_point (&depth_i
     }else{
         up_row ++;
         bottom_row ++;
-        found_valid_element=1;
+//        found_valid_element=1;
     }
 
     for (int i = central_row-1 ; i>=start_row; i--){
@@ -632,15 +632,7 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
     int bottom_row;
     int num;
     interval_point checked;
-    double cxx;
-    double cxy;
-    double cxz;
-    double cyy;
-    double cyz;
-    double czz;
-    double cx;
-    double cy;
-    double cz;
+
     double eigen1;
     double eigen2;
     double eigen3;
@@ -697,14 +689,15 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
                     cov_matrix -= c * c.transpose() / num;
 
                     Eigen::EigenSolver<Eigen::Matrix3f> s(cov_matrix);
-//
-//
+
+
                     eigen1 = s.eigenvalues().col(0)[0].real();
                     eigen2 = s.eigenvalues().col(0)[1].real();
                     eigen3 = s.eigenvalues().col(0)[2].real();
 //                    eigen1 = fabs(s.eigenvalues().col(0)[0].real());
 //                    eigen2 = fabs(s.eigenvalues().col(0)[1].real());
 //                    eigen3 = fabs(s.eigenvalues().col(0)[2].real());
+
                     if (eigen1 < eigen2 && eigen1 < eigen3) {
                         point_normal.normal_x=s.eigenvectors().col(0)[0].real();
                         point_normal.normal_y = s.eigenvectors().col(0)[1].real();
