@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/yunsuk/workspace/line_plane/src/extract/src/image.cpp
-image.h
-/home/yunsuk/workspace/line_plane/src/extract/src/image.h
-
 /home/yunsuk/workspace/line_plane/src/extract/src/image.h
 pcl/point_cloud.h
 -

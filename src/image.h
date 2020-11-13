@@ -19,7 +19,7 @@
 #define COL 4500
 #define DEPTH_THRESHOLD 0.4
 #define neighbouring_radius 0.2
-#define INTERVAL_CIRCULAR_LEVELS 2
+#define INTERVAL_CIRCULAR_LEVELS 4
 
 
 struct spherical_point{
@@ -83,7 +83,18 @@ public:
     pcl::PointCloud<pcl::Normal>::Ptr get_normal(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud);
 private:
     std::vector < std::vector < interval_point > > interval_image;
-    std::vector < std::vector < integral_point > > integral_image;
+//    std::vector < std::vector < integral_point > > integral_image;
+    std::vector < std::vector < double > > itg_xx;
+    std::vector < std::vector < double > > itg_xy;
+    std::vector < std::vector < double > > itg_xz;
+    std::vector < std::vector < double > > itg_yy;
+    std::vector < std::vector < double > > itg_yz;
+    std::vector < std::vector < double > > itg_zz;
+    std::vector < std::vector < double > > itg_x;
+    std::vector < std::vector < double > > itg_y;
+    std::vector < std::vector < double > > itg_z;
+    std::vector < std::vector < int > > itg_num;
+
 
     int boundary_row;
     int boundary_col;
