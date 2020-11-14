@@ -24,9 +24,9 @@ int main (int argc, char** argv)
     luck.remove_flat_region();
     luck.create_image();
     luck.clusterizer();
+////    luck.viewer();
+////    luck.viewer2();
 
-//    luck.viewer();
-//    luck.viewer2();
 //    Eigen::Matrix3f A;
 //    A(0,0)=6;
 //    A(0,1)=0;

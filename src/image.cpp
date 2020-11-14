@@ -623,9 +623,9 @@ void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]
 //}
 
 pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud) {
-    clock_t begin, end;
-    begin = clock();
-    std::cout << "star_normal" << std:: endl;
+//    clock_t begin, end;
+//    begin = clock();
+//    std::cout << "star_normal" << std:: endl;
     int left_col;
     int right_col;
     int up_row;
@@ -688,35 +688,35 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
                     cov_matrix = cc ;
                     cov_matrix -= c * c.transpose() / num;
 
-                    Eigen::EigenSolver<Eigen::Matrix3f> s(cov_matrix);
-
-
-                    eigen1 = s.eigenvalues().col(0)[0].real();
-                    eigen2 = s.eigenvalues().col(0)[1].real();
-                    eigen3 = s.eigenvalues().col(0)[2].real();
-//                    eigen1 = fabs(s.eigenvalues().col(0)[0].real());
-//                    eigen2 = fabs(s.eigenvalues().col(0)[1].real());
-//                    eigen3 = fabs(s.eigenvalues().col(0)[2].real());
-
-                    if (eigen1 < eigen2 && eigen1 < eigen3) {
-                        point_normal.normal_x=s.eigenvectors().col(0)[0].real();
-                        point_normal.normal_y = s.eigenvectors().col(0)[1].real();
-                        point_normal.normal_z = s.eigenvectors().col(0)[2].real();
-
-                    } else if (eigen2 < eigen1 && eigen2 < eigen3) {
-                        point_normal.normal_x = s.eigenvectors().col(1)[0].real();
-                        point_normal.normal_y = s.eigenvectors().col(1)[1].real();
-                        point_normal.normal_z = s.eigenvectors().col(1)[2].real();
-
-                    } else if (eigen3 < eigen1 && eigen3 < eigen2){
-                        point_normal.normal_x = s.eigenvectors().col(2)[0].real();
-                        point_normal.normal_y = s.eigenvectors().col(2)[1].real();
-                        point_normal.normal_z = s.eigenvectors().col(2)[2].real();
-                    }else {
-                        point_normal.normal_x =0;
-                        point_normal.normal_y =0;
-                        point_normal.normal_z=0;
-                    }
+                    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> s(cov_matrix);
+                    point_normal.normal_x = s.eigenvectors().col(0)[0];
+                    point_normal.normal_y = s.eigenvectors().col(0)[1];
+                    point_normal.normal_z = s.eigenvectors().col(0)[2];
+//// eigen solver
+//                    Eigen::EigenSolver<Eigen::Matrix3f> s(cov_matrix);
+//                    eigen1 = s.eigenvalues().col(0)[0].real();
+//                    eigen2 = s.eigenvalues().col(0)[1].real();
+//                    eigen3 = s.eigenvalues().col(0)[2].real();
+//
+//                    if (eigen1 < eigen2 && eigen1 < eigen3) {
+//                        point_normal.normal_x=s.eigenvectors().col(0)[0].real();
+//                        point_normal.normal_y = s.eigenvectors().col(0)[1].real();
+//                        point_normal.normal_z = s.eigenvectors().col(0)[2].real();
+//
+//                    } else if (eigen2 < eigen1 && eigen2 < eigen3) {
+//                        point_normal.normal_x = s.eigenvectors().col(1)[0].real();
+//                        point_normal.normal_y = s.eigenvectors().col(1)[1].real();
+//                        point_normal.normal_z = s.eigenvectors().col(1)[2].real();
+//
+//                    } else if (eigen3 < eigen1 && eigen3 < eigen2){
+//                        point_normal.normal_x = s.eigenvectors().col(2)[0].real();
+//                        point_normal.normal_y = s.eigenvectors().col(2)[1].real();
+//                        point_normal.normal_z = s.eigenvectors().col(2)[2].real();
+//                    }else {
+//                        point_normal.normal_x =0;
+//                        point_normal.normal_y =0;
+//                        point_normal.normal_z=0;
+//                    }
                     if(point_normal.normal_x * vertical_cloud->points[depth_image[i][j].index].x+point_normal.normal_y * vertical_cloud->points[depth_image[i][j].index].y+point_normal.normal_z * vertical_cloud->points[depth_image[i][j].index].z > 0){
                         point_normal.normal_x = -point_normal.normal_x;
                         point_normal.normal_y = -point_normal.normal_y;
@@ -734,9 +734,9 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
             }
         }
     }
-    end = clock();
-    std::cout << "end_normal" << std:: endl;
-    std::cout<<"수행시간 : "<<((end-begin))<<std::endl;
+//    end = clock();
+////    std::cout << "end_normal" << std:: endl;
+////    std::cout<<"수행시간 : "<<((end-begin))<<std::endl;
     return normals;
 
 }

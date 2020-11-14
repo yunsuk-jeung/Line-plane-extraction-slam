@@ -24,6 +24,8 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud2;
     pcl::PointCloud<pcl::Normal>::Ptr normal_cloud;
+    std::vector < feature_point > Line;
+    std::vector < feature_point > Plane;
 };
 
 

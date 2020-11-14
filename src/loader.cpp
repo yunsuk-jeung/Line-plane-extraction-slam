@@ -186,17 +186,34 @@ void loader::viewer2() {
     }
 }
 
+//// compute distance between line & point
+float line_to_point(float &origin_x,float &origin_y, float &origin_z,float &nx, float &ny, float &nz, float &x, float &y, float &z){
+    float distance;
+    float new_nx = x-origin_x;
+    float new_ny = y-origin_y;
+    float new_nz = z-origin_z;
+    distance = pow(nx * (ny * new_nz - nz * new_ny),2) + pow (ny * (nz* new_nx - nx * new_nz),2) + pow(nz * (nx * new_ny - ny* new_nx),2);
+    return distance;
+}
+//// compute distance between plane & point
+float plane_to_point(float &origin_x,float &origin_y, float &origin_z,float &nx, float &ny, float &nz, float &x, float &y, float &z){
+    float distance;
+    float new_nx = x-origin_x;
+    float new_ny = y-origin_y;
+    float new_nz = z-origin_z;
+    distance = fabs(new_nx * nx + new_ny * ny + new_nz * nz);
+    return distance;
+}
+
 void loader::clusterizer(){
+    std::cout << "start clusterize" << std::endl;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::Normal>::Ptr temp_normal (new pcl::PointCloud<pcl::Normal>);
     pcl::PointXYZRGB temp_point;
     pcl::Normal temp_normal_point;
-
     std::vector < std::vector < int > > visit(ROW, std::vector <int> (COL));
     std::vector < std::vector < pcl::PointXYZRGB > > surface_point;
-    std::vector < int > surface_num;
     std::vector < std::vector < int > > cloud_index;
-
     int neighbor_row= 10;
     int neighbor_col = 10;
     float reference_depth;
@@ -204,7 +221,7 @@ void loader::clusterizer(){
     float distance = 1.5;
     int surface=0;
     int max_surface=0;
-    std::cout << 's' << std::endl;
+
     float x1;
     float x2;
     float y1;
@@ -218,9 +235,9 @@ void loader::clusterizer(){
     float ny2;
     float nz2;
 
+    ////cluster
     for (int i = 0; i< ROW; i++){
         for (int j=0; j<COL; j++){
-//    int j=4250;
             if (depth_image[i][j].index != -1){
                 x1= vertical_cloud2->points[depth_image[i][j].index].x;
                 y1 = vertical_cloud2->points[depth_image[i][j].index].y;
@@ -262,16 +279,17 @@ void loader::clusterizer(){
                         ny2 = normal_cloud->points[depth_image[ii][jj].index].normal_y;
                         nz2 = normal_cloud->points[depth_image[ii][jj].index].normal_z;
 
+                        std::vector < std::vector < pcl::PointXYZRGB > > surface_point;
                         if(fabs(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2))< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.72 ){
-
                             visit[ii][jj] = surface;
-
                         }
                     }
                 }
             }
         }
     }
+
+    ////find valid element
     float cx;
     float cy;
     float cz;
@@ -281,75 +299,118 @@ void loader::clusterizer(){
     float cyy;
     float cyz;
     float czz;
-    float eigen1;
-    float eigen2;
-    float eigen3;
+    feature_point origin;
+
+    std::vector <unsigned int> found_valid(surface_point.size());
     Eigen::Matrix3f cc;
     Eigen::Vector3f c;
     Eigen::Matrix3f cov_matrix;
-    float lamda;
 
-//    for (int i=0; i< surface_point.size(); i++){
-//        if (surface_point[i].size() > 40){
-//            cx=0;
-//            cy=0;
-//            cz=0;
-//            cxx=0;
-//            cxy=0;
-//            cxz=0;
-//            cyy=0;
-//            cyz=0;
-//            czz=0;
-//                for (int j=0; j< surface_point[i].size(); j++){
-//                    cx += vertical_cloud2->points[cloud_index[i][j]].x;
-//                    cy += vertical_cloud2->points[cloud_index[i][j]].y;
-//                    cz += vertical_cloud2->points[cloud_index[i][j]].z;
-//                    cxx += vertical_cloud2->points[cloud_index[i][j]].x * vertical_cloud2->points[cloud_index[i][j]].x ;
-//                    cxy += vertical_cloud2->points[cloud_index[i][j]].x * vertical_cloud2->points[cloud_index[i][j]].y ;
-//                    cxz += vertical_cloud2->points[cloud_index[i][j]].x * vertical_cloud2->points[cloud_index[i][j]].z ;
-//                    cyy += vertical_cloud2->points[cloud_index[i][j]].y * vertical_cloud2->points[cloud_index[i][j]].y ;
-//                    cyz += vertical_cloud2->points[cloud_index[i][j]].y * vertical_cloud2->points[cloud_index[i][j]].z ;
-//                    czz += vertical_cloud2->points[cloud_index[i][j]].z * vertical_cloud2->points[cloud_index[i][j]].z ;
-//                }
-//            cc(0, 0) = cxx;
-//            cc(0, 1) = cxy;
-//            cc(0, 2) = cxz;
-//            cc(1, 0) = cxy;
-//            cc(1, 1) = cyy;
-//            cc(1, 2) = cyz;
-//            cc(2, 0) = cxz;
-//            cc(2, 1) = cyz;
-//            cc(2, 2) = czz;
-//            c(0) = cx;
-//            c(1) = cy;
-//            c(2) = cz;
-//
-//            cov_matrix = cc ;
-//            cov_matrix -= c * c.transpose() / surface_point[i].size();
-//
-//            Eigen::EigenSolver<Eigen::Matrix3f> s(cov_matrix);
-//            eigen1 = fabs(s.eigenvalues().col(0)[0].real());
-//            eigen2 = fabs(s.eigenvalues().col(0)[1].real());
-//            eigen3 = fabs(s.eigenvalues().col(0)[2].real());
-//
-//            if (eigen1 > eigen2 && eigen1 > eigen3) {
-//                lamda = (eigen2 + eigen3) / (eigen1 + eigen2 +eigen3);
-//            } else if (eigen2 > eigen1 && eigen2 > eigen3) {
-//
-//
-//            } else {
-//
-//            }
-//
-//        }
-//
-//
-//    }
-
-    int color=0;
     for (int i=0; i< surface_point.size(); i++){
-        if (surface_point[i].size() > 20){
-            if (color % 5 == 0 ){
+        int num = surface_point[i].size();
+        if (num > 20){
+            cx=0;
+            cy=0;
+            cz=0;
+            cxx=0;
+            cxy=0;
+            cxz=0;
+            cyy=0;
+            cyz=0;
+            czz=0;
+            for (int j=0; j< num; j++){
+                cx += vertical_cloud2->points[cloud_index[i][j]].x;
+                cy += vertical_cloud2->points[cloud_index[i][j]].y;
+                cz += vertical_cloud2->points[cloud_index[i][j]].z;
+                cxx += vertical_cloud2->points[cloud_index[i][j]].x * vertical_cloud2->points[cloud_index[i][j]].x ;
+                cxy += vertical_cloud2->points[cloud_index[i][j]].x * vertical_cloud2->points[cloud_index[i][j]].y ;
+                cxz += vertical_cloud2->points[cloud_index[i][j]].x * vertical_cloud2->points[cloud_index[i][j]].z ;
+                cyy += vertical_cloud2->points[cloud_index[i][j]].y * vertical_cloud2->points[cloud_index[i][j]].y ;
+                cyz += vertical_cloud2->points[cloud_index[i][j]].y * vertical_cloud2->points[cloud_index[i][j]].z ;
+                czz += vertical_cloud2->points[cloud_index[i][j]].z * vertical_cloud2->points[cloud_index[i][j]].z ;
+            }
+            cc(0, 0) = cxx;
+            cc(0, 1) = cxy;
+            cc(0, 2) = cxz;
+            cc(1, 0) = cxy;
+            cc(1, 1) = cyy;
+            cc(1, 2) = cyz;
+            cc(2, 0) = cxz;
+            cc(2, 1) = cyz;
+            cc(2, 2) = czz;
+            c(0) = cx;
+            c(1) = cy;
+            c(2) = cz;
+
+            float origin_x = cx/surface_point[i].size();
+            float origin_y = cy/surface_point[i].size();
+            float origin_z = cz/surface_point[i].size();
+            origin.origin_x = origin_x;
+            origin.origin_y = origin_y;
+            origin.origin_z = origin_z;
+
+            cov_matrix = cc ;
+            cov_matrix -= c * c.transpose() / surface_point[i].size();
+
+            Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> s(cov_matrix);
+            float eigen1 = s.eigenvalues().col(0)[0];
+            float eigen2 = s.eigenvalues().col(0)[1];
+            float eigen3 = s.eigenvalues().col(0)[2];
+
+            float error =0;
+
+            if((eigen1+eigen2)/(eigen1+eigen2+eigen3) < LINE_EIGENVALUE_THRESHOLD){
+                float nx = s.eigenvectors().col(2)[0];
+                float ny = s.eigenvectors().col(2)[1];
+                float nz = s.eigenvectors().col(2)[2];
+                for (int j =0; j < num; j++){
+                error += line_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
+                }
+                error = error/num;
+                if (error < 0.1){
+                    found_valid[i] = 1;
+                    Line.push_back(origin);
+                }else{
+                    if(eigen1/(eigen1+eigen2+eigen3) < PLANE_EIGENVALUE_THRESHOLD){
+                        float nx = s.eigenvectors().col(0)[0];
+                        float ny = s.eigenvectors().col(0)[1];
+                        float nz = s.eigenvectors().col(0)[2];
+                        error =0;
+                        for (int j =0; j < num; j++){
+                            error += plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
+                        }
+                        error = error/num;
+                        if(error < 0.05){
+                            found_valid[i] = 2;
+                            Plane.push_back(origin);
+                        }
+                    }
+                }
+            }else{
+                if(eigen1/(eigen1+eigen2+eigen3) < PLANE_EIGENVALUE_THRESHOLD){
+                    float nx = s.eigenvectors().col(0)[0];
+                    float ny = s.eigenvectors().col(0)[1];
+                    float nz = s.eigenvectors().col(0)[2];
+                    error =0;
+                    for (int j =0; j < num; j++){
+                        error += plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
+                    }
+                    error = error/num;
+                    if(error < 0.05){
+                        found_valid[i] = 2;
+                        Plane.push_back(origin);
+                    }
+                }
+
+            }
+        }
+    }
+    std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
+    int color_line =0;
+    int color_plane =0;
+    for (int i=0; i < surface_point.size(); i++){
+        if (found_valid[i] == 1){
+            if (color_line % 2 == 0 ){
                for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -363,7 +424,8 @@ void loader::clusterizer(){
                     temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
                     temp_normal->points.push_back(temp_normal_point);
                 }
-            }else if (color % 5 ==1){
+               color_line ++;
+            }else{
                 for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -377,7 +439,11 @@ void loader::clusterizer(){
                     temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
                     temp_normal->points.push_back(temp_normal_point);
                 }
-            }else if (color % 5 ==2){
+                color_line ++;
+            }
+
+        } else if (found_valid[i] == 2){
+            if (color_plane % 2 == 0 ){
                 for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -391,20 +457,7 @@ void loader::clusterizer(){
                     temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
                     temp_normal->points.push_back(temp_normal_point);
                 }
-            }else if (color % 5 ==3){
-                for (int j=0; j< surface_point[i].size(); j++){
-                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-                    temp_point.r = 255;
-                    temp_point.g = 255;
-                    temp_point.b = 0;
-                    temp->points.push_back(temp_point);
-                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-                    temp_normal->points.push_back(temp_normal_point);
-                }
+                color_plane ++;
             }else{
                 for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
@@ -419,12 +472,12 @@ void loader::clusterizer(){
                     temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
                     temp_normal->points.push_back(temp_normal_point);
                 }
+                color_plane ++;
             }
-            color ++;
         }
-
-
     }
+
+//// color check;
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
 
@@ -432,13 +485,14 @@ void loader::clusterizer(){
 
     while (!viewer.wasStopped ())
     {
-    }
-    pcl::visualization::PCLVisualizer viewer2("pcl viewer");
 
-    viewer2.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(temp,temp_normal,5,1);
-    while (!viewer2.wasStopped ())
-    {
-        viewer2.spinOnce ();
     }
+////    pcl::visualization::PCLVisualizer viewer2("pcl viewer");
+////
+////    viewer2.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(temp,temp_normal,5,1);
+////    while (!viewer2.wasStopped ())
+////    {
+////        viewer2.spinOnce ();
+////    }
 
 }

@@ -21,7 +21,15 @@
 #define DEPTH_THRESHOLD 0.4
 #define neighbouring_radius 0.2
 #define INTERVAL_CIRCULAR_LEVELS 4
+#define LINE_EIGENVALUE_THRESHOLD 0.05
+#define PLANE_EIGENVALUE_THRESHOLD 0.05
 
+struct feature_point{
+    float origin_x;
+    float origin_y;
+    float origin_z;
+
+};
 
 struct spherical_point{
     float r;
