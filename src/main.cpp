@@ -17,7 +17,7 @@ int main (int argc, char** argv)
     std:: string fileName;
     fileName = file_env + "/0000000000.txt";
 
-    //
+
     loader luck;
     luck.txt2pcl(fileName);
     luck.create_depth_image();

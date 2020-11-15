@@ -687,7 +687,6 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_imag
 
                     cov_matrix = cc ;
                     cov_matrix -= c * c.transpose() / num;
-
                     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> s(cov_matrix);
                     point_normal.normal_x = s.eigenvectors().col(0)[0];
                     point_normal.normal_y = s.eigenvectors().col(0)[1];
