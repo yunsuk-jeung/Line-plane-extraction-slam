@@ -140,6 +140,7 @@ add_executable(main_node
         src/main.cpp
         src/loader.cpp
         src/image.cpp
+        src/odom.cpp
         )
 
 ## Rename C++ executable without prefix
