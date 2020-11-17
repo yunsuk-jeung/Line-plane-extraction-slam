@@ -128,6 +128,10 @@ int main (int argc, char** argv)
         from_vx1.push_back(rotation * vx2[i] + trans);
     }
 
+    std::vector <float> d;
+    for(int i=0;i<3;i++){
+        d.push_back((vx1[i].cross(vx2[i])).norm());
+    }
     Eigen::Matrix<float,6,1> jaco;
 
     std::cout << from_vx1[0] << std::endl;
