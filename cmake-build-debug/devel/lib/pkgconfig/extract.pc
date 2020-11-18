@@ -1,4 +1,4 @@
-prefix=/home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/devel
+prefix=/home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/devel
 
 Name: extract
 Description: Description of extract
