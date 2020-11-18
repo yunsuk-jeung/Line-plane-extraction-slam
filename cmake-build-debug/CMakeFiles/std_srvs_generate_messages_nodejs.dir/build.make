@@ -54,19 +54,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /opt/clion-2020.2.4/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /opt/clion-2020.2.1/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /opt/clion-2020.2.4/bin/cmake/linux/bin/cmake -E rm -f
+RM = /opt/clion-2020.2.1/bin/cmake/linux/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/yunsuk-jeung/workspace/line_plane/src/extract
+CMAKE_SOURCE_DIR = /home/yunsuk/workspace/line_plane/src/extract
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug
+CMAKE_BINARY_DIR = /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug
 
 # Utility rule file for std_srvs_generate_messages_nodejs.
 
@@ -87,6 +87,6 @@ CMakeFiles/std_srvs_generate_messages_nodejs.dir/clean:
 .PHONY : CMakeFiles/std_srvs_generate_messages_nodejs.dir/clean
 
 CMakeFiles/std_srvs_generate_messages_nodejs.dir/depend:
-	cd /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/yunsuk-jeung/workspace/line_plane/src/extract /home/yunsuk-jeung/workspace/line_plane/src/extract /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/std_srvs_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/yunsuk/workspace/line_plane/src/extract /home/yunsuk/workspace/line_plane/src/extract /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/std_srvs_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/std_srvs_generate_messages_nodejs.dir/depend
 

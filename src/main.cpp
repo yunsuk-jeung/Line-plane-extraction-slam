@@ -5,6 +5,7 @@
 #include <pcl/point_types.h>
 #include "loader.h"
 #include "image.h"
+#include "odom.h"
 #include <omp.h>
 
 int main (int argc, char** argv)
@@ -30,9 +31,9 @@ int main (int argc, char** argv)
     std::vector < Eigen::Vector3f >  x2;
     std::vector < Eigen::Vector3f > Tx2;
     Eigen::Vector3f temp;
-    Eigen::Matrix<float,1,6> T;
-    Eigen::Matrix<float,1,6> dT;
-    Eigen::Matrix<float,1,6> test_T;
+    Eigen::Matrix<float,6,1> T;
+    Eigen::Matrix<float,6,1> dT;
+    Eigen::Matrix<float,6,1> test_T;
     Eigen::Matrix3f Rz;
     Eigen::Matrix3f Ry;
     Eigen::Matrix3f Rx;
@@ -40,6 +41,8 @@ int main (int argc, char** argv)
     Eigen::Matrix<float,3,1> t;
     Eigen::Vector3f trans;
     Eigen::Vector3f u;
+    std::vector < float > d;
+    std::vector <float > next_d;
 
     u(0)=0;
     u(1)=0;
@@ -98,12 +101,54 @@ int main (int argc, char** argv)
     for(int i=0; i<6; i++){
         T(i) =0;
     }
+    //// start for
+    R=get_rotation(T);
+    t=get_translation(T);
 
+    for(int i=0; i<x2.size(); i++){
+        Tx2.push_back(R * x2[i]+ t);
+    }
 
+    for(int i=0; i<x2.size();i++){
+        Eigen::Vector3f x2_x1;
+        x2_x1 = Tx2[i]-x1[i];
+        d.push_back (fabs(u.cross(x2_x1).norm()));
+    }
 
     for(int i=0; i<6; i++){
         dT(i) = 0.1;
     }
+    Tx2.clear();
+    std::cout << T << std::endl;
+    T += dT;
+    std::cout << T << std::endl;
+    R=get_rotation(T);
+    t=get_translation(T);
+//    std::cout << R << std::endl;
+//    std::cout << t << std::endl;
+
+    for(int i=0; i<x2.size(); i++){
+        Tx2.push_back(R * x2[i]+ t);
+    }
+//    std::cout << Tx2[0] << std::endl;
+
+    for(int i=0; i<x2.size();i++){
+        Eigen::Vector3f x2_x1;
+        x2_x1 = Tx2[i]-x1[i];
+        next_d.push_back (fabs(u.cross(x2_x1).norm()));
+    }
+
+    int row = x2.size();
+    Eigen::Matrix<float, Eigen::Dynamic, 6> J;
+    J.resize(row, 6);
+    for(int i=0; i<row; i++){
+        for(int j=0; j<6; j++){
+            J(i,j) = (next_d[i]-d[i] ) / dT(j);
+        }
+    }
+    std::cout << d[0] << std::endl;
+    std::cout << next_d[0] << std::endl;
+    std::cout << J << std::endl;
 
 
     return (0);
