@@ -150,7 +150,6 @@ int main (int argc, char** argv)
     std::cout << next_d[0] << std::endl;
     std::cout << J << std::endl;
 
-
     return (0);
 }
 
