@@ -34,7 +34,7 @@ int main (int argc, char** argv)
     Eigen::Matrix<float,6,1> T;
     Eigen::Matrix<float,6,1> next_T;
     Eigen::Matrix<float,6,1> dT;
-    Eigen::Matrix<float,6,1> test_T;
+    Eigen::Matrix<float,6,1> temp_T;
     Eigen::Matrix3f Rz;
     Eigen::Matrix3f Ry;
     Eigen::Matrix3f Rx;
@@ -44,16 +44,17 @@ int main (int argc, char** argv)
     Eigen::Vector3f u;
     Eigen::Matrix < float ,9,1> d;
     Eigen::Matrix < float ,9,1> next_d;
+    Eigen::Matrix < float ,9,1> temp_d;
 
-    u(0)=0;
+    u(0)=1/sqrt(2);
     u(1)=0;
-    u(2)=1;
+    u(2)=1/sqrt(2);
 
     for(int i=0; i<3; i++){
         for (int j=0; j<3;j++){
             temp(0)=i+1;
             temp(1)=j+1;
-            temp(2)=0;
+            temp(2)=i-j;
             x2.push_back(temp);
         }
 
@@ -66,6 +67,7 @@ int main (int argc, char** argv)
     T(5) = -M_PI/2;
 
     for(int i=0; i<3; i++){
+
         for (int j=0; j<3; j++){
             Rz(i,j) =0;
             Ry(i,j) =0;
@@ -105,52 +107,90 @@ int main (int argc, char** argv)
     for(int i=0; i<6; i++){
         dT(i) = 0.1;
     }
-    R=get_rotation(T);
-    t=get_translation(T);
-    next_T = T+dT;
 
-    for(int i=0; i<x2.size(); i++){
-        Tx2.push_back(R * x2[i]+ t);
-    }
+    next_T = T+dT;
     Tx2.clear();
-    for(int i=0; i<x2.size();i++){
-        Eigen::Vector3f x2_x1;
-        x2_x1 = Tx2[i]-x1[i];
-        d(i) =  (fabs(u.cross(x2_x1).norm()));
-    }
-    next_T = T + dT;
-//    std::cout << T.transpose() << std::endl;
-//    std::cout << next_T.transpose() << std::endl;
+
     //// start for
 
-    for (int k=0; k<1; k++){
-        R=get_rotation(T);
-        t=get_translation(T);
+    for (int k=0; k<1; k++) {
+        R = get_rotation(T);
+        t = get_translation(T);
 
-        for(int i=0; i<x2.size(); i++){
-            Tx2.push_back(R * x2[i]+ t);
-//            std::cout<<Tx2[i](0) << ' ' ;
+        for (int i = 0; i < x2.size(); i++) {
+            Tx2.push_back(R * x2[i] + t);
         }
-//        std::cout << std::endl;
-        for(int i=0; i<x2.size();i++){
+        for (int i = 0; i < x2.size(); i++) {
             Eigen::Vector3f x2_x1;
-            x2_x1 = Tx2[i]-x1[i];
-            d(i) =  (fabs(u.cross(x2_x1).norm()));
-//            std::cout << d(i) << ' ' ;
+            x2_x1 = Tx2[i] - x1[i];
+            d(i) = (fabs(u.cross(x2_x1).norm()));
         }
-//        std::cout << std::endl;
         Tx2.clear();
 
-        R=get_rotation(next_T);
-        t=get_translation(next_T);
+//        R = get_rotation(next_T);
+//        t = get_translation(next_T);
+//
+//
+//        for (int i = 0; i < x2.size(); i++) {
+//            Tx2.push_back(R * x2[i] + t);
+//        }
+//        for (int i = 0; i < x2.size(); i++) {
+//            Eigen::Vector3f x2_x1;
+//            x2_x1 = Tx2[i] - x1[i];
+//            next_d(i) = (fabs(u.cross(x2_x1).norm()));
+//        }
+//        Tx2.clear();
+        Eigen::Matrix<float,9 ,6 > J;
+        J.setZero();
 
+        //// get jacobian
+        for (int i=0; i< 6; i++){
+            temp_T = T;
+            temp_T(i) = next_T(i);
 
-        for(int i=0; i<x2.size(); i++){
-            Tx2.push_back(R * x2[i]+ t);
-//            std::cout<<Tx2[i](0) << ' ' ;
+            R = get_rotation(temp_T);
+            t = get_translation(temp_T);
+
+            for (int ii = 0; ii < x2.size(); ii++) {
+            Tx2.push_back(R * x2[ii] + t);
+            }
+
+            for (int ii = 0; ii < x2.size(); ii++) {
+            Eigen::Vector3f x2_x1;
+            x2_x1 = Tx2[ii] - x1[ii];
+            next_d(ii) = (fabs(u.cross(x2_x1).norm()));
+            }
+
+            Tx2.clear();
+
+            for (int ii=0; ii < 9; ii++){
+                J(ii,i) = (next_d(ii)-d(ii))/dT(i);
+            }
         }
-//        std::cout << std::endl;
 
+        Eigen::Matrix<float,6,6> H;
+        Eigen::Matrix<float,6,6> C;
+        Eigen::Matrix<float,6,6> K;
+
+//        std::cout << J << std::endl;
+        C = J.transpose() * J;
+
+        H.setZero();
+        for (int i = 0; i < 6; ++i) {
+            H(i,i) = C(i,i);
+        }
+        H = H/H.norm();
+        K = C + H;
+//        std::cout << K << std::endl;
+
+        T=next_T;
+        next_T = next_T - K.transpose() * J.transpose() * d;
+//        std::cout<< C << std::endl;
+//        std::cout << H << std::endl;
+
+    }
+//    std::cout << T.transpose() << std::endl;
+//    std::cout << next_T.transpose() << std::endl;
 
     return (0);
 }
