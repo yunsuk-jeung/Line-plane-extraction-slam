@@ -282,9 +282,6 @@ int main (int argc, char** argv)
     }
     std::cout << J << std::endl;
 //    std::cout << J.transpose()*J << std::endl;
-
-
-
     return (0);
 }
 
