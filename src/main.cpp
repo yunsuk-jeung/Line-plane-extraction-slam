@@ -250,38 +250,51 @@ int main (int argc, char** argv)
     Eigen::Matrix<float,2,1> pre_T;
     Eigen::Matrix<float,2,1> dT;
     Eigen::Matrix<float,2,1> T;
+    Eigen::Matrix<float,2,1> d;
+    float lambda = 10;
     pre_T.setZero();
     dT.setOnes();
     dT = 0.1*dT;
-
-    for (int i=0;i <2; i++){
-        Tx2[i] = x2[i] + pre_T;
-    }
-
-    Eigen::Matrix<float,2,1> d;
-
-    for (int i=0;i<2;i++){
-        d(i)=get_distance(x1[i],Tx2[i]);
-    }
-
+    ////initial guess
     T= pre_T + dT;
-    Eigen::Matrix<float,2,2> J;
     std::cout << "start jacobian" << std::endl;
+    for (int k=0; k<20; k++){
+        for (int i=0;i <2; i++){
+            Tx2[i] = x2[i] + pre_T;
+        }
+        for (int i=0;i<2;i++){
+            d(i)=get_distance(x1[i],Tx2[i]);
+        }
 
-    for (int i=0; i<2 ; i++){
-        Eigen::Matrix<float,2,1> temp_T;
-        temp_T = pre_T;
-        temp_T(i) = T(i);
-        for (int j=0;j <2; j++){
-            Tx2[j] = x2[j] + temp_T;
+        Eigen::Matrix<float,2,2> J;
+        Eigen::Matrix<float,2,2> I;
+        I.setZero();
+        I(0,0)=1;
+        I(1,1)=1;
+
+        for (int i=0; i<2 ; i++){
+            Eigen::Matrix<float,2,1> temp_T;
+            temp_T = pre_T;
+            temp_T(i) = T(i);
+            for (int j=0;j <2; j++){
+                Tx2[j] = x2[j] + temp_T;
+            }
+            for (int j=0; j<2 ; j++){
+                float df = get_distance(x1[j],Tx2[j]) - d(j);
+                J(j,i) = df/dT(i);
+            }
+
+            Eigen::Matrix2f C;
+            C = J.transpose() * J + lambda* I;
+            pre_T = T;
+            T = T-C.inverse() * J.transpose() * d;
         }
-        for (int j=0; j<2 ; j++){
-            float df = get_distance(x1[j],Tx2[j]) - d(j);
-            J(j,i) = df/dT(i);
-        }
+
+        std::cout<< T.transpose() << std::endl;
     }
-    std::cout << J << std::endl;
-//    std::cout << J.transpose()*J << std::endl;
+
+
+
     return (0);
 }
 
