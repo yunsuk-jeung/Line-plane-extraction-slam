@@ -63,6 +63,16 @@ Eigen::Matrix<float,2,1> d2_translation(Eigen::Matrix<float,3,1> &T){
     return t;
 }
 
+float get_distance(Eigen::Matrix<float,2,1> &x1, Eigen::Matrix<float,2,1> &Tx2){
+    float d;
+    for(int i=0;i <4; i++){
+        d = sqrt(pow(x1(0) - Tx2(0),2)
+                +pow(x1(1) - Tx2(1),2));
+    }
+    return d;
+}
+
+
 void set_x2(std::vector < Eigen::Vector3f >  &x2){
     x2[0](0) = 4;
     x2[0](1) = 0;

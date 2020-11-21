@@ -9,5 +9,5 @@
     void set_x2(std::vector < Eigen::Vector3f >  &x2);
 Eigen::Matrix<float,2,2> d2_rotation(Eigen::Matrix<float,3,1> &T);
 Eigen::Matrix<float,2,1> d2_translation(Eigen::Matrix<float,3,1> &T);
-
+float get_distance(Eigen::Matrix<float,2,1> &x1, Eigen::Matrix<float,2,1> &Tx2);
 #endif /* odom_h */

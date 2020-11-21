@@ -175,31 +175,113 @@ int main (int argc, char** argv)
 //    std::cout << T.transpose() << std::endl;
 //    std::cout << next_T.transpose() << std::endl;
 //// simple L-M method
-    std::vector < Eigen::Matrix<float,2,1> > x2(4);
-    std::vector < Eigen::Matrix<float,2,1> > x1(4);
-    x1[0](0)=2; x1[1](0)=-2; x1[2](0) = -2; x1[3](0)=2;
-    x1[0](1)=2; x1[1](1)=2; x1[2](1) = -2; x1[3](1)=-2;
-    x2[0](0)=-1; x2[1](0)=-1; x2[2](0) = 3; x2[3](0)=3;
-    x2[0](1)=1; x2[1](1)=-3; x2[2](1) = -3; x2[3](1)=1;
-    Eigen::Matrix<float, 3, 1> T;
-    Eigen::Matrix<float, 3, 1> pre_T;
-    Eigen::Matrix<float, 3, 1> dT;
-
-    T.setZero();
-    Eigen::Matrix<float,2,2> R;
-    Eigen::Matrix<float,2,1> t;
-
-    R.setZero();
-    t.setZero();
-    dT.setOnes();
-    dT = 0.01 * dT;
-
+//    std::vector < Eigen::Matrix<float,2,1> > x1(4);
+//    std::vector < Eigen::Matrix<float,2,1> > x2(4);
+//    std::vector < Eigen::Matrix<float,2,1> > Tx2(4);
+//    x1[0](0)=2; x1[1](0)=-2; x1[2](0) = -2; x1[3](0)=2;
+//    x1[0](1)=2; x1[1](1)=2; x1[2](1) = -2; x1[3](1)=-2;
+//    x2[0](0)=-1; x2[1](0)=-1; x2[2](0) = 3; x2[3](0)=3;
+//    x2[0](1)=1; x2[1](1)=-3; x2[2](1) = -3; x2[3](1)=1;
+//    Eigen::Matrix<float, 3, 1> T;
+//    Eigen::Matrix<float, 3, 1> pre_T;
+//    Eigen::Matrix<float, 3, 1> dT;
+//
+//    T.setZero();
+//    Eigen::Matrix<float,2,2> R;
+//    Eigen::Matrix<float,2,1> t;
+//    Eigen::Matrix<float,4,1> pre_d;
+//    Eigen::Matrix<float,4,1> d;
+//
+//    R.setZero();
+//    t.setZero();
+//    dT.setOnes();
+//    dT(0)= 0.1;
+//    dT(1)=0.1;
+//    dT(2)= 0.1;
+//
+//    pre_T(0)=0.8 ;
+//    pre_T(1) = 0.8 ;
+//    pre_T(2)=-M_PI/2-0.2;
+//    T = pre_T + dT;
+//    Eigen::Matrix<float, 3,1> temp_T;
+//    Eigen::Matrix<float,4,3> J;
+//    std::cout << pre_T.transpose() << std::endl;
+//    std::cout << T.transpose() << std::endl;
+//
+//    for(int k=0; k<6; k++){
+//        R = d2_rotation(pre_T);
+//        t = d2_translation(pre_T);
+//
+//        for (int i=0; i<4; i++){
+//            Tx2[i] = R * x2[i] + t;
+//        }
+//        for (int i=0; i<4; i++){
+//            pre_d(i)=get_distance(x1[i],Tx2[i]);
+//        }
+//        ////jacobian
+//
+//        for (int i=0; i<3; i++){
+//            temp_T=pre_T;
+//            temp_T(i) = T(i);
+//            R = d2_rotation(temp_T);
+//            t = d2_translation(temp_T);
+//
+//            for (int j=0; j<4; j++){
+//                Tx2[j] = R * x2[j] + t;
+//            }
+//            for (int j=0; j<4; j++){
+//                d(j) = get_distance(x1[j], Tx2[j]);
+//                J(j,i)= (d(j) -pre_d(j))/dT(i);
+//            }
+//        }
+//        pre_T = T;
+//        Eigen::Matrix<float, 3,3> C;
+//        C = J.transpose() * J;
+//        T = T - C.inverse() * J.transpose() * pre_d;
+//        dT = T-pre_T;
+//        std::cout << T.transpose() << std::endl;
+//    }
+//// most simple L-M method
+    std::vector < Eigen::Matrix<float,2,1> > x1(2);
+    std::vector < Eigen::Matrix<float,2,1> > x2(2);
+    std::vector < Eigen::Matrix<float,2,1> > Tx2(2);
+    x1[0](0) = 2; x1[0](1)=2; x1[1](0)=-3; x1[1](1) = 0;
+    x2[0](0) = 2; x2[0](1)=1; x2[1](0)=-3; x2[1](1) = -1;
+    Eigen::Matrix<float,2,1> pre_T;
+    Eigen::Matrix<float,2,1> dT;
+    Eigen::Matrix<float,2,1> T;
     pre_T.setZero();
-    T = pre_T + dT;
+    dT.setOnes();
+    dT = 0.1*dT;
 
+    for (int i=0;i <2; i++){
+        Tx2[i] = x2[i] + pre_T;
+    }
 
-    R = d2_rotation(T);
-    t = d2_translation(T);
+    Eigen::Matrix<float,2,1> d;
+
+    for (int i=0;i<2;i++){
+        d(i)=get_distance(x1[i],Tx2[i]);
+    }
+
+    T= pre_T + dT;
+    Eigen::Matrix<float,2,2> J;
+    std::cout << "start jacobian" << std::endl;
+
+    for (int i=0; i<2 ; i++){
+        Eigen::Matrix<float,2,1> temp_T;
+        temp_T = pre_T;
+        temp_T(i) = T(i);
+        for (int j=0;j <2; j++){
+            Tx2[j] = x2[j] + temp_T;
+        }
+        for (int j=0; j<2 ; j++){
+            float df = get_distance(x1[j],Tx2[j]) - d(j);
+            J(j,i) = df/dT(i);
+        }
+    }
+    std::cout << J << std::endl;
+//    std::cout << J.transpose()*J << std::endl;
 
 
 
