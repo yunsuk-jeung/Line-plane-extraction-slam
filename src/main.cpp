@@ -199,16 +199,17 @@ int main (int argc, char** argv)
 //    dT(1)=0.1;
 //    dT(2)= 0.1;
 //
-//    pre_T(0)=0.8 ;
-//    pre_T(1) = 0.8 ;
-//    pre_T(2)=-M_PI/2-0.2;
+//    pre_T(0)=0 ;
+//    pre_T(1) = 0 ;
+//    pre_T(2)=0;
 //    T = pre_T + dT;
 //    Eigen::Matrix<float, 3,1> temp_T;
 //    Eigen::Matrix<float,4,3> J;
+//    float lambda =10;
 //    std::cout << pre_T.transpose() << std::endl;
 //    std::cout << T.transpose() << std::endl;
 //
-//    for(int k=0; k<6; k++){
+//    for(int k=0; k<20; k++){
 //        R = d2_rotation(pre_T);
 //        t = d2_translation(pre_T);
 //
@@ -234,9 +235,14 @@ int main (int argc, char** argv)
 //                J(j,i)= (d(j) -pre_d(j))/dT(i);
 //            }
 //        }
+//        Eigen::Matrix3f I;
+//        I.setZero();
+//        I(0,0)=1;
+//        I(1,1)=1;
+//        I(2,2) =1;
 //        pre_T = T;
 //        Eigen::Matrix<float, 3,3> C;
-//        C = J.transpose() * J;
+//        C = J.transpose() * J + lambda * I;
 //        T = T - C.inverse() * J.transpose() * pre_d;
 //        dT = T-pre_T;
 //        std::cout << T.transpose() << std::endl;
@@ -255,9 +261,10 @@ int main (int argc, char** argv)
     pre_T.setZero();
     dT.setOnes();
     dT = 0.1*dT;
+
     ////initial guess
     T= pre_T + dT;
-    std::cout << "start jacobian" << std::endl;
+    std::cout << "start Jarcobian" << std::endl;
     for (int k=0; k<20; k++){
         for (int i=0;i <2; i++){
             Tx2[i] = x2[i] + pre_T;
@@ -285,7 +292,7 @@ int main (int argc, char** argv)
             }
 
             Eigen::Matrix2f C;
-            C = J.transpose() * J + lambda* I;
+            C = J.transpose() * J + lambda * I;
             pre_T = T;
             T = T-C.inverse() * J.transpose() * d;
         }
