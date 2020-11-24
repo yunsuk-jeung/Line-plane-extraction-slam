@@ -240,11 +240,9 @@ void loader::clusterizer(){
     std::vector < std::vector < int > > visit(ROW, std::vector <int> (COL));
     std::vector < std::vector < pcl::PointXYZRGB > > surface_point;
     std::vector < std::vector < int > > cloud_index;
-    int neighbor_row= 10;
-    int neighbor_col = 10;
+
     float reference_depth;
     float depth;
-    float distance = 0.6;
     int surface=0;
     int max_surface=0;
 
@@ -276,17 +274,13 @@ void loader::clusterizer(){
                     visit[i][j] = max_surface;
                     surface = max_surface;
                     surface_point.push_back(std::vector<pcl::PointXYZRGB>());
-                    surface_point[surface-1].push_back(vertical_cloud2->points[depth_image[i][j].index]);
                     cloud_index.push_back(std::vector<int>());
-                    cloud_index[surface-1].push_back(depth_image[i][j].index);
-
                 } else{
                     surface = visit[i][j];
-                    surface_point[surface-1].push_back(vertical_cloud2->points[depth_image[i][j].index]);
-                    cloud_index[surface-1].push_back(depth_image[i][j].index);
+
                 }
-                for (int ii= i-neighbor_row; ii < i+neighbor_row; ii++){
-                    for (int jj = j-neighbor_col; jj < j+neighbor_col; jj++ ){
+                for (int ii= i-CLUSTER_NEIGHBOR_ROW; ii < i+CLUSTER_NEIGHBOR_ROW; ii++){
+                    for (int jj = j-CLUSTER_NEIGHBOR_COL; jj < j+CLUSTER_NEIGHBOR_COL; jj++ ){
 
                         if (ii < 0 || ii >=ROW || jj < 0 || jj >= COL ) {
                             continue;
@@ -294,9 +288,9 @@ void loader::clusterizer(){
                         if(depth_image[ii][jj].index <0){
                             continue;
                         }
-                        if(visit[ii][jj] != 0 ){
-                            continue;
-                        }
+//                        if(visit[ii][jj] != 0 ){
+//                            continue;
+//                        }
                         x2 = vertical_cloud2->points[depth_image[ii][jj].index].x;
                         y2 = vertical_cloud2->points[depth_image[ii][jj].index].y;
                         z2 = vertical_cloud2->points[depth_image[ii][jj].index].z;
@@ -304,7 +298,7 @@ void loader::clusterizer(){
                         ny2 = normal_cloud->points[depth_image[ii][jj].index].normal_y;
                         nz2 = normal_cloud->points[depth_image[ii][jj].index].normal_z;
 
-                        if(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2)< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.9 ){
+                        if(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2)< CLUSTER_NEIGHBOR_DISTANCE && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 > CLUSTER_NEIGHBOR_ANGLE ){
                             visit[ii][jj] = surface;
                         }
                     }
@@ -312,9 +306,23 @@ void loader::clusterizer(){
             }
         }
     }
+    for(int i=0; i<ROW; i++){
+        for (int j=0; j<COL; j++){
+            if(depth_image[i][j].index < 0){
+                continue;
+            }
+            surface = visit[i][j];
+            surface_point[surface-1].push_back(vertical_cloud2->points[depth_image[i][j].index]);
+            cloud_index[surface-1].push_back(depth_image[i][j].index);
+        }
+    }
+//    for (int i=0; i< surface_point.size(); i++){
+//        std::cout << surface_point[i].size() << ' ' << cloud_index[i].size() << std::endl;
+//
+//    }
 
 
-    ////find valid element
+////find valid element
     float cx;
     float cy;
     float cz;
@@ -433,11 +441,12 @@ void loader::clusterizer(){
 
 
     std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
+
     int color_line =0;
     int color_plane =0;
     for (int i=0; i < surface_point.size(); i++){
         if (found_valid[i] == 1){
-            if (color_line % 2 == 0 ){
+            if (color_line % 3 == 0 ){
                for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -452,7 +461,24 @@ void loader::clusterizer(){
                     temp_normal->points.push_back(temp_normal_point);
                 }
                color_line ++;
-            }else{
+            }else if (color_line % 3 == 1 ){                {
+                    for (int j=0; j< surface_point[i].size(); j++){
+                        temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                        temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                        temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                        temp_point.r = 255;
+                        temp_point.g = 255;
+                        temp_point.b = 0;
+                        temp->points.push_back(temp_point);
+                        temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                        temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                        temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                        temp_normal->points.push_back(temp_normal_point);
+                    }
+                    color_line ++;
+                }
+            }
+                else{
                 for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -470,7 +496,7 @@ void loader::clusterizer(){
             }
 
         } else if (found_valid[i] == 2){
-            if (color_plane % 2 == 0 ){
+            if (color_plane % 3 == 0 ){
                 for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -485,7 +511,23 @@ void loader::clusterizer(){
                     temp_normal->points.push_back(temp_normal_point);
                 }
                 color_plane ++;
-            }else{
+            }else if(color_plane % 3 == 1){
+                for (int j=0; j< surface_point[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 0;
+                    temp_point.g = 255;
+                    temp_point.b = 255;
+                    temp->points.push_back(temp_point);
+                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                    temp_normal->points.push_back(temp_normal_point);
+                }
+                color_plane ++;
+            }
+            else{
                 for (int j=0; j< surface_point[i].size(); j++){
                     temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
                     temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
@@ -520,6 +562,6 @@ void loader::clusterizer(){
 ////    while (!viewer2.wasStopped ())
 ////    {
 ////        viewer2.spinOnce ();
-//    }
+////    }
 
 }

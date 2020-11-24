@@ -23,8 +23,6 @@ int main (int argc, char** argv)
     pre_cloud.create_depth_image();
     pre_cloud.remove_flat_region();
     pre_cloud.create_image();
-//    pre_cloud.viewer();
-//    pre_cloud.viewer2();
     pre_cloud.clusterizer();
 
 
