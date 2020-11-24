@@ -16,11 +16,15 @@
 #include <omp.h>
 
 #define _USE_MATH_DEFINES
-#define ROW 64
-#define COL 4500
-#define DEPTH_THRESHOLD 0.4
+#define ROW 16
+#define COL 900
+#define CLOSE_FLAT_REGION_RANGE 0.4
+#define CLOSE_VERTICAL_THRESHOLD 2
+#define FAR_FLAT_REGION_RANGE 0.5
+#define FAR_VERTICAL_THRESHOLD 2
+#define NORMAL_DEPTH_THRESHOLD 0.5
 #define neighbouring_radius 0.2
-#define INTERVAL_CIRCULAR_LEVELS 4
+#define INTERVAL_CIRCULAR_LEVELS 2
 #define LINE_EIGENVALUE_THRESHOLD 0.05
 #define PLANE_EIGENVALUE_THRESHOLD 0.05
 
@@ -87,7 +91,6 @@ class image{
 public:
     image(int row, int col);
     void create_integral_image(const spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_vertical_cloud);
-    void set_boundary(int row_boundary, int col_boundary);
     void create_interval_image(const spherical_point (&depth_image)[ROW][COL]);
     pcl::PointCloud<pcl::Normal>::Ptr get_normal(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud);
 private:
@@ -104,9 +107,6 @@ private:
     std::vector < std::vector < double > > itg_z;
     std::vector < std::vector < int > > itg_num;
 
-
-    int boundary_row;
-    int boundary_col;
     pcl::PointCloud<pcl::Normal>::Ptr normals;
 
 };

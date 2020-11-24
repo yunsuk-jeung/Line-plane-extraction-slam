@@ -5,9 +5,7 @@ loader::loader(){
     cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
     vertical_cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
     vertical_cloud2 = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
-//    cloud3 = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
     normal_cloud = pcl::PointCloud<pcl::Normal>::Ptr (new pcl::PointCloud<pcl::Normal>);
-//    interval_image(64, std::vector< interval_point>(4500));
 }
 
 void loader::txt2pcl(std::string fileName) {
@@ -33,7 +31,35 @@ void loader::txt2pcl(std::string fileName) {
         cloud->push_back(temp);
         row++;
     }
-//    pcl::copyPointCloud(*cloud,*cloud2);
+}
+
+void loader::csv2pcl(std::string fileName) {
+    pcl::PointXYZRGB temp;
+    std:: ifstream file(fileName.c_str());
+    std::string line, val;
+    std::getline(file,line);
+    std::stringstream ss(line);
+    std::getline(ss, val, ',');
+    std::getline(ss, val, ',');
+        while(std::getline(ss,val,',')){
+            temp.x = atof(val.c_str());
+            std::getline(ss, val, ',');
+            temp.y = atof(val.c_str());
+            std::getline(ss, val, ',');
+            temp.z = atof(val.c_str());
+            temp.r=255;
+            temp.g=255;
+            temp.b=255;
+            cloud->push_back(temp);
+        }
+//    pcl::visualization::CloudViewer viewer("Cloud Viewer");
+//
+//
+//    viewer.showCloud(cloud);
+//
+//    while (!viewer.wasStopped ())
+//    {
+//    }
 }
 
 void loader::viewer()
@@ -41,7 +67,7 @@ void loader::viewer()
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
 
-    viewer.showCloud(vertical_cloud2);
+    viewer.showCloud(vertical_cloud);
 
     while (!viewer.wasStopped ())
     {
@@ -52,7 +78,7 @@ void loader::viewer()
 void loader::create_depth_image() {
     spherical_point temp;
     int size = cloud->points.size();
-    float col_resolution = 2 * M_PI / 4500;
+    float col_resolution = 2 * M_PI / COL;
     float min_theta = M_PI;
     float max_theta = 0;
     float r_temp;
@@ -68,7 +94,7 @@ void loader::create_depth_image() {
             min_theta = theta_temp;
         }
     }
-    float row_resolution = (max_theta + 0.0001 - min_theta) / 64;
+    float row_resolution = (max_theta + 0.0001 - min_theta) / ROW;
     int row_num;
     int col_num;
     for (int i = 0; i < size; i++) {
@@ -96,15 +122,15 @@ void loader::remove_flat_region(){
     float a;
     float b;
     float epsilone;
-    int height = 64;
-    int length = 4500;
+    int height = ROW;
+    int length = COL;
     int num;
     int num_vertical;
     float close_area = 10;
     std::vector<int> temp_vertical_checker;
     spherical_point zero_point;
     for (int i=0; i< length; i++) {
-        int vertical_checker[64]={0,};
+        int vertical_checker[ROW]={0,};
         for (int j =0; j<height; j++){
             if (vertical_checker[j] == 0){
                 if(depth_image[j][i].index != -1 ) {
@@ -112,11 +138,11 @@ void loader::remove_flat_region(){
                     a = depth_image[j][i].r * sin(depth_image[j][i].theta);
 
                     if (a < close_area) {
-                        epsilone = 0.002;
-                        num_vertical = 2;
+                        epsilone = CLOSE_FLAT_REGION_RANGE;
+                        num_vertical = CLOSE_VERTICAL_THRESHOLD;
                     } else {
-                        epsilone = 0.2;
-                        num_vertical = 1;
+                        epsilone = FAR_FLAT_REGION_RANGE;
+                        num_vertical = FAR_VERTICAL_THRESHOLD;
                     }
 
                     for (int jj = j + 1; jj < height; jj++) {
@@ -160,7 +186,7 @@ void loader::remove_flat_region(){
 //// call integral_image
 void loader::create_image() {
     image integral(ROW+1,COL+1);
-    integral.set_boundary(5,5);
+
     integral.create_integral_image(depth_image, vertical_cloud);
     integral.create_interval_image(depth_image);
     normal_cloud=integral.get_normal(depth_image,vertical_cloud);
@@ -179,7 +205,7 @@ void loader::create_image() {
 }
 void loader::viewer2() {
     pcl::visualization::PCLVisualizer viewer("pcl viewer");
-    viewer.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(vertical_cloud2,normal_cloud,1,1);
+    viewer.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(vertical_cloud2,normal_cloud,10,1);
     while (!viewer.wasStopped ())
     {
         viewer.spinOnce ();
@@ -206,7 +232,7 @@ float plane_to_point(float &origin_x,float &origin_y, float &origin_z,float &nx,
 }
 
 void loader::clusterizer(){
-    std::cout << "start clusterize" << std::endl;
+
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::Normal>::Ptr temp_normal (new pcl::PointCloud<pcl::Normal>);
     pcl::PointXYZRGB temp_point;
@@ -218,7 +244,7 @@ void loader::clusterizer(){
     int neighbor_col = 10;
     float reference_depth;
     float depth;
-    float distance = 1.2;
+    float distance = 0.6;
     int surface=0;
     int max_surface=0;
 
@@ -234,7 +260,7 @@ void loader::clusterizer(){
     float nx2;
     float ny2;
     float nz2;
-
+    std::cout << "start clusterize" << std::endl;
     ////cluster
     for (int i = 0; i< ROW; i++){
         for (int j=0; j<COL; j++){
@@ -245,7 +271,6 @@ void loader::clusterizer(){
                 nx1 = normal_cloud->points[depth_image[i][j].index].normal_x;
                 ny1 = normal_cloud->points[depth_image[i][j].index].normal_y;
                 nz1 = normal_cloud->points[depth_image[i][j].index].normal_z;
-
                 if(visit[i][j] == 0){
                     max_surface++;
                     visit[i][j] = max_surface;
@@ -263,15 +288,15 @@ void loader::clusterizer(){
                 for (int ii= i-neighbor_row; ii < i+neighbor_row; ii++){
                     for (int jj = j-neighbor_col; jj < j+neighbor_col; jj++ ){
 
-                        if (ii < 0 || ii >=COL || jj < 0 || jj >= COL ) {
+                        if (ii < 0 || ii >=ROW || jj < 0 || jj >= COL ) {
                             continue;
                         }
                         if(depth_image[ii][jj].index <0){
                             continue;
                         }
-//                        if(visit[ii][jj] != 0 ){
-//                            continue;
-//                        }
+                        if(visit[ii][jj] != 0 ){
+                            continue;
+                        }
                         x2 = vertical_cloud2->points[depth_image[ii][jj].index].x;
                         y2 = vertical_cloud2->points[depth_image[ii][jj].index].y;
                         z2 = vertical_cloud2->points[depth_image[ii][jj].index].z;
@@ -279,8 +304,7 @@ void loader::clusterizer(){
                         ny2 = normal_cloud->points[depth_image[ii][jj].index].normal_y;
                         nz2 = normal_cloud->points[depth_image[ii][jj].index].normal_z;
 
-                        std::vector < std::vector < pcl::PointXYZRGB > > surface_point;
-                        if(fabs(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2))< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.7 ){
+                        if(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2)< distance && nx1 * nx2 + ny1 * ny2 + nz1 * nz2 >0.9 ){
                             visit[ii][jj] = surface;
                         }
                     }
@@ -288,6 +312,7 @@ void loader::clusterizer(){
             }
         }
     }
+
 
     ////find valid element
     float cx;
@@ -301,14 +326,15 @@ void loader::clusterizer(){
     float czz;
     feature_point origin;
 
-    std::vector <unsigned int> found_valid(surface_point.size());
+    std::vector < int> found_valid(surface_point.size());
     Eigen::Matrix3f cc;
     Eigen::Vector3f c;
     Eigen::Matrix3f cov_matrix;
 
     for (int i=0; i< surface_point.size(); i++){
         int num = surface_point[i].size();
-        if (num > 30){
+
+        if (num > 10){
             cx=0;
             cy=0;
             cz=0;
@@ -367,7 +393,7 @@ void loader::clusterizer(){
                 error += line_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
                 }
                 error = error/num;
-                if (error < 0.0001){
+                if (error < 0.025){
                     found_valid[i] = 1;
                     Line.push_back(origin);
                 }else{
@@ -387,7 +413,7 @@ void loader::clusterizer(){
                     }
                 }
             }else{
-                if(eigen1/(eigen1+eigen2+eigen3) < PLANE_EIGENVALUE_THRESHOLD){
+                if( eigen1/(eigen1+eigen2+eigen3) < PLANE_EIGENVALUE_THRESHOLD){
                     float nx = s.eigenvectors().col(0)[0];
                     float ny = s.eigenvectors().col(0)[1];
                     float nz = s.eigenvectors().col(0)[2];
@@ -396,15 +422,16 @@ void loader::clusterizer(){
                         error += plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
                     }
                     error = error/num;
-                    if(error < 0.1){
+                    if(error < 0.05){
                         found_valid[i] = 2;
                         Plane.push_back(origin);
                     }
                 }
-
             }
         }
     }
+
+
     std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
     int color_line =0;
     int color_plane =0;
@@ -476,8 +503,8 @@ void loader::clusterizer(){
             }
         }
     }
-
-//// color check;
+//
+////// color check;
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
 
@@ -493,6 +520,6 @@ void loader::clusterizer(){
 ////    while (!viewer2.wasStopped ())
 ////    {
 ////        viewer2.spinOnce ();
-////    }
+//    }
 
 }
