@@ -70,7 +70,7 @@ image::image(int row, int col){
 //}
 
 ////  integral image with 9 vector
-void image::create_integral_image(const spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud){
+void image::create_integral_image(const std::vector < std::vector < spherical_point > > &depth_image, pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud){
     std::vector <interval_point > row_checked;
     int index;
     for (int i=0; i< ROW; i++){
@@ -122,7 +122,7 @@ void image::create_integral_image(const spherical_point (&depth_image)[ROW][COL]
     }
 }
 
-int check_horizontal(int &left_col, int &right_col, const spherical_point (&depth_image)[ROW][COL], int row,int central_col,int start_col,int end_col, float reference_depth){
+int check_horizontal(int &left_col, int &right_col, const std::vector < std::vector < spherical_point > > &depth_image, int row,int central_col,int start_col,int end_col, float reference_depth){
     int found_valid_element =0;
     left_col = -1;
     right_col = -1;
@@ -163,7 +163,7 @@ int check_horizontal(int &left_col, int &right_col, const spherical_point (&dept
     }
     return found_valid_element;
 }
-int check_vertical(int &up_row, int &bottom_row, const spherical_point (&depth_image)[ROW][COL], int central_row,int col,int start_row,int end_row, float reference_depth){
+int check_vertical(int &up_row, int &bottom_row, const std::vector < std::vector < spherical_point > > &depth_image, int central_row,int col,int start_row,int end_row, float reference_depth){
     up_row = -1;
     bottom_row =-1;
     int found_valid_element =0;
@@ -219,7 +219,7 @@ int imin(int a, int b){
     }
 
 }
-void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]) {
+void image::create_interval_image(const std::vector < std::vector < spherical_point > > &depth_image) {
 
     for(int i=0; i<ROW; i++){
         for (int j=0; j<COL; j++){
@@ -268,7 +268,7 @@ void image::create_interval_image(const spherical_point (&depth_image)[ROW][COL]
         }
     }
 }
-pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud) {
+pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(std::vector < std::vector < spherical_point > > &depth_image, pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud) {
 //    clock_t begin, end;
 //    begin = clock();
 //    std::cout << "star_normal" << std:: endl;

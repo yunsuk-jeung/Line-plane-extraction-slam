@@ -8,8 +8,8 @@ class loader
 {
 public:
     loader();
-    void txt2pcl(std::string fileName);
-    void csv2pcl(std::string fileName);
+    void txt2pcl(const std::string &fileName, const int &num);
+    void csv2pcl(const std::string &fileName, const int &num);
     void viewer();
     void remove_flat_region();
     void create_depth_image();
@@ -18,10 +18,10 @@ public:
     void clusterizer();
 
 
-
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud;
-    spherical_point depth_image[ROW][COL];
+//    spherical_point depth_image[ROW][COL];
+    std::vector < std::vector < spherical_point > > depth_image;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud2;
     pcl::PointCloud<pcl::Normal>::Ptr normal_cloud;

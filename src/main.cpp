@@ -7,6 +7,7 @@
 #include "image.h"
 #include "odom.h"
 #include <omp.h>
+#include "feature.h"
 
 int main (int argc, char** argv)
 {
@@ -16,16 +17,27 @@ int main (int argc, char** argv)
     file_env = home_env + "/workspace/line_plane/src";
     std:: string fileName;
     fileName = file_env + "/bag2csv.csv";
-//
-//
-    loader pre_cloud;
-    pre_cloud.csv2pcl(fileName);
-    pre_cloud.create_depth_image();
-    pre_cloud.remove_flat_region();
-    pre_cloud.create_image();
-    pre_cloud.clusterizer();
 
+      feature pre;
+      pre.get_feature(fileName ,0);
+      pre.get_feature(fileName,1);
 
+//    loader pre_cloud;
+//    pre_cloud.csv2pcl(fileName,0);
+//    pre_cloud.create_depth_image();
+//    pre_cloud.remove_flat_region();
+//    pre_cloud.create_image();
+//    pre_cloud.clusterizer();
+
+//    std::vector < feature_point > Line;
+//    std::vector < feature_point > Plane;
+//
+//    loader cloud;
+//    cloud.csv2pcl(fileName,1);
+//    cloud.create_depth_image();
+//    cloud.remove_flat_region();
+//    cloud.create_depth_image();
+//    cloud.clusterizer();
 
 ////    luck.viewer2();
 

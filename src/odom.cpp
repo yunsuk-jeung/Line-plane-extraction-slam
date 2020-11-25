@@ -102,3 +102,15 @@
 //    x2[8](1) = -2;
 //    x2[8](2) = -2;
 //}
+
+void odom::example(std::string &fileName, int num){
+    std::string line, val;
+    std::ifstream file(fileName.c_str());
+    for (int i=0; i<num; i++){
+        std::getline(file,line);
+    }
+    std::stringstream ss(line);
+    while(std::getline(ss,val,',')){
+        std::cout << val << std::endl;
+    }
+}

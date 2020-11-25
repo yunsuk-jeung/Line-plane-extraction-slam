@@ -1331,6 +1331,33 @@ gtest_main/fast:
 	$(MAKE) $(MAKESILENT) -f gtest/gtest/CMakeFiles/gtest_main.dir/build.make gtest/gtest/CMakeFiles/gtest_main.dir/build
 .PHONY : gtest_main/fast
 
+src/feature.o: src/feature.cpp.o
+
+.PHONY : src/feature.o
+
+# target to build an object file
+src/feature.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main_node.dir/build.make CMakeFiles/main_node.dir/src/feature.cpp.o
+.PHONY : src/feature.cpp.o
+
+src/feature.i: src/feature.cpp.i
+
+.PHONY : src/feature.i
+
+# target to preprocess a source file
+src/feature.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main_node.dir/build.make CMakeFiles/main_node.dir/src/feature.cpp.i
+.PHONY : src/feature.cpp.i
+
+src/feature.s: src/feature.cpp.s
+
+.PHONY : src/feature.s
+
+# target to generate assembly for a file
+src/feature.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main_node.dir/build.make CMakeFiles/main_node.dir/src/feature.cpp.s
+.PHONY : src/feature.cpp.s
+
 src/image.o: src/image.cpp.o
 
 .PHONY : src/image.o
@@ -1540,6 +1567,9 @@ help:
 	@echo "... gtest"
 	@echo "... gtest_main"
 	@echo "... main_node"
+	@echo "... src/feature.o"
+	@echo "... src/feature.i"
+	@echo "... src/feature.s"
 	@echo "... src/image.o"
 	@echo "... src/image.i"
 	@echo "... src/image.s"

@@ -94,9 +94,10 @@ struct integral_point{
 class image{
 public:
     image(int row, int col);
-    void create_integral_image(const spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_vertical_cloud);
-    void create_interval_image(const spherical_point (&depth_image)[ROW][COL]);
-    pcl::PointCloud<pcl::Normal>::Ptr get_normal(spherical_point (&depth_image)[ROW][COL], pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud);
+    void create_integral_image(const std::vector < std::vector < spherical_point > > &depth_image, pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_vertical_cloud);
+    void create_interval_image(const std::vector < std::vector < spherical_point > > &depth_image);
+    pcl::PointCloud<pcl::Normal>::Ptr get_normal(std::vector < std::vector < spherical_point > > &depth_image, pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud);
+
 private:
     std::vector < std::vector < interval_point > > interval_image;
 //    std::vector < std::vector < integral_point > > integral_image;
