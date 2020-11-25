@@ -36,7 +36,9 @@ struct feature_point{
     float origin_x;
     float origin_y;
     float origin_z;
-
+    float nx;
+    float ny;
+    float nz;
 };
 
 struct spherical_point{

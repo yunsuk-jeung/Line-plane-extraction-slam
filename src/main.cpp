@@ -20,26 +20,12 @@ int main (int argc, char** argv)
 
       feature pre;
       pre.get_feature(fileName ,0);
-      pre.get_feature(fileName,1);
 
-//    loader pre_cloud;
-//    pre_cloud.csv2pcl(fileName,0);
-//    pre_cloud.create_depth_image();
-//    pre_cloud.remove_flat_region();
-//    pre_cloud.create_image();
-//    pre_cloud.clusterizer();
+      feature present;
+      present.get_feature(fileName,1);
 
-//    std::vector < feature_point > Line;
-//    std::vector < feature_point > Plane;
-//
-//    loader cloud;
-//    cloud.csv2pcl(fileName,1);
-//    cloud.create_depth_image();
-//    cloud.remove_flat_region();
-//    cloud.create_depth_image();
-//    cloud.clusterizer();
-
-////    luck.viewer2();
+      odom exam;
+      exam.example(pre,present);
 
     return (0);
 }

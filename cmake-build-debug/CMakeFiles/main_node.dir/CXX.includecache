@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/yunsuk/workspace/line_plane/src/extract/src/feature.cpp
+feature.h
+/home/yunsuk/workspace/line_plane/src/extract/src/feature.h
+
 /home/yunsuk/workspace/line_plane/src/extract/src/feature.h
 loader.h
 /home/yunsuk/workspace/line_plane/src/extract/src/loader.h
@@ -68,9 +72,13 @@ omp.h
 feature.h
 /home/yunsuk/workspace/line_plane/src/extract/src/feature.h
 
+/home/yunsuk/workspace/line_plane/src/extract/src/odom.cpp
+odom.h
 /home/yunsuk/workspace/line_plane/src/extract/src/odom.h
-image.h
-/home/yunsuk/workspace/line_plane/src/extract/src/image.h
+
+/home/yunsuk/workspace/line_plane/src/extract/src/odom.h
+feature.h
+/home/yunsuk/workspace/line_plane/src/extract/src/feature.h
 
 /usr/include/pcl-1.7/pcl/ModelCoefficients.h
 string

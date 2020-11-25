@@ -15,7 +15,7 @@ public:
     void create_depth_image();
     void create_image();
     void viewer2();
-    void clusterizer();
+    void clusterizer(std::vector < feature_point  > &Line, std::vector <  feature_point  > &Plane);
 
 
 private:
@@ -25,8 +25,7 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr vertical_cloud2;
     pcl::PointCloud<pcl::Normal>::Ptr normal_cloud;
-    std::vector < feature_point > Line;
-    std::vector < feature_point > Plane;
+
 };
 
 

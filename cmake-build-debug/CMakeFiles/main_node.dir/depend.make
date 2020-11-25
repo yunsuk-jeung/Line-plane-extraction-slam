@@ -1729,7 +1729,9 @@ CMakeFiles/main_node.dir/src/main.cpp.o: /usr/local/include/eigen3/Eigen/src/plu
 CMakeFiles/main_node.dir/src/main.cpp.o: /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
 CMakeFiles/main_node.dir/src/main.cpp.o: /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 
+CMakeFiles/main_node.dir/src/odom.cpp.o: ../src/feature.h
 CMakeFiles/main_node.dir/src/odom.cpp.o: ../src/image.h
+CMakeFiles/main_node.dir/src/odom.cpp.o: ../src/loader.h
 CMakeFiles/main_node.dir/src/odom.cpp.o: ../src/odom.cpp
 CMakeFiles/main_node.dir/src/odom.cpp.o: ../src/odom.h
 CMakeFiles/main_node.dir/src/odom.cpp.o: /usr/include/pcl-1.7/pcl/ModelCoefficients.h

@@ -35,7 +35,7 @@ void loader::txt2pcl(const std::string &fileName, const int &num) {
 }
 
 void loader::csv2pcl(const std::string &fileName, const int &num) {
-    std::cout << "csv readed" << std::endl;
+//    std::cout << "csv readed" << std::endl;
     pcl::PointXYZRGB temp;
     std:: ifstream file(fileName.c_str());
     std::string line, val;
@@ -81,7 +81,7 @@ void loader::viewer()
 }
 
 void loader::create_depth_image() {
-    std::cout << "depth_image created" << std::endl;
+//    std::cout << "depth_image created" << std::endl;
     spherical_point temp;
     int size = cloud->points.size();
     float col_resolution = 2 * M_PI / COL;
@@ -124,7 +124,7 @@ void loader::create_depth_image() {
 }
 
 void loader::remove_flat_region(){
-    std::cout << "flat region removed" << std::endl;
+//    std::cout << "flat region removed" << std::endl;
     clock_t begin, end;
     float a;
     float b;
@@ -192,7 +192,7 @@ void loader::remove_flat_region(){
 
 //// call integral_image
 void loader::create_image() {
-    std::cout << "start creating image" << std::endl;
+//    std::cout << "start creating image" << std::endl;
     image integral(ROW+1,COL+1);
 
     integral.create_integral_image(depth_image, vertical_cloud);
@@ -239,7 +239,7 @@ float plane_to_point(float &origin_x,float &origin_y, float &origin_z,float &nx,
     return distance;
 }
 
-void loader::clusterizer(){
+void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  feature_point  > &Plane){
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::Normal>::Ptr temp_normal (new pcl::PointCloud<pcl::Normal>);
@@ -266,7 +266,7 @@ void loader::clusterizer(){
     float nx2;
     float ny2;
     float nz2;
-    std::cout << "start clusterize" << std::endl;
+//    std::cout << "start clusterize" << std::endl;
     ////cluster
     for (int i = 0; i< ROW; i++){
         for (int j=0; j<COL; j++){
@@ -400,6 +400,7 @@ void loader::clusterizer(){
                 float nx = s.eigenvectors().col(2)[0];
                 float ny = s.eigenvectors().col(2)[1];
                 float nz = s.eigenvectors().col(2)[2];
+
                 for (int j =0; j < num; j++){
                 error += line_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
                 }
@@ -443,7 +444,7 @@ void loader::clusterizer(){
     }
 
 
-    std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
+//    std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
 
 //    int color_line =0;
 //    int color_plane =0;

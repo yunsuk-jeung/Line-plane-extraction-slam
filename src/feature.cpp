@@ -7,6 +7,6 @@ void feature::get_feature(std::string &fileName, int num){
     cloud.create_depth_image();
     cloud.remove_flat_region();
     cloud.create_image();
-    cloud.clusterizer();
+    cloud.clusterizer(Line,Plane);
 
 }

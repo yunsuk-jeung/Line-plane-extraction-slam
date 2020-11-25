@@ -1,7 +1,7 @@
 #ifndef odom_h
 #define odom_h
 
-#include "image.h"
+#include "feature.h"
 
 
 Eigen::Matrix3f get_rotation(Eigen::Matrix<float,6,1> &T);
@@ -13,11 +13,13 @@ float get_distance(Eigen::Matrix<float,2,1> &x1, Eigen::Matrix<float,2,1> &Tx2);
 
 class odom{
 public:
-    void example(std::string &fileName, int num);
+    void example(feature &feature_1,feature &feature_2);
 private:
     Eigen::Matrix<float,6,1> pre_T;
     Eigen::Matrix<float,6,1> T;
 
 };
+
+
 
 #endif /* odom_h */
