@@ -11,8 +11,8 @@
 
 int main (int argc, char** argv)
 {
-    clock_t start,end;
-    start = clock();
+//    clock_t start,end;
+//    start = clock();
     std::string home_env;
     std::string file_env;
     home_env = getenv("HOME") ;
@@ -21,17 +21,18 @@ int main (int argc, char** argv)
     fileName = file_env + "/bag2csv.csv";
 
       feature pre;
-      pre.get_feature(fileName ,0);
+      pre.get_feature(fileName ,9);
 
-      feature present;
-      present.get_feature(fileName,1);
-
-
-      odom exam;
-      exam.example(pre,present);
+//      feature present;
+//      present.get_feature(fileName,10);
 
 
-    std::cout << end-start << std::endl;
+//      odom exam;
+//      exam.example(pre,present);
+
+
+//    std::cout << end-start << std::endl;
+
     return (0);
 }
 
