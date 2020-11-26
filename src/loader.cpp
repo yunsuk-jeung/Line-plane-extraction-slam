@@ -407,6 +407,9 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                 error = error/num;
                 if (error < 0.025){
                     found_valid[i] = 1;
+                    origin.nx=nx;
+                    origin.ny=ny;
+                    origin.nz=nz;
                     Line.push_back(origin);
                 }else{
                     if(eigen1/(eigen1+eigen2+eigen3) < PLANE_EIGENVALUE_THRESHOLD){
@@ -419,6 +422,9 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                         }
                         error = error/num;
                         if(error < 0.05){
+                            origin.nx=nx;
+                            origin.ny=ny;
+                            origin.nz=nz;
                             found_valid[i] = 2;
                             Plane.push_back(origin);
                         }
@@ -435,6 +441,9 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                     }
                     error = error/num;
                     if(error < 0.05){
+                        origin.nx=nx;
+                        origin.ny=ny;
+                        origin.nz=nz;
                         found_valid[i] = 2;
                         Plane.push_back(origin);
                     }

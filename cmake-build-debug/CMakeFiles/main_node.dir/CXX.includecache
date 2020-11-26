@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/yunsuk/workspace/line_plane/src/extract/src/feature.cpp
-feature.h
-/home/yunsuk/workspace/line_plane/src/extract/src/feature.h
-
 /home/yunsuk/workspace/line_plane/src/extract/src/feature.h
 loader.h
 /home/yunsuk/workspace/line_plane/src/extract/src/loader.h
@@ -42,10 +38,6 @@ time.h
 omp.h
 -
 
-/home/yunsuk/workspace/line_plane/src/extract/src/loader.cpp
-loader.h
-/home/yunsuk/workspace/line_plane/src/extract/src/loader.h
-
 /home/yunsuk/workspace/line_plane/src/extract/src/loader.h
 image.h
 /home/yunsuk/workspace/line_plane/src/extract/src/image.h
@@ -71,10 +63,6 @@ omp.h
 -
 feature.h
 /home/yunsuk/workspace/line_plane/src/extract/src/feature.h
-
-/home/yunsuk/workspace/line_plane/src/extract/src/odom.cpp
-odom.h
-/home/yunsuk/workspace/line_plane/src/extract/src/odom.h
 
 /home/yunsuk/workspace/line_plane/src/extract/src/odom.h
 feature.h
