@@ -22,17 +22,17 @@
 #define CLOSE_VERTICAL_THRESHOLD 2
 #define FAR_FLAT_REGION_RANGE 0.5
 #define FAR_VERTICAL_THRESHOLD 2
-#define NORMAL_DEPTH_THRESHOLD 0.5
-#define neighbouring_radius 0.2
+#define NORMAL_DEPTH_THRESHOLD 0.3
+#define neighbouring_radius 0.3
 #define INTERVAL_CIRCULAR_LEVELS 2
-#define LINE_EIGENVALUE_THRESHOLD 0.03
+#define LINE_EIGENVALUE_THRESHOLD 0.02
 #define PLANE_EIGENVALUE_THRESHOLD 0.03
-#define CLUSTER_NEIGHBOR_ROW 8
-#define CLUSTER_NEIGHBOR_COL 20
-#define CLUSTER_NEIGHBOR_DISTANCE 1
-#define CLUSTER_NEIGHBOR_ANGLE 0.6
+#define CLUSTER_NEIGHBOR_ROW 4
+#define CLUSTER_NEIGHBOR_COL 10
+#define CLUSTER_NEIGHBOR_DISTANCE 0.3
+#define CLUSTER_NEIGHBOR_ANGLE 0.85
 #define CORRESPONDENCE_DISTANCE_THRESHOLD 0.1
-#define CORRESPONDECE_ANGLE_THRESHOLD 0.9
+#define CORRESPONDENCE_ANGLE_THRESHOLD 0.9
 
 struct feature_point{
     float origin_x;
@@ -82,7 +82,15 @@ struct integral_point{
     double itg_zz;
     int itg_num;
         integral_point(){
-            itg_x=0;
+            itg_x=0;//    pcl::visualization::CloudViewer viewer3("Cloud Viewer");
+//
+//
+//    viewer3.showCloud(temp);
+//
+//    while (!viewer3.wasStopped ())
+//    {
+//
+//    }
             itg_y=0;
             itg_z=0;
             itg_xx=0;

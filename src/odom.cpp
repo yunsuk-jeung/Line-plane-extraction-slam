@@ -46,7 +46,7 @@ int check_correspondence(feature_point &feature1, feature_point & feature2){
     d = sqrt(pow((feature1.origin_x - feature2.origin_x),2) + pow((feature1.origin_y - feature2.origin_y),2) + pow((feature1.origin_z - feature2.origin_z),2));
     theta = feature1.nx * feature2.nx + feature1.ny * feature2.ny + feature1.nz * feature2.nz;
     int found_correspondence;
-    if (d < CORRESPONDENCE_DISTANCE_THRESHOLD && theta > CORRESPONDECE_ANGLE_THRESHOLD){
+    if (d < CORRESPONDENCE_DISTANCE_THRESHOLD && theta > CORRESPONDENCE_ANGLE_THRESHOLD){
         found_correspondence =1;
         return found_correspondence;
     }else{
@@ -106,7 +106,7 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
 
     J.resize(line_size + plane_size, 6);
     d.resize(line_size + plane_size,1) ;
-    int k=0;
+     int k=0;
     for (int i=0;i<line_size; i++){
         if(line_match[i] == -1){
             continue;

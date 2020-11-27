@@ -294,7 +294,7 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(std::vector < std::vector < 
                 num = itg_num[bottom_row][right_col] - itg_num[up_row - 1][right_col] -
                         itg_num[bottom_row][left_col - 1] + itg_num[up_row - 1][left_col - 1];
 //                if (num > 2 && right_col - left_col > 0 && bottom_row-up_row >0) {
-                if (num > 4 ) {
+                if (num > 4 && right_col - left_col > 0 && bottom_row-up_row >0 ) {
 
                     cc(0, 0) = itg_xx[bottom_row][right_col] - itg_xx[up_row - 1][right_col] -
                                itg_xx[bottom_row][left_col - 1] + itg_xx[up_row - 1][left_col - 1];
