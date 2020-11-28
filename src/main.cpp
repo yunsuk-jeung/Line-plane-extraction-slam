@@ -21,14 +21,14 @@ int main (int argc, char** argv)
     fileName = file_env + "/bag2csv.csv";
 
       feature pre;
-      pre.get_feature(fileName ,9);
+      pre.get_feature(fileName ,0);
 
-//      feature present;
-//      present.get_feature(fileName,10);
+      feature present;
+      present.get_feature(fileName,1);
 
 
-//      odom exam;
-//      exam.example(pre,present);
+      odom exam;
+      exam.example(pre,present);
 
 
 //    std::cout << end-start << std::endl;

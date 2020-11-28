@@ -89,7 +89,10 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
 
     Eigen::Matrix<float, Eigen::Dynamic, 6 > J;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > d;
+    Eigen::Matrix<float, Eigen::Dynamic, 1 > next_d;
+
     Eigen::Matrix<float, 6,1 > T;
+    Eigen::Matrix<float, 6,1 > dT;
 
     Eigen::Matrix<float, 3, 1 >  p1;
     Eigen::Matrix<float, 3, 1 >  p2;
@@ -98,15 +101,14 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
     Eigen::Matrix<float, 3, 3 > R;
     Eigen::Matrix<float, 3, 1 > t;
 
-
-    T.setOnes();
-    T = 0.01 * T;
-    R = get_rotation(T);
-    t = get_translation(T);
+    float initial_guess = 0.01;
+    float lambda=10;
 
     J.resize(line_size + plane_size, 6);
     d.resize(line_size + plane_size,1) ;
+    next_d.resize(line_size + plane_size,1) ;
      int k=0;
+     //// pre_d
     for (int i=0;i<line_size; i++){
         if(line_match[i] == -1){
             continue;
@@ -121,7 +123,7 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
         p2(1)=feature_2.Line[line_match[i]].origin_y;
         p2(2)=feature_2.Line[line_match[i]].origin_z;
         d(k) = line_point_distance(u,p1,p2);
-        std::cout << d(k) << std::endl;
+//        std::cout << d(k) << std::endl;
         k++;
 
     }
@@ -140,9 +142,143 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
         p2(1)=feature_2.Plane[plane_match[i]].origin_y;
         p2(2)=feature_2.Plane[plane_match[i]].origin_z;
         d(k) = plane_point_distance(u,p1,p2);
-        std::cout << d(k) << std::endl;
+//        std::cout << d(k) << std::endl;
         k++;
     }
+    //// next_d
+
+    for (int j=0; j<6; j++){
+        T.setZero();
+        T(j)=initial_guess;
+        R = get_rotation(T);
+        t = get_translation(T);
+        k=0;
+        for (int i=0; i<line_size; i++){
+            p1(0)=feature_1.Line[i].origin_x;
+            p1(1)=feature_1.Line[i].origin_y;
+            p1(2)=feature_1.Line[i].origin_z;
+            u(0)=feature_1.Line[i].nx;
+            u(1)=feature_1.Line[i].ny;
+            u(2)=feature_1.Line[i].nz;
+            p2(0)=feature_2.Line[line_match[i]].origin_x;
+            p2(1)=feature_2.Line[line_match[i]].origin_y;
+            p2(2)=feature_2.Line[line_match[i]].origin_z;
+            p2 = R * p2 +t;
+            next_d(k) = line_point_distance(u,p1,p2);
+            J(k,j) = next_d(k) - d(k) / initial_guess;
+            k++;
+
+        }
+        for (int i=0;i<plane_size; i++){
+            if(plane_match[i] == -1){
+                continue;
+            }
+            p1(0)=feature_1.Plane[i].origin_x;
+            p1(1)=feature_1.Plane[i].origin_y;
+            p1(2)=feature_1.Plane[i].origin_z;
+            u(0)=feature_1.Plane[i].nx;
+            u(1)=feature_1.Plane[i].ny;
+            u(2)=feature_1.Plane[i].nz;
+            p2(0)=feature_2.Plane[plane_match[i]].origin_x;
+            p2(1)=feature_2.Plane[plane_match[i]].origin_y;
+            p2(2)=feature_2.Plane[plane_match[i]].origin_z;
+            p2 = R * p2 +t;
+            next_d(k) = plane_point_distance(u,p1,p2);
+            J(k,j) = next_d(k) - d(k) / initial_guess;
+            k++;
+        }
+    }
+    Eigen::Matrix<float , 6, 6> I;
+    I.setZero();
+    for(int i=0; i< 6; i++){
+        I(i,i) =1;
+    }
+    std::cout << "start update" << std::endl;
+    for(int iter=0; iter<10; iter++){
+        Eigen::Matrix<float, 6, 6> C;
+        C = J.transpose() * J +  I * lambda;
+        dT = C.inverse() * J.transpose() * d * -1;
+        T = pre_T + dT;
+        pre_T = T;
+        //// y(p)
+        R = get_rotation(pre_T);
+        t = get_translation(pre_T);
+        k=0;
+        for (int i=0; i<line_size; i++){
+            p1(0)=feature_1.Line[i].origin_x;
+            p1(1)=feature_1.Line[i].origin_y;
+            p1(2)=feature_1.Line[i].origin_z;
+            u(0)=feature_1.Line[i].nx;
+            u(1)=feature_1.Line[i].ny;
+            u(2)=feature_1.Line[i].nz;
+            p2(0)=feature_2.Line[line_match[i]].origin_x;
+            p2(1)=feature_2.Line[line_match[i]].origin_y;
+            p2(2)=feature_2.Line[line_match[i]].origin_z;
+            p2 = R * p2 +t;
+            d(k) = line_point_distance(u,p1,p2);
+            k++;
+
+        }
+        for (int i=0;i<plane_size; i++){
+            if(plane_match[i] == -1){
+                continue;
+            }
+            p1(0)=feature_1.Plane[i].origin_x;
+            p1(1)=feature_1.Plane[i].origin_y;
+            p1(2)=feature_1.Plane[i].origin_z;
+            u(0)=feature_1.Plane[i].nx;
+            u(1)=feature_1.Plane[i].ny;
+            u(2)=feature_1.Plane[i].nz;
+            p2(0)=feature_2.Plane[plane_match[i]].origin_x;
+            p2(1)=feature_2.Plane[plane_match[i]].origin_y;
+            p2(2)=feature_2.Plane[plane_match[i]].origin_z;
+            p2 = R * p2 +t;
+            d(k) = plane_point_distance(u,p1,p2);
+            k++;
+        }
+        ////y(p+h)
+        R = get_rotation(T);
+        t = get_translation(T);
+        k=0;
+        for (int i=0; i<line_size; i++){
+            p1(0)=feature_1.Line[i].origin_x;
+            p1(1)=feature_1.Line[i].origin_y;
+            p1(2)=feature_1.Line[i].origin_z;
+            u(0)=feature_1.Line[i].nx;
+            u(1)=feature_1.Line[i].ny;
+            u(2)=feature_1.Line[i].nz;
+            p2(0)=feature_2.Line[line_match[i]].origin_x;
+            p2(1)=feature_2.Line[line_match[i]].origin_y;
+            p2(2)=feature_2.Line[line_match[i]].origin_z;
+            p2 = R * p2 +t;
+            next_d(k) = line_point_distance(u,p1,p2);
+            k++;
+
+        }
+        for (int i=0;i<plane_size; i++){
+            if(plane_match[i] == -1){
+                continue;
+            }
+            p1(0)=feature_1.Plane[i].origin_x;
+            p1(1)=feature_1.Plane[i].origin_y;
+            p1(2)=feature_1.Plane[i].origin_z;
+            u(0)=feature_1.Plane[i].nx;
+            u(1)=feature_1.Plane[i].ny;
+            u(2)=feature_1.Plane[i].nz;
+            p2(0)=feature_2.Plane[plane_match[i]].origin_x;
+            p2(1)=feature_2.Plane[plane_match[i]].origin_y;
+            p2(2)=feature_2.Plane[plane_match[i]].origin_z;
+            p2 = R * p2 +t;
+            next_d(k) = plane_point_distance(u,p1,p2);
+            k++;
+        }
+        float numer;
+        numer = dT.transpose() * dT;
+        J = J + ((next_d - d) - (J * dT)) * dT.transpose() / numer;
+        std::cout << T.transpose() << std::endl;
+        std::cout << iter << std::endl;
+    }
+
 
 }
 
