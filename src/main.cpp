@@ -21,22 +21,22 @@ int main (int argc, char** argv)
     fileName = file_env + "/bag2csv.csv";
 
       feature pre;
-      pre.get_feature(fileName ,0);
+      pre.get_feature(fileName ,9);
       Eigen::Matrix <float,4,4> SE3;
       SE3.setZero();
       for (int i=0; i<4; i++){
           SE3(i,i)=1;
       }
 
-      for(int i=0; i< 2; i++){
-          feature present;
-          present.get_feature(fileName,i);
+      for(int i=0; i< 1; i++){
+//          feature present;
+//          present.get_feature(fileName,10);
+//
+//          odom exam;
+//          SE3 *= exam.example(pre,present);
+//          pre.swap_feature(present);
 
-          odom exam;
-          SE3 *= exam.example(pre,present);
-          pre.swap_feature(present);
-
-          std::cout << SE3 << std::endl;
+//          std::cout << SE3 << std::endl;
 
       }
 

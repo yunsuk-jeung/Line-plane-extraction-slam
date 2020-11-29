@@ -8,7 +8,7 @@ void feature::get_feature(std::string &fileName, int num){
     cloud.remove_flat_region();
     cloud.create_image();
     cloud.clusterizer(Line,Plane);
-//    cloud.viewer2();
+    cloud.viewer2();
 
 
 }
