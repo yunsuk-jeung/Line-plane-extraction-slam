@@ -12,7 +12,7 @@ void find_match(std::vector<feature_point> &feature_1, std::vector<feature_point
 class odom{
 public:
     odom();
-    void example(feature &feature_1,feature &feature_2);
+    Eigen::Matrix<float,4,4> example(feature &feature_1,feature &feature_2);
 private:
     Eigen::Matrix<float,6,1> T;
 };

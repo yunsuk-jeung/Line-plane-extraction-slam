@@ -556,7 +556,7 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
     }
 
 
-    std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
+//    std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
 //// check with color
 //    int color_line =0;
 //    int color_plane =0;

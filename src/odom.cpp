@@ -1,4 +1,5 @@
 #include "odom.h"
+Eigen::Matrix <float,4,4 > get_SE3(Eigen::Matrix<float,6,1> &T);
 
 Eigen::Matrix3f get_rotation(Eigen::Matrix<float,6,1> &T){
     Eigen::Matrix3f Rz;
@@ -83,7 +84,7 @@ float plane_point_distance(Eigen::Matrix<float,3,1> &u,Eigen::Matrix<float,3,1> 
     dd = fabs(u.transpose() * d) ;
     return dd;
 }
-Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_match, std::vector <int> &plane_match, Eigen::Matrix<float,6,1> &pre_T){
+void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_match, std::vector <int> &plane_match, Eigen::Matrix<float,6,1> &pre_T){
     int line_size =line_match.size();
     int plane_size = plane_match.size();
 
@@ -102,7 +103,7 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
     Eigen::Matrix<float, 3, 1 > t;
 
     float initial_guess = 0.01;
-    float lambda=10;
+    float lambda=100000;
 
     J.resize(line_size + plane_size, 6);
     d.resize(line_size + plane_size,1) ;
@@ -127,7 +128,7 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
         k++;
 
     }
-    std::cout << "line done" << std::endl;
+//    std::cout << "line done" << std::endl;
     for (int i=0;i<plane_size; i++){
         if(plane_match[i] == -1){
             continue;
@@ -193,13 +194,13 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
     for(int i=0; i< 6; i++){
         I(i,i) =1;
     }
-    std::cout << "start update" << std::endl;
-    for(int iter=0; iter<10; iter++){
+//    std::cout << "start update" << std::endl;
+    for(int iter=0; iter<50; iter++){
         Eigen::Matrix<float, 6, 6> C;
         C = J.transpose() * J +  I * lambda;
         dT = C.inverse() * J.transpose() * d * -1;
-        T = pre_T + dT;
         pre_T = T;
+        T = pre_T + dT;
         //// y(p)
         R = get_rotation(pre_T);
         t = get_translation(pre_T);
@@ -275,21 +276,35 @@ Eigen::Matrix<float,6,1> get_SE3(feature &feature_1, feature &feature_2, std::ve
         float numer;
         numer = dT.transpose() * dT;
         J = J + ((next_d - d) - (J * dT)) * dT.transpose() / numer;
-        std::cout << T.transpose() << std::endl;
-        std::cout << iter << std::endl;
     }
-
-
 }
 
 odom::odom(){
     T.setZero();
 }
 
-void odom::example(feature &feature_1,feature &feature_2){
+Eigen::Matrix<float,4,4> odom::example(feature &feature_1,feature &feature_2){
     std::vector < int > line_match;
     std::vector < int > plane_match;
     find_match(feature_1.Line,feature_2.Line,line_match);
     find_match(feature_1.Plane,feature_2.Plane,plane_match);
     get_SE3(feature_1, feature_2,line_match, plane_match, T);
+
+    Eigen::Matrix<float,4,4> SE3;
+    Eigen::Matrix<float, 3, 3 > R;
+    Eigen::Matrix<float, 3, 1 > t;
+    SE3.setZero();
+    R=get_rotation(T);
+    t=get_translation(T);
+    for(int i=0;i <3; i++){
+        for(int j=0;j <3; j++){
+            SE3(i,j) = R(i,j);
+        }
+    }
+    for(int i=0; i<3; i++){
+        SE3(i,3) = t(i);
+    }
+    SE3(3,3) = 1;
+
+    return SE3;
 }

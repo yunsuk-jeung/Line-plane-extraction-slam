@@ -12,3 +12,7 @@ void feature::get_feature(std::string &fileName, int num){
 
 
 }
+void feature::swap_feature(feature &pre_feature){
+    Line.swap(pre_feature.Line);
+    Plane.swap(pre_feature.Plane);
+}
