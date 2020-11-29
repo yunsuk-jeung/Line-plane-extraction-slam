@@ -27,16 +27,13 @@ int main (int argc, char** argv)
       for (int i=0; i<4; i++){
           SE3(i,i)=1;
       }
-
+      
 //      for(int i=0; i< 2; i++){
           feature present;
           present.get_feature(fileName,10);
 
-          odom exam;
-          SE3 *= exam.example(pre,present);
-          pre.swap_feature(present);
 
-          std::cout << SE3 << std::endl;
+//          std::cout << SE3 << std::endl;
 
 //      }
 
