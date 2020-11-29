@@ -103,7 +103,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     Eigen::Matrix<float, 3, 1 > t;
 
     float initial_guess = 0.01;
-    float lambda=100000;
+    float lambda=1000;
 
     J.resize(line_size + plane_size, 6);
     d.resize(line_size + plane_size,1) ;
@@ -195,7 +195,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         I(i,i) =1;
     }
 //    std::cout << "start update" << std::endl;
-    for(int iter=0; iter<50; iter++){
+    for(int iter=0; iter<100; iter++){
         Eigen::Matrix<float, 6, 6> C;
         C = J.transpose() * J +  I * lambda;
         dT = C.inverse() * J.transpose() * d * -1;
