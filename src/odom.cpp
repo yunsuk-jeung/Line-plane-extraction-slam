@@ -87,7 +87,18 @@ float plane_point_distance(Eigen::Matrix<float,3,1> &u,Eigen::Matrix<float,3,1> 
 void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_match, std::vector <int> &plane_match, Eigen::Matrix<float,6,1> &pre_T){
     int line_size =line_match.size();
     int plane_size = plane_match.size();
-
+    int num_d=0;
+    for (int i=0; i< line_size; i++){
+        if(line_match[i] != -1){
+            num_d ++;
+        }
+    }
+    for (int i=0; i< plane_size; i++){
+        if(plane_match[i] != -1){
+            num_d ++;
+        }
+    }
+//    std::cout << num_d << std::endl;
     Eigen::Matrix<float, Eigen::Dynamic, 6 > J;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > d;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > next_d;
@@ -104,10 +115,11 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
 
     float initial_guess = 0.01;
     float lambda=1000;
-
-    J.resize(line_size + plane_size, 6);
-    d.resize(line_size + plane_size,1) ;
-    next_d.resize(line_size + plane_size,1) ;
+//    std::cout << line_size << ' ' << plane_size << std::endl;
+//    std::cout << num_d << std::endl;
+    J.resize(num_d, 6);
+    d.resize(num_d,1) ;
+    next_d.resize(num_d,1) ;
      int k=0;
      //// pre_d
     for (int i=0;i<line_size; i++){
@@ -144,10 +156,12 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         p2(2)=feature_2.Plane[plane_match[i]].origin_z;
         d(k) = plane_point_distance(u,p1,p2);
 //        std::cout << d(k) << std::endl;
+//        std::cout << p1.transpose() << ' ' << p2.transpose() << ' ' << std::endl;
         k++;
     }
-    //// next_d
 
+    //// next_d
+//    std::cout << d.transpose() << std::endl;
     for (int j=0; j<6; j++){
         T.setZero();
         T(j)=initial_guess;
@@ -155,6 +169,9 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         t = get_translation(T);
         k=0;
         for (int i=0; i<line_size; i++){
+            if(line_match[i] == -1){
+                continue;
+            }
             p1(0)=feature_1.Line[i].origin_x;
             p1(1)=feature_1.Line[i].origin_y;
             p1(2)=feature_1.Line[i].origin_z;
@@ -188,6 +205,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             J(k,j) = next_d(k) - d(k) / initial_guess;
             k++;
         }
+//        std::cout << (next_d - d).transpose() << std::endl;
     }
     Eigen::Matrix<float , 6, 6> I;
     I.setZero();
@@ -195,17 +213,26 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         I(i,i) =1;
     }
 //    std::cout << "start update" << std::endl;
-    for(int iter=0; iter<100; iter++){
+    T.setOnes();
+    T= T * initial_guess;
+    for(int iter=0; iter<50; iter++){
         Eigen::Matrix<float, 6, 6> C;
         C = J.transpose() * J +  I * lambda;
         dT = C.inverse() * J.transpose() * d * -1;
-        pre_T = T;
+        if(fabs(dT(0)) < 0.000001 && fabs(dT(1)) < 0.000001 && fabs(dT(2)) < 0.000001
+        && fabs(dT(3)) < 0.000001 && fabs(dT(4)) < 0.000001 && fabs(dT(5)) < 0.000001){
+            return;
+        }
         T = pre_T + dT;
+        pre_T = T;
         //// y(p)
         R = get_rotation(pre_T);
         t = get_translation(pre_T);
         k=0;
         for (int i=0; i<line_size; i++){
+            if(line_match[i] == -1){
+                continue;
+            }
             p1(0)=feature_1.Line[i].origin_x;
             p1(1)=feature_1.Line[i].origin_y;
             p1(2)=feature_1.Line[i].origin_z;
@@ -242,6 +269,9 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         t = get_translation(T);
         k=0;
         for (int i=0; i<line_size; i++){
+            if(line_match[i] == -1){
+                continue;
+            }
             p1(0)=feature_1.Line[i].origin_x;
             p1(1)=feature_1.Line[i].origin_y;
             p1(2)=feature_1.Line[i].origin_z;

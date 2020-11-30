@@ -266,7 +266,7 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
     float nx2;
     float ny2;
     float nz2;
-    std::cout << "start clusterize" << std::endl;
+//    std::cout << "start clusterize" << std::endl;
     //cluster
     for (int i = 0; i< ROW; i++){
         for (int j=0; j<COL; j++){
@@ -678,9 +678,9 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
 //            }
 //        }
 //    }
-
+//
 //// color check;
-
+//
 //    pcl::visualization::CloudViewer viewer3("Cloud Viewer");
 //
 //
