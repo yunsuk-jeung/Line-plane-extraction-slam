@@ -113,7 +113,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     Eigen::Matrix<float, 3, 3 > R;
     Eigen::Matrix<float, 3, 1 > t;
 
-    float initial_guess = 0.01;
+    float initial_guess = 0.00001;
     float lambda=1000;
 //    std::cout << line_size << ' ' << plane_size << std::endl;
 //    std::cout << num_d << std::endl;
@@ -205,26 +205,27 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             J(k,j) = next_d(k) - d(k) / initial_guess;
             k++;
         }
-//        std::cout << (next_d - d).transpose() << std::endl;
     }
+    std::cout << J << std::endl;
     Eigen::Matrix<float , 6, 6> I;
     I.setZero();
     for(int i=0; i< 6; i++){
         I(i,i) =1;
     }
 //    std::cout << "start update" << std::endl;
-    T.setOnes();
-    T= T * initial_guess;
-    for(int iter=0; iter<50; iter++){
+    T.setZero();
+    for(int iter=0; iter<1000; iter++){
         Eigen::Matrix<float, 6, 6> C;
         C = J.transpose() * J +  I * lambda;
         dT = C.inverse() * J.transpose() * d * -1;
-        if(fabs(dT(0)) < 0.000001 && fabs(dT(1)) < 0.000001 && fabs(dT(2)) < 0.000001
-        && fabs(dT(3)) < 0.000001 && fabs(dT(4)) < 0.000001 && fabs(dT(5)) < 0.000001){
+        if(fabs(dT(0)) < 0.0000001 && fabs(dT(1)) < 0.0000001 && fabs(dT(2)) < 0.0000001
+        && fabs(dT(3)) < 0.0000001 && fabs(dT(4)) < 0.0000001 && fabs(dT(5)) < 0.0000001){
             return;
         }
-        T = pre_T + dT;
         pre_T = T;
+        T = pre_T + dT;
+//        std::cout << pre_T.transpose() << std::endl;
+//        std::cout << T.transpose() << std::endl;
         //// y(p)
         R = get_rotation(pre_T);
         t = get_translation(pre_T);
