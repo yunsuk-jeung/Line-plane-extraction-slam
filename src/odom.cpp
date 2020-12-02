@@ -98,6 +98,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             num_d ++;
         }
     }
+//    std::cout << num_d<< std::endl;
 //    std::cout << num_d << std::endl;
     Eigen::Matrix<float, Eigen::Dynamic, 6 > J;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > d;
@@ -113,8 +114,8 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     Eigen::Matrix<float, 3, 3 > R;
     Eigen::Matrix<float, 3, 1 > t;
 
-    float initial_guess = 0.00001;
-    float lambda=1000;
+    float initial_guess = 0.0000001;
+    float lambda=100;
 //    std::cout << line_size << ' ' << plane_size << std::endl;
 //    std::cout << num_d << std::endl;
     J.resize(num_d, 6);
@@ -183,7 +184,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             p2(2)=feature_2.Line[line_match[i]].origin_z;
             p2 = R * p2 +t;
             next_d(k) = line_point_distance(u,p1,p2);
-            J(k,j) = next_d(k) - d(k) / initial_guess;
+            J(k,j) =( next_d(k) - d(k)) / initial_guess;
             k++;
 
         }
@@ -202,11 +203,11 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             p2(2)=feature_2.Plane[plane_match[i]].origin_z;
             p2 = R * p2 +t;
             next_d(k) = plane_point_distance(u,p1,p2);
-            J(k,j) = next_d(k) - d(k) / initial_guess;
+            J(k,j) = (next_d(k) - d(k)) / initial_guess;
             k++;
         }
     }
-    std::cout << J << std::endl;
+//    std::cout << J << std::endl;
     Eigen::Matrix<float , 6, 6> I;
     I.setZero();
     for(int i=0; i< 6; i++){

@@ -36,27 +36,28 @@ int main (int argc, char** argv)
 //    std::cout << kk << std::endl;
 
     feature pre;
-    pre.get_feature(fileName ,1);
+    pre.get_feature(fileName ,1280);
     Eigen::Matrix <float,4,4> SE3;
     SE3.setZero();
     for (int i=0; i<4; i++) {
         SE3(i, i) = 1;
     }
       
-    for(int i=0; i< 1; i=i+10){
+    for(int i=1280; i< 1281; i++){
         feature present;
-        present.get_feature(fileName,2);
+        present.get_feature(fileName,i);
         odom A;
         SE3 *= A.example(pre,present);
         pre.swap_feature(present);
         origin = SE3 * point;
-        fprintf(logFp_, "%f,%f,%f\n" , origin(0),origin(1),origin(2));
+//        fprintf(logFp_, "%f,%f,%f\n" , origin(0),origin(1),origin(2));
 
 //        fprintf(logFp_, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" ,
 //                SE3(0,0),SE3(0,1),SE3(0,2),SE3(0,3),
 //                SE3(1,0),SE3(1,1),SE3(1,2),SE3(1,3),
 //                SE3(2,0),SE3(2,1),SE3(2,2),SE3(2,3),
 //                SE3(3,0),SE3(3,1),SE3(3,2),SE3(3,3));
+    std::cout << i << std::endl;
     }
     end = clock();
     std::cout << SE3 << std::endl;
