@@ -84,6 +84,14 @@ float plane_point_distance(Eigen::Matrix<float,3,1> &u,Eigen::Matrix<float,3,1> 
     dd = fabs(u.transpose() * d) ;
     return dd;
 }
+
+void diagonal(Eigen::Matrix<float,Eigen::Dynamic,6> &J, Eigen::Matrix<float,6,6> &H){
+    Eigen::Matrix<float, 6,6> JJ;
+    JJ = J.transpose() * J;
+    for(int i=0;i<6; i++){
+        H(i,i) = JJ(i,i);
+    }
+}
 void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_match, std::vector <int> &plane_match, Eigen::Matrix<float,6,1> &pre_T){
     int line_size =line_match.size();
     int plane_size = plane_match.size();
@@ -105,6 +113,8 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     Eigen::Matrix<float, Eigen::Dynamic, 1 > next_d;
 
     Eigen::Matrix<float, 6,1 > T;
+    Eigen::Matrix<float, 6,1 > temp_pre_T;
+    Eigen::Matrix<float, 6,1 > temp_T;
     Eigen::Matrix<float, 6,1 > dT;
 
     Eigen::Matrix<float, 3, 1 >  p1;
@@ -113,9 +123,11 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     Eigen::Matrix<float, 3, 1 >  u;
     Eigen::Matrix<float, 3, 3 > R;
     Eigen::Matrix<float, 3, 1 > t;
-
-    float initial_guess = 0.0000001;
-    float lambda=100;
+    float identical_matrix_checker = ODOM_IDENTICAL_METRIX;
+    float initial_guess = 0.001;
+    float lambda=ODOM_INITIIAL_LAMBDA;
+    float h_threshold = ODOM_H_THRESHOLD;
+    float nu=2;
 //    std::cout << line_size << ' ' << plane_size << std::endl;
 //    std::cout << num_d << std::endl;
     J.resize(num_d, 6);
@@ -209,24 +221,25 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     }
 //    std::cout << J << std::endl;
     Eigen::Matrix<float , 6, 6> I;
+    Eigen::Matrix<float, 6, 6> H;
     I.setZero();
+    H.setZero();
     for(int i=0; i< 6; i++){
         I(i,i) =1;
     }
-//    std::cout << "start update" << std::endl;
+
     T.setZero();
     for(int iter=0; iter<1000; iter++){
         Eigen::Matrix<float, 6, 6> C;
-        C = J.transpose() * J +  I * lambda;
+        diagonal(J, H);
+        C = J.transpose() * J + lambda * H;
         dT = C.inverse() * J.transpose() * d * -1;
-        if(fabs(dT(0)) < 0.0000001 && fabs(dT(1)) < 0.0000001 && fabs(dT(2)) < 0.0000001
-        && fabs(dT(3)) < 0.0000001 && fabs(dT(4)) < 0.0000001 && fabs(dT(5)) < 0.0000001){
+//        std::cout << dT.transpose() << std::endl;
+        if(fabs(dT(0)) < 0.0000000001 && fabs(dT(1)) < 0.0000000001 && fabs(dT(2)) < 0.0000000001
+        && fabs(dT(3)) < 0.0000000001 && fabs(dT(4)) < 0.0000000001 && fabs(dT(5)) < 0.0000000001){
             return;
         }
-        pre_T = T;
         T = pre_T + dT;
-//        std::cout << pre_T.transpose() << std::endl;
-//        std::cout << T.transpose() << std::endl;
         //// y(p)
         R = get_rotation(pre_T);
         t = get_translation(pre_T);
@@ -305,10 +318,27 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             next_d(k) = plane_point_distance(u,p1,p2);
             k++;
         }
-        float numer;
-        numer = dT.transpose() * dT;
-        J = J + ((next_d - d) - (J * dT)) * dT.transpose() / numer;
+        float jaco_numer;
+        float h;
+        float h_numer;
+        h = d.transpose()*d;
+        h = h- next_d.transpose() * next_d;
+        h_numer = dT.transpose()*(lambda * dT - J.transpose()*d );
+        h = h/h_numer;
+        if(h > h_threshold){
+            pre_T = T;
+            jaco_numer = dT.transpose() * dT;
+            J = J + ((next_d - d) - (J * dT)) * dT.transpose() / jaco_numer;
+            nu=2;
+            std::cout << iter << std::endl;
+            std::cout << next_d.transpose() - d.transpose() << std::endl;
+        }else{
+            lambda = nu * lambda;
+            nu = 4* nu;
+        }
+
     }
+    pre_T = T;
 }
 
 odom::odom(){

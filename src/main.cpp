@@ -27,30 +27,23 @@ int main (int argc, char** argv)
     point.setZero();
     point(3) =1;
     Eigen::Matrix<float,4,1> origin;
-//    std::ifstream file(fileName.c_str());
-//    std::string line;
-//    int kk=0;
-//    while (std::getline(file,line)){
-//        kk++;
-//    }
-//    std::cout << kk << std::endl;
 
     feature pre;
-    pre.get_feature(fileName ,1280);
+    pre.get_feature(fileName ,152);
     Eigen::Matrix <float,4,4> SE3;
     SE3.setZero();
     for (int i=0; i<4; i++) {
         SE3(i, i) = 1;
     }
       
-    for(int i=1280; i< 1281; i++){
+    for(int i=153; i< 154; i++){
         feature present;
         present.get_feature(fileName,i);
         odom A;
         SE3 *= A.example(pre,present);
         pre.swap_feature(present);
         origin = SE3 * point;
-//        fprintf(logFp_, "%f,%f,%f\n" , origin(0),origin(1),origin(2));
+        fprintf(logFp_, "%f,%f,%f\n" , origin(0),origin(1),origin(2));
 
 //        fprintf(logFp_, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" ,
 //                SE3(0,0),SE3(0,1),SE3(0,2),SE3(0,3),
@@ -60,7 +53,7 @@ int main (int argc, char** argv)
     std::cout << i << std::endl;
     }
     end = clock();
-    std::cout << SE3 << std::endl;
+    std::cout << SE3*point << std::endl;
 //    std::cout << (end - start)/CLOCKS_PER_SEC << std::endl;
     return (0);
 }

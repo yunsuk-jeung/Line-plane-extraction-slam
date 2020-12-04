@@ -37,6 +37,8 @@ time.h
 -
 omp.h
 -
+algorithm
+-
 
 /home/yunsuk/workspace/line_plane/src/extract/src/loader.h
 image.h

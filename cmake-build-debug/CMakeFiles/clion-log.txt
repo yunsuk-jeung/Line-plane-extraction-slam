@@ -14,12 +14,9 @@
 -- Found gmock sources under '/usr/src/gmock': gmock will be built
 -- Found PythonInterp: /usr/bin/python2 (found version "2.7.12") 
 -- Using Python nosetests: /usr/bin/nosetests-2.7
--- catkin 0.7.20
+-- catkin 0.7.29
 -- BUILD_SHARED_LIBS is on
 -- Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
--- Found OpenMP_C: -fopenmp  
--- Found OpenMP_CXX: -fopenmp  
--- Found OpenMP: TRUE   
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug

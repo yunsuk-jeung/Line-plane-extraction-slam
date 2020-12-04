@@ -14,7 +14,7 @@
 #include <Eigen/Eigenvalues>
 #include <time.h>
 #include <omp.h>
-
+#include <algorithm>
 #define _USE_MATH_DEFINES
 #define ROW 16
 #define COL 900
@@ -36,6 +36,10 @@
 
 #define CORRESPONDENCE_DISTANCE_THRESHOLD 0.6
 #define CORRESPONDENCE_ANGLE_THRESHOLD 0.7
+
+#define ODOM_INITIIAL_LAMBDA 0.1
+#define ODOM_IDENTICAL_METRIX 0.00000001
+#define ODOM_H_THRESHOLD 0.2
 
 struct feature_point{
     float origin_x;
