@@ -1,25 +1,25 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
-Change Dir: /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp
+Change Dir: /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_e880b/fast && /usr/bin/make  -f CMakeFiles/cmTC_e880b.dir/build.make CMakeFiles/cmTC_e880b.dir/build
-make[1]: Entering directory '/home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_e880b.dir/src.c.o
-/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_e880b.dir/src.c.o   -c /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_e880b
-/opt/clion-2020.2.1/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e880b.dir/link.txt --verbose=1
-/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_e880b.dir/src.c.o  -o cmTC_e880b 
-CMakeFiles/cmTC_e880b.dir/src.c.o: In function `main':
+Run Build Command(s):/usr/bin/make cmTC_ee90b/fast && /usr/bin/make  -f CMakeFiles/cmTC_ee90b.dir/build.make CMakeFiles/cmTC_ee90b.dir/build
+make[1]: Entering directory '/home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_ee90b.dir/src.c.o
+/usr/bin/gcc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_ee90b.dir/src.c.o   -c /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_ee90b
+/opt/clion-2020.2.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ee90b.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_ee90b.dir/src.c.o  -o cmTC_ee90b 
+CMakeFiles/cmTC_ee90b.dir/src.c.o: In function `main':
 src.c:(.text+0x3c): undefined reference to `pthread_create'
 src.c:(.text+0x48): undefined reference to `pthread_detach'
 src.c:(.text+0x54): undefined reference to `pthread_cancel'
 src.c:(.text+0x65): undefined reference to `pthread_join'
 src.c:(.text+0x79): undefined reference to `pthread_atfork'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_e880b.dir/build.make:106: recipe for target 'cmTC_e880b' failed
-make[1]: *** [cmTC_e880b] Error 1
-make[1]: Leaving directory '/home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
-Makefile:141: recipe for target 'cmTC_e880b/fast' failed
-make: *** [cmTC_e880b/fast] Error 2
+CMakeFiles/cmTC_ee90b.dir/build.make:106: recipe for target 'cmTC_ee90b' failed
+make[1]: *** [cmTC_ee90b] Error 1
+make[1]: Leaving directory '/home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
+Makefile:141: recipe for target 'cmTC_ee90b/fast' failed
+make: *** [cmTC_ee90b/fast] Error 2
 
 
 Source file was:
@@ -44,22 +44,22 @@ int main(void)
 }
 
 Determining if the function pthread_create exists in the pthreads failed with the following output:
-Change Dir: /home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp
+Change Dir: /home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_c2ccf/fast && /usr/bin/make  -f CMakeFiles/cmTC_c2ccf.dir/build.make CMakeFiles/cmTC_c2ccf.dir/build
-make[1]: Entering directory '/home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_c2ccf.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_c2ccf.dir/CheckFunctionExists.c.o   -c /opt/clion-2020.2.1/bin/cmake/linux/share/cmake-3.17/Modules/CheckFunctionExists.c
-Linking C executable cmTC_c2ccf
-/opt/clion-2020.2.1/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c2ccf.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_c2ccf.dir/CheckFunctionExists.c.o  -o cmTC_c2ccf  -lpthreads 
+Run Build Command(s):/usr/bin/make cmTC_99d49/fast && /usr/bin/make  -f CMakeFiles/cmTC_99d49.dir/build.make CMakeFiles/cmTC_99d49.dir/build
+make[1]: Entering directory '/home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_99d49.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_99d49.dir/CheckFunctionExists.c.o   -c /opt/clion-2020.2.4/bin/cmake/linux/share/cmake-3.17/Modules/CheckFunctionExists.c
+Linking C executable cmTC_99d49
+/opt/clion-2020.2.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_99d49.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_99d49.dir/CheckFunctionExists.c.o  -o cmTC_99d49  -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_c2ccf.dir/build.make:106: recipe for target 'cmTC_c2ccf' failed
-make[1]: *** [cmTC_c2ccf] Error 1
-make[1]: Leaving directory '/home/yunsuk/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
-Makefile:141: recipe for target 'cmTC_c2ccf/fast' failed
-make: *** [cmTC_c2ccf/fast] Error 2
+CMakeFiles/cmTC_99d49.dir/build.make:106: recipe for target 'cmTC_99d49' failed
+make[1]: *** [cmTC_99d49] Error 1
+make[1]: Leaving directory '/home/yunsuk-jeung/workspace/line_plane/src/extract/cmake-build-debug/CMakeFiles/CMakeTmp'
+Makefile:141: recipe for target 'cmTC_99d49/fast' failed
+make: *** [cmTC_99d49/fast] Error 2
 
 
 
