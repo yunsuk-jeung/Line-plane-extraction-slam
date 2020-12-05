@@ -283,7 +283,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         }
         get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k);
     }
-
+//    std::cout << d.transpose() << std::endl;
     //// next_d
 //    std::cout << d.transpose() << std::endl;
     for (int j=0; j<6; j++){
@@ -320,7 +320,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     }
     std::cout << d.transpose()<< std::endl;
     T.setZero();
-    for(int iter=0; iter<1000; iter++){
+    for(int iter=0; iter<10; iter++){
         Eigen::Matrix<float, 6, 6> C;
         diagonal(J, H);
         C = J.transpose() * J + lambda * H;
@@ -347,6 +347,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             }
             get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k,R,t);
         }
+        std::cout << d.transpose() << std::endl;
         ////y(p+h)
         R = get_rotation(T);
         t = get_translation(T);
@@ -363,7 +364,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             }
             get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], next_d, k,R,t);
         }
-        std::cout << d.transpose() * d << std::endl;
+//        std::cout << d.transpose() * d << std::endl;
         float jaco_numer;
         float h;
         float h_numer;
@@ -377,7 +378,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             jaco_numer = dT.transpose() * dT;
             J = J + ( (next_d - d) - (J * dT) ) * dT.transpose() / jaco_numer;
             nu=2;
-            std::cout << h << ' ' << d.transpose() * d << ' ';
+//            std::cout << h << ' ' << d.transpose() * d << ' ';
             if( (1- pow(2* h-1,3)) > 1/3){
                 lambda = lambda * (1- pow(2* h-1,3));
             }else{
