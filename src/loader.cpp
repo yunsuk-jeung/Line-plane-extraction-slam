@@ -507,6 +507,7 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
             origin.origin_y = origin_y;
             origin.origin_z = origin_z;
 
+
             cov_matrix = cc ;
             cov_matrix -= c * c.transpose() / cloud_index[i].size();
 
@@ -531,6 +532,12 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                     origin.nx=nx;
                     origin.ny=ny;
                     origin.nz=nz;
+                    origin.lc_x = vertical_cloud2->points[cloud_index[i][0]].x;
+                    origin.lc_y = vertical_cloud2->points[cloud_index[i][0]].x;
+                    origin.lc_z = vertical_cloud2->points[cloud_index[i][0]].x;
+                    origin.rc_x = vertical_cloud2->points[cloud_index[i][num-1]].x;
+                    origin.rc_y = vertical_cloud2->points[cloud_index[i][num-1]].x;
+                    origin.rc_z = vertical_cloud2->points[cloud_index[i][num-1]].x;
                     Line.push_back(origin);
                 }else{
                     if(eigen1/(eigen1+eigen2+eigen3) < PLANE_EIGENVALUE_THRESHOLD){
@@ -542,10 +549,16 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                             error += plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
                         }
                         error = error/num;
-                        if(error < 0.2){
+                        if(error < 0.1){
                             origin.nx=nx;
                             origin.ny=ny;
                             origin.nz=nz;
+                            origin.lc_x = vertical_cloud2->points[cloud_index[i][0]].x;
+                            origin.lc_y = vertical_cloud2->points[cloud_index[i][0]].x;
+                            origin.lc_z = vertical_cloud2->points[cloud_index[i][0]].x;
+                            origin.rc_x = vertical_cloud2->points[cloud_index[i][num-1]].x;
+                            origin.rc_y = vertical_cloud2->points[cloud_index[i][num-1]].x;
+                            origin.rc_z = vertical_cloud2->points[cloud_index[i][num-1]].x;
                             found_valid[i] = 2;
                             Plane.push_back(origin);
                         }
@@ -561,10 +574,16 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                         error += plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][j]].x,vertical_cloud2->points[cloud_index[i][j]].y, vertical_cloud2->points[cloud_index[i][j]].z);
                     }
                     error = error/num;
-                    if(error < 0.2){
+                    if(error < 0.1){
                         origin.nx=nx;
                         origin.ny=ny;
                         origin.nz=nz;
+                        origin.lc_x = vertical_cloud2->points[cloud_index[i][0]].x;
+                        origin.lc_y = vertical_cloud2->points[cloud_index[i][0]].x;;
+                        origin.lc_z = vertical_cloud2->points[cloud_index[i][0]].x;;
+                        origin.rc_x = vertical_cloud2->points[cloud_index[i][num-1]].x;;
+                        origin.rc_y = vertical_cloud2->points[cloud_index[i][num-1]].x;;
+                        origin.rc_z = vertical_cloud2->points[cloud_index[i][num-1]].x;;
                         found_valid[i] = 2;
                         Plane.push_back(origin);
                     }
@@ -679,8 +698,8 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
 //        }
 //    }
 //
-//// color check;
-//
+//////// color check;
+////
 //    pcl::visualization::CloudViewer viewer3("Cloud Viewer");
 //
 //
