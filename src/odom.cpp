@@ -318,7 +318,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     for(int i=0; i< 6; i++){
         I(i,i) =1;
     }
-    std::cout << d.transpose()<< std::endl;
+//    std::cout << d.transpose()<< std::endl;
     T.setZero();
     for(int iter=0; iter<10; iter++){
         Eigen::Matrix<float, 6, 6> C;
@@ -332,22 +332,22 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         }
         T = pre_T + dT;
         //// y(p)
-        R = get_rotation(pre_T);
-        t = get_translation(pre_T);
-        k=0;
-        for (int i=0; i<line_size; i++){
-            if(line_match[i] == -1){
-                continue;
-            }
-            get_line_feature_distance(feature_1.Line[i], feature_2.Line[line_match[i]], d, k, R,t);
-        }
-        for (int i=0;i<plane_size; i++){
-            if(plane_match[i] == -1){
-                continue;
-            }
-            get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k,R,t);
-        }
-        std::cout << d.transpose() << std::endl;
+//        R = get_rotation(pre_T);
+//        t = get_translation(pre_T);
+//        k=0;
+//        for (int i=0; i<line_size; i++){
+//            if(line_match[i] == -1){
+//                continue;
+//            }
+//            get_line_feature_distance(feature_1.Line[i], feature_2.Line[line_match[i]], d, k, R,t);
+//        }
+//        for (int i=0;i<plane_size; i++){
+//            if(plane_match[i] == -1){
+//                continue;
+//            }
+//            get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k,R,t);
+//        }
+//        std::cout << d.transpose() << std::endl;
         ////y(p+h)
         R = get_rotation(T);
         t = get_translation(T);
@@ -378,7 +378,8 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             jaco_numer = dT.transpose() * dT;
             J = J + ( (next_d - d) - (J * dT) ) * dT.transpose() / jaco_numer;
             nu=2;
-//            std::cout << h << ' ' << d.transpose() * d << ' ';
+//            std::cout << next_d.transpose()<< ' ';
+            d= next_d;
             if( (1- pow(2* h-1,3)) > 1/3){
                 lambda = lambda * (1- pow(2* h-1,3));
             }else{
@@ -386,7 +387,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             }
         }else{
             lambda = nu * lambda;
-            nu = 1.5* nu;
+            nu = 1.1* nu;
         }
 
     }

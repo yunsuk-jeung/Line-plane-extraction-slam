@@ -29,14 +29,14 @@ int main (int argc, char** argv)
     Eigen::Matrix<float,4,1> origin;
 
     feature pre;
-    pre.get_feature(fileName ,3);
+    pre.get_feature(fileName ,2);
     Eigen::Matrix <float,4,4> SE3;
     SE3.setZero();
     for (int i=0; i<4; i++) {
         SE3(i, i) = 1;
     }
       
-    for(int i=3; i< 4; i++){
+    for(int i=3; i< 1200; i++){
         feature present;
         present.get_feature(fileName,i);
         odom A;
@@ -51,9 +51,10 @@ int main (int argc, char** argv)
 //                SE3(2,0),SE3(2,1),SE3(2,2),SE3(2,3),
 //                SE3(3,0),SE3(3,1),SE3(3,2),SE3(3,3));
 //    std::cout << i << std::endl;
+        std::cout << i <<' ' <<(SE3*point).transpose() << std::endl;
     }
     end = clock();
-    std::cout << SE3*point << std::endl;
+
 //    std::cout << (end - start)/CLOCKS_PER_SEC << std::endl;
     return (0);
 }
