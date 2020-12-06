@@ -276,12 +276,16 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             continue;
         }
         get_line_feature_distance(feature_1.Line[i], feature_2.Line[line_match[i]], d, k);
+        std::cout << feature_1.Line[i].origin_x << feature_1.Line[i].origin_y << feature_1.Line[i].origin_z << std::endl;
+        std::cout << feature_2.Line[line_match[i]].origin_x << feature_2.Line[line_match[i]].origin_y << feature_2.Line[line_match[i]].origin_z <<std::endl;
     }
     for (int i=0;i<plane_size; i++){
         if(plane_match[i] == -1){
             continue;
         }
         get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k);
+        std::cout << feature_1.Plane[i].origin_x << ' ' <<feature_1.Plane[i].origin_y << ' ' <<feature_1.Plane[i].origin_z << std::endl;
+        std::cout << feature_2.Plane[plane_match[i]].origin_x << ' ' <<feature_2.Plane[plane_match[i]].origin_y << ' ' << feature_2.Plane[plane_match[i]].origin_z <<std::endl;
     }
 //    std::cout << d.transpose() << std::endl;
     //// next_d
@@ -378,7 +382,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             jaco_numer = dT.transpose() * dT;
             J = J + ( (next_d - d) - (J * dT) ) * dT.transpose() / jaco_numer;
             nu=2;
-//            std::cout << next_d.transpose()<< ' ';
+//            std::cout << nextud.transpose()<< ' ';
             d= next_d;
             if( (1- pow(2* h-1,3)) > 1/3){
                 lambda = lambda * (1- pow(2* h-1,3));
@@ -389,7 +393,6 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             lambda = nu * lambda;
             nu = 1.1* nu;
         }
-
     }
 
 //    std::cout << pre_T.transpose() << std::endl;
