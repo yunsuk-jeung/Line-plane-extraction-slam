@@ -409,7 +409,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     }
 //    std::cout << d.transpose()<< std::endl;
     T.setZero();
-    for(int iter=0; iter<10; iter++){
+    for(int iter=0; iter<100; iter++){
         Eigen::Matrix<float, 6, 6> C;
         diagonal(J, H);
         C = J.transpose() * J + lambda * H;

@@ -29,14 +29,14 @@ int main (int argc, char** argv)
     Eigen::Matrix<float,4,1> origin;
 
     feature pre;
-    pre.get_feature(fileName ,2);
+    pre.get_feature(fileName ,1);
     Eigen::Matrix <float,4,4> SE3;
     SE3.setZero();
     for (int i=0; i<4; i++) {
         SE3(i, i) = 1;
     }
       
-    for(int i=3; i< 100; i++){
+    for(int i=1; i< 2; i++){
         feature present;
         present.get_feature(fileName,i);
         odom A;

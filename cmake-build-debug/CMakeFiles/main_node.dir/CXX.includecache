@@ -6,17 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/feature.cpp
-feature.h
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/feature.h
-
 /home/yunsuk-jeung/workspace/line_plane/src/extract/src/feature.h
 loader.h
 /home/yunsuk-jeung/workspace/line_plane/src/extract/src/loader.h
-
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/image.cpp
-image.h
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/image.h
 
 /home/yunsuk-jeung/workspace/line_plane/src/extract/src/image.h
 pcl/point_cloud.h
@@ -48,10 +40,6 @@ omp.h
 algorithm
 -
 
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/loader.cpp
-loader.h
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/loader.h
-
 /home/yunsuk-jeung/workspace/line_plane/src/extract/src/loader.h
 image.h
 /home/yunsuk-jeung/workspace/line_plane/src/extract/src/image.h
@@ -77,10 +65,6 @@ omp.h
 -
 feature.h
 /home/yunsuk-jeung/workspace/line_plane/src/extract/src/feature.h
-
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/odom.cpp
-odom.h
-/home/yunsuk-jeung/workspace/line_plane/src/extract/src/odom.h
 
 /home/yunsuk-jeung/workspace/line_plane/src/extract/src/odom.h
 feature.h
