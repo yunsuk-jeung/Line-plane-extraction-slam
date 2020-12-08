@@ -354,6 +354,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k);
     }
 //    std::cout << d.transpose() << std::endl;
+//    std::cout << d.transpose() << std::endl;
 //    //// next_d
 //    for (int j=0; j<6; j++){
 //        T.setZero();
@@ -382,7 +383,6 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
 //    std::cout << J << std::endl;
 //    std::cout << std::endl;
     k=0;
-
     ////new jaco
     for (int i=0;i<line_size; i++){
         if(line_match[i] == -1){
@@ -396,10 +396,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         }
         get_plane_jacobian(feature_1.Plane[i], feature_2.Plane[plane_match[i]], pre_T, J, k);
     }
-//    std::cout << J << std::endl;
-
-//    std::cout << 1111111111 << std::endl;
-
+    std::cout << d.transpose()*d << std::endl;
     Eigen::Matrix<float , 6, 6> I;
     Eigen::Matrix<float, 6, 6> H;
     I.setZero();
@@ -407,15 +404,23 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     for(int i=0; i< 6; i++){
         I(i,i) =1;
     }
-//    std::cout << d.transpose()<< std::endl;
     T.setZero();
-    for(int iter=0; iter<100; iter++){
+//    diagonal(J, H);
+//    float multi=0;
+//    for(int i=0; i<6; i++){
+//        if(H(i,i)>multi){
+//            multi = H(i,i);
+//        }
+//    }
+//    lambda*=multi;
+
+    for(int iter=0; iter<500; iter++){
         Eigen::Matrix<float, 6, 6> C;
         diagonal(J, H);
         C = J.transpose() * J + lambda * H;
         dT = C.inverse() * J.transpose() * d * -1;
-        if(fabs(dT(0)) < 0.0000000001 && fabs(dT(1)) < 0.0000000001 && fabs(dT(2)) < 0.0000000001
-        && fabs(dT(3)) < 0.0000000001 && fabs(dT(4)) < 0.0000000001 && fabs(dT(5)) < 0.0000000001){
+        if(fabs(dT(0)) < 0.00000001 && fabs(dT(1)) < 0.00000001 && fabs(dT(2)) < 0.0000001
+        && fabs(dT(3)) < 0.00000001 && fabs(dT(4)) < 0.00000001 && fabs(dT(5)) < 0.0000001){
 //            std::cout << pre_T.transpose() << std::endl;
             return;
         }
@@ -459,12 +464,11 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         float h_numer;
         h = d.transpose()*d;
         h = h- next_d.transpose() * next_d;
-        h_numer = dT.transpose()*(lambda * H * dT - J.transpose()*d );
+        h_numer = dT.transpose()*(lambda  * dT - J.transpose()*d );
         h = h/h_numer;
 
         if(h > h_threshold){
             pre_T = T;
-
             ////new jaco
             k=0;
             for (int i=0;i<line_size; i++){
@@ -480,8 +484,8 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
                 get_plane_jacobian(feature_1.Plane[i], feature_2.Plane[plane_match[i]], pre_T, J, k);
             }
             nu=2;
-//            std::cout << nextud.transpose()<< ' ';
             d= next_d;
+            std::cout << d.transpose()*d << std::endl;
             if( (1- pow(2* h-1,3)) > 1/3){
                 lambda = lambda * (1- pow(2* h-1,3));
             }else{
@@ -489,7 +493,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             }
         }else{
             lambda = nu * lambda;
-            nu = 1.1* nu;
+            nu = 2;
         }
     }
 

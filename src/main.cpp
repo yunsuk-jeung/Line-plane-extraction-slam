@@ -36,7 +36,7 @@ int main (int argc, char** argv)
         SE3(i, i) = 1;
     }
       
-    for(int i=1; i< 2; i++){
+    for(int i=2; i< 3; i++){
         feature present;
         present.get_feature(fileName,i);
         odom A;
@@ -45,13 +45,7 @@ int main (int argc, char** argv)
         origin = SE3 * point;
         fprintf(logFp_, "%f,%f,%f\n" , origin(0),origin(1),origin(2));
 
-//        fprintf(logFp_, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n" ,
-//                SE3(0,0),SE3(0,1),SE3(0,2),SE3(0,3),
-//                SE3(1,0),SE3(1,1),SE3(1,2),SE3(1,3),
-//                SE3(2,0),SE3(2,1),SE3(2,2),SE3(2,3),
-//                SE3(3,0),SE3(3,1),SE3(3,2),SE3(3,3));
-//    std::cout << i << std::endl;
-        std::cout << i <<' ' <<(SE3*point).transpose() << std::endl;
+        std::cout << i << ':' <<(SE3*point).transpose() << std::endl;
     }
     end = clock();
 
