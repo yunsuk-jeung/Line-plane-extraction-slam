@@ -37,7 +37,7 @@
 #define CORRESPONDENCE_DISTANCE_THRESHOLD 0.2
 #define CORRESPONDENCE_ANGLE_THRESHOLD 0.8
 
-#define ODOM_INITIAL_LAMBDA 1000
+#define ODOM_INITIAL_LAMBDA 0.1
 #define ODOM_IDENTICAL_METRIX 0.00000001
 #define ODOM_H_THRESHOLD 0.001
 
@@ -48,12 +48,6 @@ struct feature_point{
     float nx;
     float ny;
     float nz;
-    float lc_x;
-    float lc_y;
-    float lc_z;
-    float rc_x;
-    float rc_y;
-    float rc_z;
 };
 
 struct spherical_point{

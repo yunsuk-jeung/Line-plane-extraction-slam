@@ -7,12 +7,14 @@ void feature::get_feature(std::string &fileName, int num){
     cloud.create_depth_image();
     cloud.remove_flat_region();
     cloud.create_image();
-    cloud.clusterizer(Line,Plane);
+    cloud.clusterizer(Line,Plane,Line_points,Plane_points);
 //    cloud.viewer2();
 
 
 }
 void feature::swap_feature(feature &pre_feature){
     Line.swap(pre_feature.Line);
+    Line_points.swap(pre_feature.Line_points);
     Plane.swap(pre_feature.Plane);
+    Plane_points.swap(pre_feature.Plane_points);
 }

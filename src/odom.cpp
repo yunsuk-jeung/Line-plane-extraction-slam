@@ -93,7 +93,7 @@ void diagonal(Eigen::Matrix<float,Eigen::Dynamic,6> &J, Eigen::Matrix<float,6,6>
         H(i,i) = JJ(i,i);
     }
 }
-void get_line_feature_distance(feature_point &Line_1, feature_point &Line_2, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k){
+void get_line_feature_distance(feature_point &Line_1, std::vector <float> &Line_1_points, feature_point &Line_2, std::vector <float> &Line_2_points, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k){
     Eigen::Matrix<float, 3, 1 > p1;
     Eigen::Matrix<float, 3, 1 > p2;
     Eigen::Matrix<float, 3, 1 > u;
@@ -104,27 +104,17 @@ void get_line_feature_distance(feature_point &Line_1, feature_point &Line_2, Eig
     u(0)=Line_1.nx;
     u(1)=Line_1.ny;
     u(2)=Line_1.nz;
-    p2(0)=Line_2.origin_x;
-    p2(1)=Line_2.origin_y;
-    p2(2)=Line_2.origin_z;
+    for (int i=0; i< Line_2_points.size(); i=i+3){
+        p2(0)=Line_2_points[i];
+        p2(1)=Line_2_points[i+1];
+        p2(2)=Line_2_points[i+2];
 
-    d(k) = line_point_distance(u,p1,p2);
-    k++;
-
-//    p2(0)=Line_2.lc_x;
-//    p2(1)=Line_2.lc_y;
-//    p2(2)=Line_2.lc_z;
-//    d(k) = line_point_distance(u,p1,p2);
-//    k++;
-//
-//    p2(0)=Line_2.rc_x;
-//    p2(1)=Line_2.rc_y;
-//    p2(2)=Line_2.rc_z;
-//    d(k) = line_point_distance(u,p1,p2);
-//    k++;
+        d(k) = line_point_distance(u,p1,p2);
+        k++;
+    }
 }
 
-void get_line_feature_distance(feature_point &Line_1, feature_point &Line_2, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k, Eigen::Matrix<float,3,3> &R, Eigen::Matrix<float,3,1> &t){
+void get_line_feature_distance(feature_point &Line_1, std::vector <float> &Line_1_points, feature_point &Line_2, std::vector <float> &Line_2_points, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k, Eigen::Matrix<float,3,3> &R, Eigen::Matrix<float,3,1> &t){
     Eigen::Matrix<float, 3, 1 > p1;
     Eigen::Matrix<float, 3, 1 > p2;
     Eigen::Matrix<float, 3, 1 > Tp2;
@@ -137,29 +127,17 @@ void get_line_feature_distance(feature_point &Line_1, feature_point &Line_2, Eig
     u(1)=Line_1.ny;
     u(2)=Line_1.nz;
 
-    p2(0)=Line_2.origin_x;
-    p2(1)=Line_2.origin_y;
-    p2(2)=Line_2.origin_z;
-    p2 = R * p2 +t;
-    d(k) = line_point_distance(u,p1,p2);
-    k++;
-
-//    p2(0)=Line_2.lc_x;
-//    p2(1)=Line_2.lc_y;
-//    p2(2)=Line_2.lc_z;
-//    p2 = R * p2 +t;
-//    d(k) = line_point_distance(u,p1,p2);
-//    k++;
-//
-//    p2(0)=Line_2.rc_x;
-//    p2(1)=Line_2.rc_y;
-//    p2(2)=Line_2.rc_z;
-//    p2 = R * p2 +t;
-//    d(k) = line_point_distance(u,p1,p2);
-//    k++;
+    for (int i=0; i< Line_2_points.size(); i=i+3){
+        p2(0)=Line_2_points[i];
+        p2(1)=Line_2_points[i+1];
+        p2(2)=Line_2_points[i+2];
+        p2 = R * p2 +t;
+        d(k) = line_point_distance(u,p1,p2);
+        k++;
+    }
 }
 
-void get_plane_feature_distance(feature_point &Plane_1, feature_point &Plane_2, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k){
+void get_plane_feature_distance(feature_point &Plane_1, std::vector < float > &Plane_1_points, feature_point &Plane_2, std::vector < float > &Plane_2_points, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k){
     Eigen::Matrix<float, 3, 1 > p1;
     Eigen::Matrix<float, 3, 1 > p2;
     Eigen::Matrix<float, 3, 1 > u;
@@ -172,26 +150,17 @@ void get_plane_feature_distance(feature_point &Plane_1, feature_point &Plane_2, 
     u(1)=Plane_1.ny;
     u(2)=Plane_1.nz;
 
-    p2(0)=Plane_2.origin_x;
-    p2(1)=Plane_2.origin_y;
-    p2(2)=Plane_2.origin_z;
-    d(k) = plane_point_distance(u,p1,p2);
-    k++;
+    for (int i=0; i< Plane_2_points.size(); i=i+3){
+        p2(0)=Plane_2_points[i];
+        p2(1)=Plane_2_points[i+1];
+        p2(2)=Plane_2_points[i+2];
+        d(k) = plane_point_distance(u,p1,p2);
+        k++;
+    }
 
-//    p2(0)=Plane_2.lc_x;
-//    p2(1)=Plane_2.lc_y;
-//    p2(2)=Plane_2.lc_z;
-//    d(k) = plane_point_distance(u,p1,p2);
-//    k++;
-//
-//    p2(0)=Plane_2.rc_x;
-//    p2(1)=Plane_2.rc_y;
-//    p2(2)=Plane_2.rc_z;
-//    d(k) = plane_point_distance(u,p1,p2);
-//    k++;
 }
 
-void get_plane_feature_distance(feature_point &Plane_1, feature_point &Plane_2, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k, Eigen::Matrix<float,3,3> &R, Eigen::Matrix<float,3,1> &t){
+void get_plane_feature_distance(feature_point &Plane_1, std::vector < float > &Plane_1_points, feature_point &Plane_2, std::vector < float > &Plane_2_points, Eigen::Matrix<float, Eigen::Dynamic, 1> &d, int &k, Eigen::Matrix<float,3,3> &R, Eigen::Matrix<float,3,1> &t){
     Eigen::Matrix<float, 3, 1 > p1;
     Eigen::Matrix<float, 3, 1 > p2;
     Eigen::Matrix<float, 3, 1 > Tp2;
@@ -205,29 +174,17 @@ void get_plane_feature_distance(feature_point &Plane_1, feature_point &Plane_2, 
     u(1)=Plane_1.ny;
     u(2)=Plane_1.nz;
 
-    p2(0)=Plane_2.origin_x;
-    p2(1)=Plane_2.origin_y;
-    p2(2)=Plane_2.origin_z;
-    p2 = R * p2 +t;
-    d(k) = plane_point_distance(u,p1,p2);
-    k++;
-
-//    p2(0)=Plane_2.lc_x;
-//    p2(1)=Plane_2.lc_y;
-//    p2(2)=Plane_2.lc_z;
-//    p2 = R * p2 +t;
-//    d(k) = plane_point_istance(u,p1,p2);
-//    k++;
-//
-//    p2(0)=Plane_2.rc_x;
-//    p2(1)=Plane_2.rc_y;
-//    p2(2)=Plane_2.rc_z;
-//    p2 = R * p2 +t;
-//    d(k) = plane_point_distance(u,p1,p2);
-//    k++;
+    for (int i=0; i< Plane_2_points.size(); i=i+3){
+        p2(0)=Plane_2_points[i];
+        p2(1)=Plane_2_points[i+1];
+        p2(2)=Plane_2_points[i+2];
+        p2 = R * p2 +t;
+        d(k) = plane_point_distance(u,p1,p2);
+        k++;
+    }
 }
 
-void get_line_jacobian(feature_point &Line_1, feature_point &Line_2, Eigen::Matrix<float, 6, 1 > &T, Eigen::Matrix<float, Eigen::Dynamic, 6> &J, int &k){
+void get_line_jacobian(feature_point &Line_1, std::vector <float> &Line_1_points, feature_point &Line_2, std::vector <float> &Line_2_points, Eigen::Matrix<float, 6, 1 > &T, Eigen::Matrix<float, Eigen::Dynamic, 6> &J, int &k){
 
     float x1 = Line_1.origin_x;
     float y1 = Line_1.origin_y;
@@ -235,37 +192,45 @@ void get_line_jacobian(feature_point &Line_1, feature_point &Line_2, Eigen::Matr
     float nx = Line_1.nx;
     float ny = Line_1.ny;
     float nz = Line_1.nz;
-    float x2 = Line_2.origin_x;
-    float y2 = Line_2.origin_y;
-    float z2 = Line_2.origin_z;
+
     float tx = T(0);
     float ty = T(1);
     float tz = T(2);
     float r = T(3);
     float p = T(4);
     float w = T(5);
+    float x2;
+    float y2;
+    float z2;
 
-    J(k,0) =       -(2*nz*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) - 2*ny*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))
-                   /(2*pow ( (pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) +     pow(  (nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) +  pow(   (ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))   ,2)      ),(1/2)));
-    J(k,1) =  -(2*nz*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) + 2*nx*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*    pow((  pow(   (ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) + pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2)),(1/2)));
-    J(k,2) =  (2*nx*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) + 2*ny*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*    pow((   pow( (ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) ,2) + pow(  (nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) ,2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) ,2)),(1/2)));
-    J(k,3) =  (2*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)))*(nx*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r)) - nz*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)))) + 2*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))*(ny*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r)) + nz*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)))) + 2*(nx*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w))) + ny*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r))))*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*   pow((    pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) +    pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) + pow( (ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2)),(1/2)));
-    J(k,4) =  -(2*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)))*(nx*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) + nz*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r))) - 2*(ny*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r)) - nx*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w)))*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) + 2*(ny*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) + nz*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w)))*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*  pow((   pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))  ,2) + pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2))  ,(1/2)));
-    J(k,5) =  -(2*(nx*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w)) + ny*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) - 2*nz*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)))*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)) + 2*nz*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w)))/(2*   pow((pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) + pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) ,2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))    ,2)) ,(1/2)));
-    k++;
+    for (int i=0; i< Line_2_points.size(); i=i+3){
+        x2=Line_2_points[i];
+        y2=Line_2_points[i+1];
+        z2=Line_2_points[i+2];
 
+        J(k,0) =       -(2*nz*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) - 2*ny*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))
+                       /(2*pow ( (pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) +     pow(  (nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) +  pow(   (ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))   ,2)      ),(1/2)));
+        J(k,1) =  -(2*nz*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) + 2*nx*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*    pow((  pow(   (ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) + pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2)),(1/2)));
+        J(k,2) =  (2*nx*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) + 2*ny*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*    pow((   pow( (ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) ,2) + pow(  (nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) ,2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) ,2)),(1/2)));
+        J(k,3) =  (2*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)))*(nx*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r)) - nz*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)))) + 2*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))*(ny*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r)) + nz*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)))) + 2*(nx*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w))) + ny*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r))))*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*   pow((    pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) +    pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) + pow( (ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2)),(1/2)));
+        J(k,4) =  -(2*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)))*(nx*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) + nz*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r))) - 2*(ny*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r)) - nx*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w)))*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) + 2*(ny*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) + nz*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w)))*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))))/(2*  pow((   pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))  ,2) + pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))),2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2))  ,(1/2)));
+        J(k,5) =  -(2*(nx*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w)) + ny*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))*(ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))) - 2*nz*(nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)))*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)) + 2*nz*(ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w)))/(2*   pow((pow((ny*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) - nx*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w))),2) + pow((nx*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w))) ,2) + pow((ny*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) - nz*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)))    ,2)) ,(1/2)));
+
+        k++;
+    }
 }
 
-void get_plane_jacobian(feature_point &Plane_1, feature_point &Plane_2, Eigen::Matrix<float, 6, 1 > &T, Eigen::Matrix<float, Eigen::Dynamic, 6> &J, int &k){
+void get_plane_jacobian(feature_point &Plane_1, std::vector < float > &Plane_1_points, feature_point &Plane_2, std::vector < float > &Plane_2_points, Eigen::Matrix<float, 6, 1 > &T, Eigen::Matrix<float, Eigen::Dynamic, 6> &J, int &k){
     float x1 = Plane_1.origin_x;
     float y1 = Plane_1.origin_y;
     float z1 = Plane_1.origin_z;
     float nx = Plane_1.nx;
     float ny = Plane_1.ny;
     float nz = Plane_1.nz;
-    float x2 = Plane_2.origin_x;
-    float y2 = Plane_2.origin_y;
-    float z2 = Plane_2.origin_z;
+
+    float x2;
+    float y2;
+    float z2;
     float tx = T(0);
     float ty = T(1);
     float tz = T(2);
@@ -273,27 +238,31 @@ void get_plane_jacobian(feature_point &Plane_1, feature_point &Plane_2, Eigen::M
     float p = T(4);
     float w = T(5);
 
-    float distance = nz*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) + nx*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) + ny*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w));
-    if (distance >= 0){
-        J(k,0) = nx;
-        J(k,1) = ny;
-        J(k,2) = nz;
-        J(k,3) = nz*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r)) + nx*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r))) - ny*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)));
-        J(k,4) = nx*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r)) - nz*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) + ny*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w));
-        J(k,5) = ny*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w)) - nx*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w));
-        k++;
-    }else{
-        J(k,0) = -nx;
-        J(k,0) =-ny;
-        J(k,0) =-nz;
-        J(k,0) =ny*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w))) - nx*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r))) - nz*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r));
-        J(k,0) =nz*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) - nx*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r)) - ny*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w));
-        J(k,0) =nx*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)) - ny*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w));
-        k++;
+    for (int i=0; i< Plane_2_points.size(); i=i+3){
+        x2=Plane_2_points[i];
+        y2=Plane_2_points[i+1];
+        z2=Plane_2_points[i+2];
+
+        float distance = nz*(tz - z1 - x2*sin(p) + z2*cos(p)*cos(r) + y2*cos(p)*sin(r)) + nx*(tx - x1 - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + x2*cos(p)*cos(w)) + ny*(ty - y1 + y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w));
+
+        if (distance >= 0){
+            J(k,0) = nx;
+            J(k,1) = ny;
+            J(k,2) = nz;
+            J(k,3) = nz*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r)) + nx*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r))) - ny*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)));
+            J(k,4) = nx*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r)) - nz*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) + ny*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w));
+            J(k,5) = ny*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w)) - nx*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w));
+            k++;
+        }else{
+            J(k,0) = -nx;
+            J(k,1) =-ny;
+            J(k,2) =-nz;
+            J(k,3) =ny*(y2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + z2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w))) - nx*(y2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) + z2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r))) - nz*(y2*cos(p)*cos(r) - z2*cos(p)*sin(r));
+            J(k,4) =nz*(x2*cos(p) + z2*cos(r)*sin(p) + y2*sin(p)*sin(r)) - nx*(z2*cos(p)*cos(r)*cos(w) - x2*cos(w)*sin(p) + y2*cos(p)*cos(w)*sin(r)) - ny*(z2*cos(p)*cos(r)*sin(w) - x2*sin(p)*sin(w) + y2*cos(p)*sin(r)*sin(w));
+            J(k,5) =nx*(y2*(cos(r)*cos(w) + sin(p)*sin(r)*sin(w)) - z2*(cos(w)*sin(r) - cos(r)*sin(p)*sin(w)) + x2*cos(p)*sin(w)) - ny*(z2*(sin(r)*sin(w) + cos(r)*cos(w)*sin(p)) - y2*(cos(r)*sin(w) - cos(w)*sin(p)*sin(r)) + x2*cos(p)*cos(w));
+            k++;
+        }
     }
-
-
-
 }
 
 void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_match, std::vector <int> &plane_match, Eigen::Matrix<float,6,1> &pre_T){
@@ -302,18 +271,26 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     int num_d=0;
     for (int i=0; i< line_size; i++){
         if(line_match[i] != -1){
-            num_d ++;
+            num_d += feature_2.Line_points[line_match[i]].size();
         }
     }
-//    std::cout << num_d<< std::endl;
+
+    float line_num=num_d;
+    if(line_num >0){
+        std::cout << "line_exsit" << ' ' ;
+    }
+
     for (int i=0; i< plane_size; i++){
         if(plane_match[i] != -1){
-            num_d ++;
+            num_d += feature_2.Plane_points[plane_match[i]].size();
         }
     }
+    float plane_num=num_d;
+//    std::cout << plane_num << std::endl;
 //    std::cout << num_d<< std::endl;
 //    std::cout << num_d << std::endl;
-//    num_d =3* num_d;
+
+    num_d =num_d/3;
     Eigen::Matrix<float, Eigen::Dynamic, 6 > J;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > d;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > next_d;
@@ -339,21 +316,25 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
     J.resize(num_d, 6);
     d.resize(num_d,1) ;
     next_d.resize(num_d,1) ;
+//    std::cout << num_d << std::endl;
      int k=0;
      //// pre_d
     for (int i=0;i<line_size; i++){
         if(line_match[i] == -1){
             continue;
         }
-        get_line_feature_distance(feature_1.Line[i], feature_2.Line[line_match[i]], d, k);
+        get_line_feature_distance(feature_1.Line[i], feature_1.Line_points[i], feature_2.Line[line_match[i]], feature_2.Line_points[line_match[i]], d, k);
     }
+
     for (int i=0;i<plane_size; i++){
         if(plane_match[i] == -1){
             continue;
         }
-        get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k);
+        get_plane_feature_distance(feature_1.Plane[i], feature_1.Plane_points[i],feature_2.Plane[plane_match[i]], feature_2.Plane_points[plane_match[i]], d, k);
+//        std::cout << d << "asdfasdfasdfasf" << std::endl;
     }
-//    std::cout << d.transpose() << std::endl;
+//    std::cout << d <<std::endl;
+    std::cout << "first distance: " << d.transpose()*d << std::endl;
 //    std::cout << d.transpose() << std::endl;
 //    //// next_d
 //    for (int j=0; j<6; j++){
@@ -388,15 +369,25 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         if(line_match[i] == -1){
             continue;
         }
-        get_line_jacobian(feature_1.Line[i], feature_2.Line[line_match[i]], pre_T, J, k);
+        get_line_jacobian(feature_1.Line[i], feature_1.Line_points[i], feature_2.Line[line_match[i]], feature_2.Line_points[line_match[i]], pre_T, J, k);
     }
     for (int i=0;i<plane_size; i++){
         if(plane_match[i] == -1){
             continue;
         }
-        get_plane_jacobian(feature_1.Plane[i], feature_2.Plane[plane_match[i]], pre_T, J, k);
+        get_plane_jacobian(feature_1.Plane[i], feature_1.Plane_points[i],feature_2.Plane[plane_match[i]], feature_2.Plane_points[plane_match[i]], pre_T, J, k);
     }
-    std::cout << d.transpose()*d << std::endl;
+
+//    std::cout << J.transpose() * J << std::endl;
+
+    float distance = d.transpose()*d;
+
+    if (d.transpose() * d == 0 ){
+        std::cout << "here?" <<std::endl;
+        std::cout  << "delat_distance: "<< distance << std::endl;
+        return;
+    }
+
     Eigen::Matrix<float , 6, 6> I;
     Eigen::Matrix<float, 6, 6> H;
     I.setZero();
@@ -405,43 +396,15 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         I(i,i) =1;
     }
     T.setZero();
-//    diagonal(J, H);
-//    float multi=0;
-//    for(int i=0; i<6; i++){
-//        if(H(i,i)>multi){
-//            multi = H(i,i);
-//        }
-//    }
-//    lambda*=multi;
 
     for(int iter=0; iter<500; iter++){
         Eigen::Matrix<float, 6, 6> C;
         diagonal(J, H);
         C = J.transpose() * J + lambda * H;
         dT = C.inverse() * J.transpose() * d * -1;
-//        if(fabs(dT(0)) < 0.00000001 && fabs(dT(1)) < 0.00000001 && fabs(dT(2)) < 0.0000001
-//        && fabs(dT(3)) < 0.00000001 && fabs(dT(4)) < 0.00000001 && fabs(dT(5)) < 0.0000001){
-////            std::cout << pre_T.transpose() << std::endl;
-//            return;
-//        }
+
         T = pre_T + dT;
         //// y(p)
-//        R = get_rotation(pre_T);
-//        t = get_translation(pre_T);
-//        k=0;
-//        for (int i=0; i<line_size; i++){
-//            if(line_match[i] == -1){
-//                continue;
-//            }
-//            get_line_feature_distance(feature_1.Line[i], feature_2.Line[line_match[i]], d, k, R,t);
-//        }
-//        for (int i=0;i<plane_size; i++){
-//            if(plane_match[i] == -1){
-//                continue;
-//            }
-//            get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], d, k,R,t);
-//        }
-//        std::cout << d.transpose() << std::endl;
         ////y(p+h)
         R = get_rotation(T);
         t = get_translation(T);
@@ -450,15 +413,15 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             if(line_match[i] == -1){
                 continue;
             }
-            get_line_feature_distance(feature_1.Line[i], feature_2.Line[line_match[i]], next_d, k, R,t);
+            get_line_feature_distance(feature_1.Line[i], feature_1.Line_points[i], feature_2.Line[line_match[i]], feature_2.Line_points[line_match[i]], next_d, k, R,t);
         }
         for (int i=0;i<plane_size; i++){
             if(plane_match[i] == -1){
                 continue;
             }
-            get_plane_feature_distance(feature_1.Plane[i], feature_2.Plane[plane_match[i]], next_d, k,R,t);
+            get_plane_feature_distance(feature_1.Plane[i], feature_1.Plane_points[i],feature_2.Plane[plane_match[i]], feature_2.Plane_points[plane_match[i]], next_d, k,R,t);
         }
-//        std::cout << d.transpose() * d << std::endl;
+
         float jaco_numer;
         float h;
         float h_numer;
@@ -475,28 +438,30 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
                 if(line_match[i] == -1){
                     continue;
                 }
-                get_line_jacobian(feature_1.Line[i], feature_2.Line[line_match[i]], pre_T, J, k);
+                get_line_jacobian(feature_1.Line[i], feature_1.Line_points[i], feature_2.Line[line_match[i]], feature_2.Line_points[line_match[i]], pre_T, J, k);
             }
             for (int i=0;i<plane_size; i++){
                 if(plane_match[i] == -1){
                     continue;
                 }
-                get_plane_jacobian(feature_1.Plane[i], feature_2.Plane[plane_match[i]], pre_T, J, k);
+                get_plane_jacobian(feature_1.Plane[i], feature_1.Plane_points[i],feature_2.Plane[plane_match[i]], feature_2.Plane_points[plane_match[i]], pre_T, J, k);
             }
             nu=2;
             d= next_d;
-            std::cout << k << ' '<< lambda << d.transpose()*d << std::endl;
             if( (1- pow(2* h-1,3)) > 1/3){
-//                lambda = lambda * (1- pow(2* h-1,3));
+                lambda = lambda * (1- pow(2* h-1,3));
             }else{
-//                lambda = lambda/3;
+                lambda = lambda/3;
             }
         }else{
-//            lambda = nu * lambda;
-//            nu = 2;
+            lambda = nu * lambda;
+            nu = 2;
         }
     }
 
+    float distance2;
+    distance2 = d.transpose()*d;
+    std::cout  << "delat_distance: "<< -distance + distance2 << std::endl;
     std::cout << pre_T.transpose() << std::endl;
 }
 

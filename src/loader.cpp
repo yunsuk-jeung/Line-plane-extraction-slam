@@ -239,7 +239,7 @@ float plane_to_point(float &origin_x,float &origin_y, float &origin_z,float &nx,
     return distance;
 }
 
-void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  feature_point  > &Plane){
+void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  feature_point  > &Plane, std::vector < std::vector <float > > &Line_points, std::vector < std::vector <float> > &Plane_points){
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::Normal>::Ptr temp_normal (new pcl::PointCloud<pcl::Normal>);
@@ -528,17 +528,25 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                 }
                 error = error/num;
                 if (error < 0.04){
+
                     found_valid[i] = 1;
                     origin.nx=nx;
                     origin.ny=ny;
                     origin.nz=nz;
-                    origin.lc_x = origin.origin_x + nx;
-                    origin.lc_y = origin.origin_y + ny;
-                    origin.lc_z = origin.origin_z + nz;
-                    origin.rc_x = origin.origin_x - nx;
-                    origin.rc_y = origin.origin_y - ny;
-                    origin.rc_z = origin.origin_z - nz;
                     Line.push_back(origin);
+                    std::vector <float > points;
+                    points.push_back(origin.origin_x);
+                    points.push_back(origin.origin_y);
+                    points.push_back(origin.origin_z);
+                    points.push_back(origin.origin_x + nx);
+                    points.push_back(origin.origin_y + ny);
+                    points.push_back(origin.origin_z + nz);
+                    points.push_back(origin.origin_x - nx);
+                    points.push_back(origin.origin_y - ny);
+                    points.push_back(origin.origin_z - nz);
+                    Line_points.push_back(points);
+                    points.clear();
+
                 }else{
                     if(eigen1/(eigen1+eigen2+eigen3) < PLANE_EIGENVALUE_THRESHOLD){
                         float nx = s.eigenvectors().col(0)[0];
@@ -550,6 +558,7 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                         }
                         error = error/num;
                         if(error < 0.1){
+                            found_valid[i] = 2;
                             float nx1 = s.eigenvectors().col(1)[0];
                             float ny1 = s.eigenvectors().col(1)[1];
                             float nz1 = s.eigenvectors().col(1)[2];
@@ -559,14 +568,27 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                             origin.nx=nx;
                             origin.ny=ny;
                             origin.nz=nz;
-                            origin.lc_x = origin.origin_x + nx1;
-                            origin.lc_y = origin.origin_y + ny1;
-                            origin.lc_z = origin.origin_z + nz1;
-                            origin.rc_x = origin.origin_x + nx2;
-                            origin.rc_y = origin.origin_y + ny2;
-                            origin.rc_z = origin.origin_z + nz2;
-                            found_valid[i] = 2;
+
                             Plane.push_back(origin);
+
+                            std::vector <float > points;
+                            points.push_back(origin.origin_x);
+                            points.push_back(origin.origin_y);
+                            points.push_back(origin.origin_z);
+                            points.push_back(origin.origin_x + nx1);
+                            points.push_back(origin.origin_y + ny1);
+                            points.push_back(origin.origin_z + nz1);
+                            points.push_back(origin.origin_x + nx2);
+                            points.push_back(origin.origin_y + ny2);
+                            points.push_back(origin.origin_z + nz2);
+                            points.push_back(origin.origin_x - nx1);
+                            points.push_back(origin.origin_y - ny1);
+                            points.push_back(origin.origin_z - nz1);
+                            points.push_back(origin.origin_x - nx2);
+                            points.push_back(origin.origin_y - ny2);
+                            points.push_back(origin.origin_z - nz2);
+                            Plane_points.push_back(points);
+                            points.clear();
                         }
                     }
                 }
@@ -590,14 +612,26 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
                         origin.nx=nx;
                         origin.ny=ny;
                         origin.nz=nz;
-                        origin.lc_x = origin.origin_x + nx1;
-                        origin.lc_y = origin.origin_y + ny1;
-                        origin.lc_z = origin.origin_z + nz1;
-                        origin.rc_x = origin.origin_x + nx2;
-                        origin.rc_y = origin.origin_y + ny2;
-                        origin.rc_z = origin.origin_z + nz2;
                         found_valid[i] = 2;
                         Plane.push_back(origin);
+                        std::vector <float > points;
+                        points.push_back(origin.origin_x);
+                        points.push_back(origin.origin_y);
+                        points.push_back(origin.origin_z);
+                        points.push_back(origin.origin_x + nx1);
+                        points.push_back(origin.origin_y + ny1);
+                        points.push_back(origin.origin_z + nz1);
+                        points.push_back(origin.origin_x + nx2);
+                        points.push_back(origin.origin_y + ny2);
+                        points.push_back(origin.origin_z + nz2);
+                        points.push_back(origin.origin_x - nx1);
+                        points.push_back(origin.origin_y - ny1);
+                        points.push_back(origin.origin_z - nz1);
+                        points.push_back(origin.origin_x - nx2);
+                        points.push_back(origin.origin_y - ny2);
+                        points.push_back(origin.origin_z - nz2);
+                        Plane_points.push_back(points);
+                        points.clear();
 //                      float e1= plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][0]].x,vertical_cloud2->points[cloud_index[i][0]].y, vertical_cloud2->points[cloud_index[i][0]].z);
 //                        std::cout << i << ' ' << "error: " << e1 << std::endl;
                     }
@@ -609,120 +643,120 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
 
 //    std::cout << Line.size() << ' ' <<Plane.size() << std::endl;
 //// check with color
-//    int color_line =0;
-//    int color_plane =0;
-//    for (int i=0; i < cloud_index.size(); i++){
-//        if (found_valid[i] == 1){
-//            if (color_line % 3 == 0 ){
-//               for (int j=0; j< cloud_index[i].size(); j++){
-//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-//                    temp_point.r = 255;
-//                    temp_point.g = 0;
-//                    temp_point.b = 0;
-//                    temp->points.push_back(temp_point);
-//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-//                    temp_normal->points.push_back(temp_normal_point);
-//                }
-//               color_line ++;
-//            }else if (color_line % 3 == 1 ){
-//                    for (int j=0; j< cloud_index[i].size(); j++){
-//                        temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-//                        temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-//                        temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-//                        temp_point.r = 255;
-//                        temp_point.g = 255;
-//                        temp_point.b = 0;
-//                        temp->points.push_back(temp_point);
-//                        temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-//                        temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-//                        temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-//                        temp_normal->points.push_back(temp_normal_point);
-//                    }
-//                    color_line ++;
-//            }else{
-//                for (int j=0; j< cloud_index[i].size(); j++){
-//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-//                    temp_point.r = 0;
-//                    temp_point.g = 255;
-//                    temp_point.b = 0;
-//                    temp->points.push_back(temp_point);
-//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-//                    temp_normal->points.push_back(temp_normal_point);
-//                }
-//                color_line ++;
-//            }
+    int color_line =0;
+    int color_plane =0;
+    for (int i=0; i < cloud_index.size(); i++){
+        if (found_valid[i] == 1){
+            if (color_line % 3 == 0 ){
+               for (int j=0; j< cloud_index[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 255;
+                    temp_point.g = 0;
+                    temp_point.b = 0;
+                    temp->points.push_back(temp_point);
+                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                    temp_normal->points.push_back(temp_normal_point);
+                }
+               color_line ++;
+            }else if (color_line % 3 == 1 ){
+                    for (int j=0; j< cloud_index[i].size(); j++){
+                        temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                        temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                        temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                        temp_point.r = 255;
+                        temp_point.g = 255;
+                        temp_point.b = 0;
+                        temp->points.push_back(temp_point);
+                        temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                        temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                        temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                        temp_normal->points.push_back(temp_normal_point);
+                    }
+                    color_line ++;
+            }else{
+                for (int j=0; j< cloud_index[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 0;
+                    temp_point.g = 255;
+                    temp_point.b = 0;
+                    temp->points.push_back(temp_point);
+                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                    temp_normal->points.push_back(temp_normal_point);
+                }
+                color_line ++;
+            }
+
+
+        } else if (found_valid[i] == 2){
+            if (color_plane % 3 == 0 ){
+                for (int j=0; j< cloud_index[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 0;
+                    temp_point.g = 0;
+                    temp_point.b = 255;
+                    temp->points.push_back(temp_point);
+                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                    temp_normal->points.push_back(temp_normal_point);
+                }
+                color_plane ++;
+            }else if(color_plane % 3 == 1){
+                for (int j=0; j< cloud_index[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 0;
+                    temp_point.g = 255;
+                    temp_point.b = 255;
+                    temp->points.push_back(temp_point);
+                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                    temp_normal->points.push_back(temp_normal_point);
+                }
+                color_plane ++;
+            }
+            else{
+                for (int j=0; j< cloud_index[i].size(); j++){
+                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
+                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
+                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
+                    temp_point.r = 255;
+                    temp_point.g = 255;
+                    temp_point.b = 255;
+                    temp->points.push_back(temp_point);
+                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
+                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
+                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
+                    temp_normal->points.push_back(temp_normal_point);
+                }
+                color_plane ++;
+            }
+        }
+    }
+
+////// color check;
 //
-//
-//        } else if (found_valid[i] == 2){
-//            if (color_plane % 3 == 0 ){
-//                for (int j=0; j< cloud_index[i].size(); j++){
-//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-//                    temp_point.r = 0;
-//                    temp_point.g = 0;
-//                    temp_point.b = 255;
-//                    temp->points.push_back(temp_point);
-//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-//                    temp_normal->points.push_back(temp_normal_point);
-//                }
-//                color_plane ++;
-//            }else if(color_plane % 3 == 1){
-//                for (int j=0; j< cloud_index[i].size(); j++){
-//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-//                    temp_point.r = 0;
-//                    temp_point.g = 255;
-//                    temp_point.b = 255;
-//                    temp->points.push_back(temp_point);
-//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-//                    temp_normal->points.push_back(temp_normal_point);
-//                }
-//                color_plane ++;
-//            }
-//            else{
-//                for (int j=0; j< cloud_index[i].size(); j++){
-//                    temp_point.x = vertical_cloud2->points[cloud_index[i][j]].x;
-//                    temp_point.y = vertical_cloud2->points[cloud_index[i][j]].y;
-//                    temp_point.z = vertical_cloud2->points[cloud_index[i][j]].z;
-//                    temp_point.r = 255;
-//                    temp_point.g = 255;
-//                    temp_point.b = 255;
-//                    temp->points.push_back(temp_point);
-//                    temp_normal_point.normal_x = normal_cloud->points[cloud_index[i][j]].normal_x;
-//                    temp_normal_point.normal_y = normal_cloud->points[cloud_index[i][j]].normal_y;
-//                    temp_normal_point.normal_z = normal_cloud->points[cloud_index[i][j]].normal_z;
-//                    temp_normal->points.push_back(temp_normal_point);
-//                }
-//                color_plane ++;
-//            }
-//        }
-//    }
-//
-//////// color check;
-////
-//    pcl::visualization::CloudViewer viewer3("Cloud Viewer");
-//
-//
-//    viewer3.showCloud(temp);
-//
-//    while (!viewer3.wasStopped ())
-//    {
-//
-//    }
+    pcl::visualization::CloudViewer viewer3("Cloud Viewer");
+
+
+    viewer3.showCloud(temp);
+
+    while (!viewer3.wasStopped ())
+    {
+
+    }
 
 //    pcl::visualization::PCLVisualizer viewer2("pcl viewer");
 //
