@@ -45,7 +45,7 @@ Eigen::Matrix<float,3,1> get_translation(Eigen::Matrix<float,6,1> &T){
 int check_correspondence(feature_point &feature1, feature_point & feature2){
     float d,theta;
     d = sqrt(pow((feature1.origin_x - feature2.origin_x),2) + pow((feature1.origin_y - feature2.origin_y),2) + pow((feature1.origin_z - feature2.origin_z),2));
-    theta = feature1.nx * feature2.nx + feature1.ny * feature2.ny + feature1.nz * feature2.nz;
+    theta = fabs(feature1.nx * feature2.nx + feature1.ny * feature2.ny + feature1.nz * feature2.nz);
     int found_correspondence;
     if (d < CORRESPONDENCE_DISTANCE_THRESHOLD && theta > CORRESPONDENCE_ANGLE_THRESHOLD){
         found_correspondence =1;
@@ -419,11 +419,11 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         diagonal(J, H);
         C = J.transpose() * J + lambda * H;
         dT = C.inverse() * J.transpose() * d * -1;
-        if(fabs(dT(0)) < 0.00000001 && fabs(dT(1)) < 0.00000001 && fabs(dT(2)) < 0.0000001
-        && fabs(dT(3)) < 0.00000001 && fabs(dT(4)) < 0.00000001 && fabs(dT(5)) < 0.0000001){
-//            std::cout << pre_T.transpose() << std::endl;
-            return;
-        }
+//        if(fabs(dT(0)) < 0.00000001 && fabs(dT(1)) < 0.00000001 && fabs(dT(2)) < 0.0000001
+//        && fabs(dT(3)) < 0.00000001 && fabs(dT(4)) < 0.00000001 && fabs(dT(5)) < 0.0000001){
+////            std::cout << pre_T.transpose() << std::endl;
+//            return;
+//        }
         T = pre_T + dT;
         //// y(p)
 //        R = get_rotation(pre_T);
@@ -464,7 +464,7 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         float h_numer;
         h = d.transpose()*d;
         h = h- next_d.transpose() * next_d;
-        h_numer = dT.transpose()*(lambda  * dT - J.transpose()*d );
+        h_numer = dT.transpose()*(lambda * H * dT - J.transpose()*d );
         h = h/h_numer;
 
         if(h > h_threshold){
@@ -485,19 +485,19 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
             }
             nu=2;
             d= next_d;
-            std::cout << d.transpose()*d << std::endl;
+            std::cout << k << ' '<< lambda << d.transpose()*d << std::endl;
             if( (1- pow(2* h-1,3)) > 1/3){
-                lambda = lambda * (1- pow(2* h-1,3));
+//                lambda = lambda * (1- pow(2* h-1,3));
             }else{
-                lambda = lambda/3;
+//                lambda = lambda/3;
             }
         }else{
-            lambda = nu * lambda;
-            nu = 2;
+//            lambda = nu * lambda;
+//            nu = 2;
         }
     }
 
-//    std::cout << pre_T.transpose() << std::endl;
+    std::cout << pre_T.transpose() << std::endl;
 }
 
 odom::odom(){

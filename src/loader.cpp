@@ -466,7 +466,7 @@ void loader::clusterizer(std::vector < feature_point  > &Line, std::vector <  fe
     for (int i=0; i< cloud_index.size(); i++){
         int num = cloud_index[i].size();
 
-        if (num > 20){
+        if (num > 30){
             cx=0;
             cy=0;
             cz=0;
