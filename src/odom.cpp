@@ -334,7 +334,9 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
 //        std::cout << d << "asdfasdfasdfasf" << std::endl;
     }
 //    std::cout << d <<std::endl;
-    std::cout << "first distance: " << d.transpose()*d << std::endl;
+    std::cout << "matched feature #: " << num_d/5 << std::endl;
+    float total_d = d.transpose() * d;
+    std::cout << "first distance: " << total_d << std::endl;
 //    std::cout << d.transpose() << std::endl;
 //    //// next_d
 //    for (int j=0; j<6; j++){
