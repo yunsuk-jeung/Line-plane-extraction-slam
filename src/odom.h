@@ -4,6 +4,7 @@
 #include "feature.h"
 
 
+
 Eigen::Matrix3f get_rotation(Eigen::Matrix<float,6,1> &T);
 Eigen::Matrix<float,3,1> get_translation(Eigen::Matrix<float,6,1> &T);
 int check_correspondence(feature_point &feature1, feature_point & feature2);
