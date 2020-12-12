@@ -573,6 +573,11 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                         }
                         error = error/num;
                         if(error < 0.1){
+                            if(nx * origin_x + ny*origin_y + nz*origin_z >= 0){
+                                nx = -nx;
+                                ny = -ny;
+                                nz = -nz;
+                            }
                             found_valid[i] = 2;
                             float nx1 = s.eigenvectors().col(1)[0];
                             float ny1 = s.eigenvectors().col(1)[1];
@@ -609,18 +614,18 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                             points.push_back(origin.origin_x);
                             points.push_back(origin.origin_y);
                             points.push_back(origin.origin_z);
-                            points.push_back(origin.origin_x + nx1);
-                            points.push_back(origin.origin_y + ny1);
-                            points.push_back(origin.origin_z + nz1);
-                            points.push_back(origin.origin_x + nx2);
-                            points.push_back(origin.origin_y + ny2);
-                            points.push_back(origin.origin_z + nz2);
-                            points.push_back(origin.origin_x - nx1);
-                            points.push_back(origin.origin_y - ny1);
-                            points.push_back(origin.origin_z - nz1);
-                            points.push_back(origin.origin_x - nx2);
-                            points.push_back(origin.origin_y - ny2);
-                            points.push_back(origin.origin_z - nz2);
+//                            points.push_back(origin.origin_x + 2 * nx1);
+//                            points.push_back(origin.origin_y + 2 * ny1);
+//                            points.push_back(origin.origin_z + 2 * nz1);
+//                            points.push_back(origin.origin_x + 2 * nx2);
+//                            points.push_back(origin.origin_y + 2 * ny2);
+//                            points.push_back(origin.origin_z + 2 * nz2);
+//                            points.push_back(origin.origin_x - 2 * nx1);
+//                            points.push_back(origin.origin_y - 2 * ny1);
+//                            points.push_back(origin.origin_z - 2 * nz1);
+//                            points.push_back(origin.origin_x - 2 * nx2);
+//                            points.push_back(origin.origin_y - 2 * ny2);
+//                            points.push_back(origin.origin_z - 2 * nz2);
                             Plane_points.push_back(points);
                             points.clear();
                         }
@@ -637,6 +642,11 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                     }
                     error = error/num;
                     if(error < 0.1){
+                        if(nx * origin_x + ny*origin_y + nz*origin_z >= 0){
+                            nx = -nx;
+                            ny = -ny;
+                            nz = -nz;
+                        }
                         float nx1 = s.eigenvectors().col(1)[0];
                         float ny1 = s.eigenvectors().col(1)[1];
                         float nz1 = s.eigenvectors().col(1)[2];
@@ -670,18 +680,18 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                         points.push_back(origin.origin_x);
                         points.push_back(origin.origin_y);
                         points.push_back(origin.origin_z);
-                        points.push_back(origin.origin_x + nx1);
-                        points.push_back(origin.origin_y + ny1);
-                        points.push_back(origin.origin_z + nz1);
-                        points.push_back(origin.origin_x + nx2);
-                        points.push_back(origin.origin_y + ny2);
-                        points.push_back(origin.origin_z + nz2);
-                        points.push_back(origin.origin_x - nx1);
-                        points.push_back(origin.origin_y - ny1);
-                        points.push_back(origin.origin_z - nz1);
-                        points.push_back(origin.origin_x - nx2);
-                        points.push_back(origin.origin_y - ny2);
-                        points.push_back(origin.origin_z - nz2);
+//                        points.push_back(origin.origin_x + 2 * nx1);
+//                        points.push_back(origin.origin_y + 2 * ny1);
+//                        points.push_back(origin.origin_z + 2 * nz1);
+//                        points.push_back(origin.origin_x + 2 * nx2);
+//                        points.push_back(origin.origin_y + 2 * ny2);
+//                        points.push_back(origin.origin_z + 2 * nz2);
+//                        points.push_back(origin.origin_x - 2 * nx1);
+//                        points.push_back(origin.origin_y - 2 * ny1);
+//                        points.push_back(origin.origin_z - 2 * nz1);
+//                        points.push_back(origin.origin_x - 2 * nx2);
+//                        points.push_back(origin.origin_y - 2 * ny2);
+//                        points.push_back(origin.origin_z - 2 * nz2);
                         Plane_points.push_back(points);
                         points.clear();
 //                      float e1= plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][0]].x,vertical_cloud2->points[cloud_index[i][0]].y, vertical_cloud2->points[cloud_index[i][0]].z);
