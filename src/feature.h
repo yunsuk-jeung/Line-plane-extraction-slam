@@ -11,5 +11,8 @@ public:
     std::vector < std::vector < float > > Line_points;
     std::vector < feature_point >  Plane;
     std::vector < std::vector < float > >  Plane_points;
+    std::vector < std::vector < float > >  Line_every_points;
+    std::vector < std::vector < float > >  Plane_every_points;
+
 };
 #endif /* feature_h */

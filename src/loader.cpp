@@ -239,7 +239,7 @@ float plane_to_point(float &origin_x,float &origin_y, float &origin_z,float &nx,
     return distance;
 }
 
-void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  feature_point  > &Plane, std::vector < std::vector <float > > &Line_points, std::vector < std::vector <float> > &Plane_points){
+void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  feature_point  > &Plane, std::vector < std::vector <float > > &Line_points, std::vector < std::vector <float> > &Plane_points, std::vector < std::vector <float> > &Line_every_points, std::vector < std::vector <float> > &Plane_every_points){
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::Normal>::Ptr temp_normal (new pcl::PointCloud<pcl::Normal>);
@@ -533,16 +533,19 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                     origin.nz=nz;
                     Line.push_back(origin);
                     std::vector <float > points;
-//                    for (int j =0; j < num; j++){
-//                        points.push_back(vertical_cloud2->points[cloud_index[i][j]].x);
-//                        points.push_back(vertical_cloud2->points[cloud_index[i][j]].y);
-//                        points.push_back(vertical_cloud2->points[cloud_index[i][j]].z);
-//                    }
-//                    for ( int j=0; j<100; j++){
-//                        points.push_back(origin_x + nx * j/50);
-//                        points.push_back(origin_y + ny * j/50);
-//                        points.push_back(origin_z + nz * j/50);
-//                    }
+                    for (int j =0; j < num; j++){
+                        points.push_back(vertical_cloud2->points[cloud_index[i][j]].x);
+                        points.push_back(vertical_cloud2->points[cloud_index[i][j]].y);
+                        points.push_back(vertical_cloud2->points[cloud_index[i][j]].z);
+                    }
+                    for ( int j=0; j<100; j++){
+                        points.push_back(origin_x + nx * j/50);
+                        points.push_back(origin_y + ny * j/50);
+                        points.push_back(origin_z + nz * j/50);
+                    }
+                    Line_every_points.push_back(points);
+                    points.clear();
+
 //                    for (int w=0; w<100; w++){
 //                        for(int h=0; h<100; h++){
 //                            points.push_back(origin_x - (w)/50 * nx1 - (h)/50 * nx2);
@@ -597,12 +600,14 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                                 points.push_back(vertical_cloud2->points[cloud_index[i][j]].y);
                                 points.push_back(vertical_cloud2->points[cloud_index[i][j]].z);
                             }
-
                             for ( int j=0; j<100; j++){
                                 points.push_back(origin_x + nx * j/50);
                                 points.push_back(origin_y + ny * j/50);
                                 points.push_back(origin_z + nz * j/50);
                             }
+                            Plane_every_points.push_back(points);
+                            points.clear();
+
 //                            for (int w=0; w<100; w++){
 //                                float h=0;
 ////                                for(int h=0; h<100; h++){
@@ -614,18 +619,18 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                             points.push_back(origin.origin_x);
                             points.push_back(origin.origin_y);
                             points.push_back(origin.origin_z);
-//                            points.push_back(origin.origin_x + 2 * nx1);
-//                            points.push_back(origin.origin_y + 2 * ny1);
-//                            points.push_back(origin.origin_z + 2 * nz1);
-//                            points.push_back(origin.origin_x + 2 * nx2);
-//                            points.push_back(origin.origin_y + 2 * ny2);
-//                            points.push_back(origin.origin_z + 2 * nz2);
-//                            points.push_back(origin.origin_x - 2 * nx1);
-//                            points.push_back(origin.origin_y - 2 * ny1);
-//                            points.push_back(origin.origin_z - 2 * nz1);
-//                            points.push_back(origin.origin_x - 2 * nx2);
-//                            points.push_back(origin.origin_y - 2 * ny2);
-//                            points.push_back(origin.origin_z - 2 * nz2);
+                            points.push_back(origin.origin_x + 2 * nx1);
+                            points.push_back(origin.origin_y + 2 * ny1);
+                            points.push_back(origin.origin_z + 2 * nz1);
+                            points.push_back(origin.origin_x + 2 * nx2);
+                            points.push_back(origin.origin_y + 2 * ny2);
+                            points.push_back(origin.origin_z + 2 * nz2);
+                            points.push_back(origin.origin_x - 2 * nx1);
+                            points.push_back(origin.origin_y - 2 * ny1);
+                            points.push_back(origin.origin_z - 2 * nz1);
+                            points.push_back(origin.origin_x - 2 * nx2);
+                            points.push_back(origin.origin_y - 2 * ny2);
+                            points.push_back(origin.origin_z - 2 * nz2);
                             Plane_points.push_back(points);
                             points.clear();
                         }
@@ -659,16 +664,19 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                         found_valid[i] = 2;
                         Plane.push_back(origin);
                         std::vector <float > points;
-//                        for (int j =0; j < num; j++){
-//                            points.push_back(vertical_cloud2->points[cloud_index[i][j]].x);
-//                            points.push_back(vertical_cloud2->points[cloud_index[i][j]].y);
-//                            points.push_back(vertical_cloud2->points[cloud_index[i][j]].z);
-//                        }
-//                        for ( int j=0; j<100; j++){
-//                            points.push_back(origin_x + nx * j/50);
-//                            points.push_back(origin_y + ny * j/50);
-//                            points.push_back(origin_z + nz * j/50);
-//                        }
+                        for (int j =0; j < num; j++){
+                            points.push_back(vertical_cloud2->points[cloud_index[i][j]].x);
+                            points.push_back(vertical_cloud2->points[cloud_index[i][j]].y);
+                            points.push_back(vertical_cloud2->points[cloud_index[i][j]].z);
+                        }
+                        for ( int j=0; j<100; j++){
+                            points.push_back(origin_x + nx * j/50);
+                            points.push_back(origin_y + ny * j/50);
+                            points.push_back(origin_z + nz * j/50);
+                        }
+                        Plane_every_points.push_back(points);
+                        points.clear();
+
 //                        for (int w=0; w<100; w++){
 //                            float h = 0;
 //                            for(int h=0; h<100; h++){
@@ -680,18 +688,18 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
                         points.push_back(origin.origin_x);
                         points.push_back(origin.origin_y);
                         points.push_back(origin.origin_z);
-//                        points.push_back(origin.origin_x + 2 * nx1);
-//                        points.push_back(origin.origin_y + 2 * ny1);
-//                        points.push_back(origin.origin_z + 2 * nz1);
-//                        points.push_back(origin.origin_x + 2 * nx2);
-//                        points.push_back(origin.origin_y + 2 * ny2);
-//                        points.push_back(origin.origin_z + 2 * nz2);
-//                        points.push_back(origin.origin_x - 2 * nx1);
-//                        points.push_back(origin.origin_y - 2 * ny1);
-//                        points.push_back(origin.origin_z - 2 * nz1);
-//                        points.push_back(origin.origin_x - 2 * nx2);
-//                        points.push_back(origin.origin_y - 2 * ny2);
-//                        points.push_back(origin.origin_z - 2 * nz2);
+                        points.push_back(origin.origin_x + 2 * nx1);
+                        points.push_back(origin.origin_y + 2 * ny1);
+                        points.push_back(origin.origin_z + 2 * nz1);
+                        points.push_back(origin.origin_x + 2 * nx2);
+                        points.push_back(origin.origin_y + 2 * ny2);
+                        points.push_back(origin.origin_z + 2 * nz2);
+                        points.push_back(origin.origin_x - 2 * nx1);
+                        points.push_back(origin.origin_y - 2 * ny1);
+                        points.push_back(origin.origin_z - 2 * nz1);
+                        points.push_back(origin.origin_x - 2 * nx2);
+                        points.push_back(origin.origin_y - 2 * ny2);
+                        points.push_back(origin.origin_z - 2 * nz2);
                         Plane_points.push_back(points);
                         points.clear();
 //                      float e1= plane_to_point(origin_x, origin_y, origin_z, nx, ny, nz, vertical_cloud2->points[cloud_index[i][0]].x,vertical_cloud2->points[cloud_index[i][0]].y, vertical_cloud2->points[cloud_index[i][0]].z);

@@ -15,7 +15,7 @@ public:
     void create_depth_image();
     void create_image();
     void viewer2();
-    void clusterizer(std::vector < feature_point  > &Line, std::vector <  feature_point  > &Plane, std::vector < std::vector <float > > &Line_points, std::vector < std::vector <float> > &Plane_points);
+    void clusterizer(std::vector < feature_point  > &Line, std::vector <  feature_point  > &Plane, std::vector < std::vector <float > > &Line_points, std::vector < std::vector <float> > &Plane_points, std::vector < std::vector <float> > &Liene_every_points, std::vector < std::vector <float> > &Plane_every_points);
 
 
 private:

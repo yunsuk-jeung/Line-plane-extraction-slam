@@ -31,7 +31,7 @@ int main (int argc, char** argv)
     origin_check = point;
 
     feature pre;
-    pre.get_feature(fileName ,1);
+    pre.get_feature(fileName ,0);
     Eigen::Matrix <float,4,4> SE3;
     Eigen::Matrix <float,4,4> SE3_check;
     SE3.setZero();
@@ -40,7 +40,7 @@ int main (int argc, char** argv)
     }
     SE3_check=SE3;
 
-    for(int i=2; i<3; i++){
+    for(int i=1; i<77; i++){
         feature present;
         present.get_feature(fileName,i);
         odom A;
@@ -52,13 +52,13 @@ int main (int argc, char** argv)
         d = sqrt(pow(origin(0)-origin_check(0),2) + pow(origin(1)-origin_check(1),2)
                 + pow(origin(2)-origin_check(2),2));
 
-//        if (d > 0.2){
-//            origin = origin_check;
-//            SE3 = SE3_check;
-//        }else{
-//            origin_check = origin;
-//            SE3_check = SE3;
-//        }
+        if (d > 0.1){
+            origin = origin_check;
+            SE3 = SE3_check;
+        }else{
+            origin_check = origin;
+            SE3_check = SE3;
+        }
 
         fprintf(logFp_, "%f,%f,%f\n" , origin(0),origin(1),origin(2));
 
