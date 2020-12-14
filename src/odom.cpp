@@ -1,53 +1,54 @@
 #include "odom.h"
 
 Eigen::Matrix <float,4,4 > get_SE3(Eigen::Matrix<float,6,1> &T);
-Eigen::Matrix3f get_rotation(Eigen::Matrix<float,6,1> &T){
-    Eigen::Matrix3f Rz;
-    Eigen::Matrix3f Ry;
-    Eigen::Matrix3f Rx;
-    Eigen::Matrix3f R;
 
-    for(int i=0; i<3; i++){
-        for (int j=0; j<3; j++){
-            Rz(i,j) =0;
-            Ry(i,j) =0;
-            Rx(i,j) =0;
-        }
-    }
-    Rz(0,0) = std::cos(T(5));
-    Rz(0,1) = -std::sin(T(5));
-    Rz(1,0) = std::sin(T(5));
-    Rz(1,1) = Rz(0,0);
-    Rz(2,2) =1;
+//Eigen::Matrix3f get_rotation(Eigen::Matrix<float,6,1> &T){
+//    Eigen::Matrix3f Rz;
+//    Eigen::Matrix3f Ry;
+//    Eigen::Matrix3f Rx;
+//    Eigen::Matrix3f R;
+//
+//    for(int i=0; i<3; i++){
+//        for (int j=0; j<3; j++){
+//            Rz(i,j) =0;
+//            Ry(i,j) =0;
+//            Rx(i,j) =0;
+//        }
+//    }
+//    Rz(0,0) = std::cos(T(5));
+//    Rz(0,1) = -std::sin(T(5));
+//    Rz(1,0) = std::sin(T(5));
+//    Rz(1,1) = Rz(0,0);
+//    Rz(2,2) =1;
+//
+//    Ry(0,0) = std::cos(T(4));
+//    Ry(0,2) = std::sin(T(4));
+//    Ry(2,0) = -std::sin(T(4));
+//    Ry(2,2) = std::cos(T(4));
+//    Ry(1,1)=1;
+//
+//    Rx(0,0)=1;
+//    Rx(1,1) = std::cos(T(3));
+//    Rx(1,2) = -std::sin(T(3));
+//    Rx(2,1) = std::sin(T(3));
+//    Rx(2,2) = std::cos(T(3));
+//    R = Rz * Ry * Rx;
+//    return R;
+//}
+//Eigen::Matrix<float,3,1> get_translation(Eigen::Matrix<float,6,1> &T){
+//    Eigen::Matrix<float,3,1> t;
+//    t(0)=T(0);
+//    t(1) = T(1);
+//    t(2) = T(2);
+//    return t;
+//}
 
-    Ry(0,0) = std::cos(T(4));
-    Ry(0,2) = std::sin(T(4));
-    Ry(2,0) = -std::sin(T(4));
-    Ry(2,2) = std::cos(T(4));
-    Ry(1,1)=1;
-
-    Rx(0,0)=1;
-    Rx(1,1) = std::cos(T(3));
-    Rx(1,2) = -std::sin(T(3));
-    Rx(2,1) = std::sin(T(3));
-    Rx(2,2) = std::cos(T(3));
-    R = Rz * Ry * Rx;
-    return R;
-}
-Eigen::Matrix<float,3,1> get_translation(Eigen::Matrix<float,6,1> &T){
-    Eigen::Matrix<float,3,1> t;
-    t(0)=T(0);
-    t(1) = T(1);
-    t(2) = T(2);
-    return t;
-}
-
-int check_correspondence(feature_point &feature1, feature_point & feature2){
+int check_correspondence(feature_point &feature1, feature_point & feature2, float &dist_threshold, float &angle_threshold){
     float d,theta;
-    d = sqrt(pow((feature1.origin_x - feature2.origin_x),2) + pow((feature1.origin_y - feature2.origin_y),2) + pow((feature1.origin_z - feature2.origin_z),2));
+    d = sqrt(pow((feature1.origin_x - feature2.origin_x),2) + pow((feature1.origin_y - feature2.origin_y),2) + 0.1*pow((feature1.origin_z - feature2.origin_z),2));
     theta = fabs(feature1.nx * feature2.nx + feature1.ny * feature2.ny + feature1.nz * feature2.nz);
     int found_correspondence;
-    if (d < CORRESPONDENCE_DISTANCE_THRESHOLD && theta > CORRESPONDENCE_ANGLE_THRESHOLD){
+    if (d < dist_threshold && theta > angle_threshold){
         found_correspondence =1;
         return found_correspondence;
     }else{
@@ -56,15 +57,14 @@ int check_correspondence(feature_point &feature1, feature_point & feature2){
     }
 }
 
-void find_match(std::vector<feature_point> &feature1, std::vector<feature_point> &feature2, std::vector<int> &match){
-    int num=0;
+void find_match1(std::vector<feature_point> &feature1, std::vector<feature_point> &feature2, std::vector<int> &match, float &dist_threshold, float &angle_threshold){
     float pre_d;
     float d;
     for (int i=0; i<feature1.size(); i++){
         match.push_back(-1);
-        pre_d=1;
+        pre_d=100;
         for(int j=0; j<feature2.size(); j++){
-            if(check_correspondence(feature1[i],feature2[j]) == 0){
+            if(check_correspondence(feature1[i],feature2[j], dist_threshold, angle_threshold) == 0){
                 continue;
             }
             else{
@@ -74,6 +74,7 @@ void find_match(std::vector<feature_point> &feature1, std::vector<feature_point>
                     pre_d =d;
                 }
             }
+
         }
     }
 }
@@ -325,24 +326,26 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         if(line_match[i] != -1){
             num_d += feature_2.Line_points[line_match[i]].size()/3;
             num_d++;
-            num_d2++;
+//            num_d2++;
         }
     }
 
     float line_num=num_d;
     if(line_num >0){
-        std::cout << "line_exsit" << ' ' ;
+//        std::cout << "line_exsit" << ' ' ;
     }
 
     for (int i=0; i< plane_size; i++){
         if(plane_match[i] != -1){
             num_d += feature_2.Plane_points[plane_match[i]].size()/3;
             num_d ++;
-            num_d2++;
+//            num_d2++;
         }
     }
     float plane_num=num_d;
-
+    if(num_d == 0){
+        return;
+    }
     Eigen::Matrix<float, Eigen::Dynamic, 6 > J;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > d;
     Eigen::Matrix<float, Eigen::Dynamic, 1 > next_d;
@@ -384,9 +387,9 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
         get_plane_feature_distance(feature_1.Plane[i], feature_1.Plane_points[i],feature_2.Plane[plane_match[i]], feature_2.Plane_points[plane_match[i]], d, k,R,t);
     }
 
-    std::cout << "matched feature #: " << num_d2<< std::endl;
+//    std::cout << "matched feature #: " << num_d2<< std::endl;
     float total_d = d.transpose() * d;
-    std::cout << "first distance: " << total_d << std::endl;
+//    std::cout << "first distance: " << total_d << std::endl;
 //    std::cout << d.transpose() << std::endl;
 //    //// next_d
 //    for (int j=0; j<6; j++){
@@ -507,14 +510,14 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
 
     float distance2;
     distance2 = d.transpose()*d;
-    std::cout  << "delta_distance: "<< -distance + distance2 << std::endl;
-    std::cout << "odometry: " << pre_T.transpose() << std::endl;
+//    std::cout  << "delta_distance: "<< -distance + distance2 << std::endl;
+//    std::cout << "odometry: " << pre_T.transpose() << std::endl;
 //    pre_T(0)=0;
 //    pre_T(1)=0;
 //    pre_T(2)=0;
 //    pre_T.setZero();
     ///////////translation////////////////
-
+//
 //    Eigen::Matrix<float, Eigen::Dynamic, 3 > J2;
 //    Eigen::Matrix<float, Eigen::Dynamic, 1 > d2;
 //    Eigen::Matrix<float, Eigen::Dynamic, 1 > next_d2;
@@ -651,99 +654,160 @@ void get_SE3(feature &feature_1, feature &feature_2, std::vector <int> &line_mat
 //    std::cout << pre_T.transpose() << std::endl;
 }
 
-odom::odom(){
-    T.setZero();
+odom::odom(Eigen::Matrix<float,6,1> input_T){
+    T=input_T;
+}
+void odom::match_update(odom &input_odom) {
+    line_match.assign(input_odom.line_match.begin(), input_odom.line_match.end());
+    plane_match.assign(input_odom.plane_match.begin(), input_odom.plane_match.end());
+
+}
+void odom::find_match(feature &feature_1,feature &feature_2, float &dist_threshold, float &angle_threshold){
+
+    find_match1(feature_1.Line,feature_2.Line,line_match, dist_threshold, angle_threshold);
+    find_match1(feature_1.Plane,feature_2.Plane,plane_match, dist_threshold, angle_threshold);
+
 }
 
-Eigen::Matrix<float,4,4> odom::example(feature &feature_1,feature &feature_2){
-    std::vector < int > line_match;
-    std::vector < int > plane_match;
-    find_match(feature_1.Line,feature_2.Line,line_match);
-    find_match(feature_1.Plane,feature_2.Plane,plane_match);
+Eigen::Matrix<float,6,1> odom::example(feature &feature_1,feature &feature_2){
+    Eigen::Matrix<float, 6, 1> input_T;
+    input_T = T;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr check_cloud;
     check_cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointXYZRGB check_point;
+    get_SE3(feature_1, feature_2,line_match, plane_match, input_T);
 
-    get_SE3(feature_1, feature_2,line_match, plane_match, T);
-    Eigen::Matrix<float,4,4> SE3;
-    Eigen::Matrix<float, 3, 3 > R;
-    Eigen::Matrix<float, 3, 1 > t;
-    Eigen::Matrix<float, 3, 1 > p;
-    SE3.setZero();
-    R=get_rotation(T);
-    t=get_translation(T);
-    for(int i=0;i <3; i++){
-        for(int j=0;j <3; j++){
-            SE3(i,j) = R(i,j);
-        }
-    }
-    for(int i=0; i<3; i++){
-        SE3(i,3) = t(i);
-    }
-    SE3(3,3) = 1;
 
-    //    std::cout << feature_1.Plane_points[1].size() << std::endl;
+//    Eigen::Matrix<float, 3, 3> R;
+//    Eigen::Matrix<float ,3, 1> t;
+//    R = get_rotation(input_T);
+//    t = get_translation(input_T);
+//
+//    Eigen::Matrix<float, 3,1> p;
+//
+//    for( int i=0; i<feature_1.Plane.size(); i++){
+//        if(plane_match[i] == -1){
+//            continue;
+//        }
+//        for(int j=0; j<feature_1.Plane_every_points[i].size(); j=j+3){
+//            check_point.x = feature_1.Plane_every_points[i][j];
+//            check_point.y = feature_1.Plane_every_points[i][j+1];
+//            check_point.z = feature_1.Plane_every_points[i][j+2];
+//            check_point.r = 255;
+//            check_point.b = 0;
+//            check_point.g = 0;
+//            check_cloud->push_back(check_point);
+//        }
+//        for(int j=0; j<feature_2.Plane_every_points[plane_match[i]].size(); j=j+3){
+//            p(0) = feature_2.Plane_every_points[plane_match[i]][j];
+//            p(1) = feature_2.Plane_every_points[plane_match[i]][j+1];
+//            p(2) =  feature_2.Plane_every_points[plane_match[i]][j+2];
+//            p = R * p + t;
+//            check_point.x = p(0);
+//            check_point.y = p(1);
+//            check_point.z = p(2);
+//            check_point.r = 0;
+//            check_point.b = 0;
+//            check_point.g = 255;
+//            check_cloud->push_back(check_point);
+//        }
+//    }
+//    for(int j=0; j<100; j++){
+//        check_point.x = 0.02 * j;
+//        check_point.y = 0;
+//        check_point.z =0;
+//        check_point.r = 255;
+//        check_point.b = 0;
+//        check_point.g = 0;
+//        check_cloud->push_back(check_point);
+//    }
+//    for(int j=0; j<100; j++){
+//        check_point.x = 0;
+//        check_point.y = 0.02 * j;
+//        check_point.z =0;
+//        check_point.r = 0;
+//        check_point.b = 0;
+//        check_point.g = 255;
+//        check_cloud->push_back(check_point);
+//    }
+//    for(int j=0; j<100; j++){
+//        check_point.x = 0;
+//        check_point.y = 0;
+//        check_point.z = 0.02 * j;
+//        check_point.r = 0;
+//        check_point.b = 255;
+//        check_point.g = 0;
+//        check_cloud->push_back(check_point);
+//    }
+//
+//    pcl::visualization::CloudViewer viewer("Cloud Viewer");
+//    viewer.showCloud(check_cloud);
+//    while (!viewer.wasStopped ())
+//    {
+//    }
+//    check_cloud->clear();
+//
+//    for( int i=0; i<feature_1.Plane.size(); i++){
+//        for(int j=0; j<feature_1.Plane_every_points[i].size(); j=j+3){
+//            check_point.x = feature_1.Plane_every_points[i][j];
+//            check_point.y = feature_1.Plane_every_points[i][j+1];
+//            check_point.z = feature_1.Plane_every_points[i][j+2];
+//            check_point.r = 255 ;
+//            check_point.b = 255 ;
+//            check_point.g = 255;
+//            check_cloud->push_back(check_point);
+//        }
+//    }
+//    for(int i=0; i<feature_2.Plane.size();i++) {
+//        for (int j = 0; j < feature_2.Plane_every_points[i].size(); j = j + 3) {
+//            p(0) = feature_2.Plane_every_points[i][j];
+//            p(1) = feature_2.Plane_every_points[i][j + 1];
+//            p(2) = feature_2.Plane_every_points[i][j + 2];
+//            p= R*p +t;
+//            check_point.x = p(0);
+//            check_point.y = p(1);
+//            check_point.z = p(2);
+//            check_point.r = 0;
+//            check_point.b = 0;
+//            check_point.g = 255;
+//            check_cloud->push_back(check_point);
+//        }
+//    }
+//
+//    for(int j=0; j<100; j++){
+//        check_point.x = 0.02 * j;
+//        check_point.y = 0;
+//        check_point.z =0;
+//        check_point.r = 255;
+//        check_point.b = 0;
+//        check_point.g = 0;
+//        check_cloud->push_back(check_point);
+//    }
+//    for(int j=0; j<100; j++){
+//        check_point.x = 0;
+//        check_point.y = 0.02 * j;
+//        check_point.z =0;
+//        check_point.r = 0;
+//        check_point.b = 0;
+//        check_point.g = 255;
+//        check_cloud->push_back(check_point);
+//    }
+//    for(int j=0; j<100; j++){
+//        check_point.x = 0;
+//        check_point.y = 0;
+//        check_point.z = 0.02 * j;
+//        check_point.r = 0;
+//        check_point.b = 255;
+//        check_point.g = 0;
+//        check_cloud->push_back(check_point);
+//    }
+//
+//    pcl::visualization::CloudViewer viewer2("Cloud Viewer");
+//    viewer2.showCloud(check_cloud);
+//    while (!viewer2.wasStopped ())
+//    {
+//    }
 
-    for( int i=0; i<feature_1.Plane.size(); i++){
-        if(plane_match[i] == -1){
-            continue;
-        }
-        for(int j=0; j<feature_1.Plane_every_points[i].size(); j=j+3){
-            check_point.x = feature_1.Plane_every_points[i][j];
-            check_point.y = feature_1.Plane_every_points[i][j+1];
-            check_point.z = feature_1.Plane_every_points[i][j+2];
-            check_point.r = 255;
-            check_point.b = 255;
-            check_point.g = 255;
-            check_cloud->push_back(check_point);
-        }
-        for(int j=0; j<feature_2.Plane_every_points[plane_match[i]].size(); j=j+3){
-            p(0) = feature_2.Plane_every_points[plane_match[i]][j];
-            p(1) = feature_2.Plane_every_points[plane_match[i]][j+1];
-            p(2) =  feature_2.Plane_every_points[plane_match[i]][j+2];
-            p = R * p + t;
-            check_point.x = p(0);
-            check_point.y = p(1);
-            check_point.z = p(2);
-            check_point.r = 255;
-            check_point.b = 0;
-            check_point.g = 0;
-            check_cloud->push_back(check_point);
-        }
-    }
-    for(int j=0; j<100; j++){
-        check_point.x = 0.02 * j;
-        check_point.y = 0;
-        check_point.z =0;
-        check_point.r = 255;
-        check_point.b = 0;
-        check_point.g = 0;
-        check_cloud->push_back(check_point);
-    }
-    for(int j=0; j<100; j++){
-        check_point.x = 0;
-        check_point.y = 0.02 * j;
-        check_point.z =0;
-        check_point.r = 0;
-        check_point.b = 0;
-        check_point.g = 255;
-        check_cloud->push_back(check_point);
-    }
-    for(int j=0; j<100; j++){
-        check_point.x = 0;
-        check_point.y = 0;
-        check_point.z = 0.02 * j;
-        check_point.r = 0;
-        check_point.b = 255;
-        check_point.g = 0;
-        check_cloud->push_back(check_point);
-    }
 
-    pcl::visualization::CloudViewer viewer("Cloud Viewer");
-    viewer.showCloud(check_cloud);
-    while (!viewer.wasStopped ())
-    {
-    }
-
-    return SE3;
+    return input_T;
 }

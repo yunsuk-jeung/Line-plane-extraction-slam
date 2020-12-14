@@ -827,7 +827,7 @@ void loader::clusterizer(std::vector < feature_point > &Line, std::vector <  fea
 //    {
 //
 //    }
-
+//
 //    pcl::visualization::PCLVisualizer viewer2("pcl viewer");
 //
 //    viewer2.addPointCloudNormals<pcl::PointXYZRGB,pcl::Normal>(temp,temp_normal,5,1);

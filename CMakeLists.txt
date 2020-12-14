@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
+find_package(Sophus REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 FIND_PACKAGE(OpenMP REQUIRED)
@@ -119,6 +120,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   ${catkin_INCLUDE_DIRS}
+        ${Sophus_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -161,7 +163,9 @@ add_executable(main_node
 
  target_link_libraries(main_node
    ${catkin_LIBRARIES}
+   ${SOPHUS_LIBRARIES}
  )
+
 #############
 ## Install ##
 #############
