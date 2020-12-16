@@ -125,7 +125,7 @@ void feature::rotate(Eigen::Matrix<float, 6, 1> &T){
         Plane[i].ny = new_n(1);
         Plane[i].nz = new_n(2);
     }
-    for (int i=0; i< Line_points.size(); i=i+3){
+    for (int i=0; i< Line_points.size(); i++){
         for (int j=0; j<Line_points[i].size(); j=j+3){
             p(0)= Line_points[i][j];
             p(1) = Line_points[i][j+1];
@@ -137,7 +137,7 @@ void feature::rotate(Eigen::Matrix<float, 6, 1> &T){
         }
 
     }
-    for (int i=0; i< Plane_points.size(); i=i+3){
+    for (int i=0; i< Plane_points.size(); i++){
         for (int j=0; j<Plane_points[i].size(); j=j+3){
             p(0)= Plane_points[i][j];
             p(1) = Plane_points[i][j+1];
@@ -146,6 +146,31 @@ void feature::rotate(Eigen::Matrix<float, 6, 1> &T){
             Plane_points[i][j] = p(0);
             Plane_points[i][j+1] = p(1);
             Plane_points[i][j+2] = p(2);
+        }
+
+    }
+    for (int i=0; i< Line_every_points.size(); i++){
+        for (int j=0; j<Line_every_points[i].size(); j=j+3){
+            p(0)= Line_every_points[i][j];
+            p(1) = Line_every_points[i][j+1];
+            p(2) = Line_every_points[i][j+2];
+            p= R * p +t;
+            Line_every_points[i][j] = p(0);
+            Line_every_points[i][j+1] = p(1);
+            Line_every_points[i][j+2] = p(2);
+        }
+
+    }
+    for (int i=0; i< Plane_every_points.size(); i++){
+        for (int j=0; j<Plane_every_points[i].size(); j=j+3){
+
+            p(0)= Plane_every_points[i][j];
+            p(1) = Plane_every_points[i][j+1];
+            p(2) = Plane_every_points[i][j+2];
+            p= R * p +t;
+            Plane_every_points[i][j] = p(0);
+            Plane_every_points[i][j+1] = p(1);
+            Plane_every_points[i][j+2] = p(2);
         }
 
     }

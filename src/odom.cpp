@@ -746,68 +746,74 @@ Eigen::Matrix<float,6,1> odom::example(feature &feature_1,feature &feature_2){
 //    {
 //    }
 //    check_cloud->clear();
-//
-//    for( int i=0; i<feature_1.Plane.size(); i++){
-//        for(int j=0; j<feature_1.Plane_every_points[i].size(); j=j+3){
-//            check_point.x = feature_1.Plane_every_points[i][j];
-//            check_point.y = feature_1.Plane_every_points[i][j+1];
-//            check_point.z = feature_1.Plane_every_points[i][j+2];
-//            check_point.r = 255 ;
-//            check_point.b = 255 ;
-//            check_point.g = 255;
-//            check_cloud->push_back(check_point);
-//        }
-//    }
-//    for(int i=0; i<feature_2.Plane.size();i++) {
-//        for (int j = 0; j < feature_2.Plane_every_points[i].size(); j = j + 3) {
-//            p(0) = feature_2.Plane_every_points[i][j];
-//            p(1) = feature_2.Plane_every_points[i][j + 1];
-//            p(2) = feature_2.Plane_every_points[i][j + 2];
-//            p= R*p +t;
-//            check_point.x = p(0);
-//            check_point.y = p(1);
-//            check_point.z = p(2);
-//            check_point.r = 0;
-//            check_point.b = 0;
-//            check_point.g = 255;
-//            check_cloud->push_back(check_point);
-//        }
-//    }
-//
-//    for(int j=0; j<100; j++){
-//        check_point.x = 0.02 * j;
-//        check_point.y = 0;
-//        check_point.z =0;
-//        check_point.r = 255;
-//        check_point.b = 0;
-//        check_point.g = 0;
-//        check_cloud->push_back(check_point);
-//    }
-//    for(int j=0; j<100; j++){
-//        check_point.x = 0;
-//        check_point.y = 0.02 * j;
-//        check_point.z =0;
-//        check_point.r = 0;
-//        check_point.b = 0;
-//        check_point.g = 255;
-//        check_cloud->push_back(check_point);
-//    }
-//    for(int j=0; j<100; j++){
-//        check_point.x = 0;
-//        check_point.y = 0;
-//        check_point.z = 0.02 * j;
-//        check_point.r = 0;
-//        check_point.b = 255;
-//        check_point.g = 0;
-//        check_cloud->push_back(check_point);
-//    }
-//
-//    pcl::visualization::CloudViewer viewer2("Cloud Viewer");
-//    viewer2.showCloud(check_cloud);
-//    while (!viewer2.wasStopped ())
-//    {
-//    }
-
 
     return input_T;
+}
+
+void display(feature &feature_1,feature &feature_2) {
+
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr check_cloud;
+    check_cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointXYZRGB check_point;
+    Eigen::Matrix<float, 3,1> p;
+    for( int i=0; i<feature_1.Plane.size(); i++){
+        for(int j=0; j<feature_1.Plane_every_points[i].size(); j=j+3){
+            check_point.x = feature_1.Plane_every_points[i][j];
+            check_point.y = feature_1.Plane_every_points[i][j+1];
+            check_point.z = feature_1.Plane_every_points[i][j+2];
+            check_point.r = 255 ;
+            check_point.b = 255 ;
+            check_point.g = 255;
+            check_cloud->push_back(check_point);
+        }
+    }
+    for(int i=0; i<feature_2.Plane.size();i++) {
+        for (int j = 0; j < feature_2.Plane_every_points[i].size(); j = j + 3) {
+            p(0) = feature_2.Plane_every_points[i][j];
+            p(1) = feature_2.Plane_every_points[i][j + 1];
+            p(2) = feature_2.Plane_every_points[i][j + 2];
+//            p= R*p +t;
+            check_point.x = p(0);
+            check_point.y = p(1);
+            check_point.z = p(2);
+            check_point.r = 0;
+            check_point.b = 0;
+            check_point.g = 255;
+            check_cloud->push_back(check_point);
+        }
+    }
+
+    for(int j=0; j<100; j++){
+        check_point.x = 0.02 * j;
+        check_point.y = 0;
+        check_point.z =0;
+        check_point.r = 255;
+        check_point.b = 0;
+        check_point.g = 0;
+        check_cloud->push_back(check_point);
+    }
+    for(int j=0; j<100; j++){
+        check_point.x = 0;
+        check_point.y = 0.02 * j;
+        check_point.z =0;
+        check_point.r = 0;
+        check_point.b = 0;
+        check_point.g = 255;
+        check_cloud->push_back(check_point);
+    }
+    for(int j=0; j<100; j++){
+        check_point.x = 0;
+        check_point.y = 0;
+        check_point.z = 0.02 * j;
+        check_point.r = 0;
+        check_point.b = 255;
+        check_point.g = 0;
+        check_cloud->push_back(check_point);
+    }
+
+    pcl::visualization::CloudViewer viewer2("Cloud Viewer");
+    viewer2.showCloud(check_cloud);
+    while (!viewer2.wasStopped ())
+    {
+    }
 }
