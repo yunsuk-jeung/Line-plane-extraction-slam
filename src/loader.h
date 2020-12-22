@@ -17,7 +17,6 @@ public:
     void viewer2();
     void clusterizer(std::vector < feature_point  > &Line, std::vector <  feature_point  > &Plane, std::vector < std::vector <float > > &Line_points, std::vector < std::vector <float> > &Plane_points, std::vector < std::vector <float> > &Liene_every_points, std::vector < std::vector <float> > &Plane_every_points);
 
-
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud;
 //    spherical_point depth_image[ROW][COL];
@@ -29,4 +28,4 @@ private:
 };
 
 
-#endif /* loader_h */
+#iendif /* loader_h */

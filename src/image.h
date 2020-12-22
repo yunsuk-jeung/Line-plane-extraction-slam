@@ -74,6 +74,7 @@ struct interval_point{
     }
 };
 
+
 struct integral_point{
     double itg_x;
     double itg_y;

@@ -352,6 +352,7 @@ pcl::PointCloud<pcl::Normal>::Ptr image::get_normal(std::vector < std::vector < 
         }
     }
 //    end = clock();
+
 ////    std::cout << "end_normal" << std:: endl;
 ////    std::cout<<"수행시간 : "<<((end-begin))<<std::endl;
     return normals;
