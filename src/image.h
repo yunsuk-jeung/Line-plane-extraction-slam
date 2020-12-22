@@ -62,7 +62,6 @@ struct spherical_point{
 };
 
 struct interval_point{
-
     int left_col;
     int up_row;
     int right_col;
