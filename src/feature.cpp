@@ -10,7 +10,6 @@ void feature::get_feature(std::string &fileName, int num){
     cloud.clusterizer(Line,Plane,Line_points,Plane_points,Line_every_points,Plane_every_points);
 //    cloud.viewer2();
 
-
 }
 void feature::swap_feature(feature &pre_feature){
     Line.swap(pre_feature.Line);

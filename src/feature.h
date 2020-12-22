@@ -3,6 +3,7 @@
 
 #include "loader.h"
 
+
 class feature{
 public:
     void get_feature(std::string &fileName, int num);
