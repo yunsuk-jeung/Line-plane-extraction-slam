@@ -33,10 +33,8 @@
 #define CLUSTER_NEIGHBOR_COL_VALID 100
 #define CLUSTER_NEIGHBOR_DISTANCE 1
 #define CLUSTER_NEIGHBOR_ANGLE 0.95
-
 #define CORRESPONDENCE_DISTANCE_THRESHOLD 0.5
 #define CORRESPONDENCE_ANGLE_THRESHOLD 0.90
-
 #define ODOM_INITIAL_LAMBDA 1000
 #define ODOM_IDENTICAL_METRIX 0.00000001
 #define ODOM_H_THRESHOLD 0.001
@@ -89,15 +87,7 @@ struct integral_point{
     double itg_zz;
     int itg_num;
         integral_point(){
-            itg_x=0;//    pcl::visualization::CloudViewer viewer3("Cloud Viewer");
-//
-//
-//    viewer3.showCloud(temp);
-//
-//    while (!viewer3.wasStopped ())
-//    {
-//
-//    }
+            itg_x=0;
             itg_y=0;
             itg_z=0;
             itg_xx=0;
